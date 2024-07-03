@@ -1,4 +1,4 @@
-package model.dto;
+package project.model;
 
 public class ProductDto {
     private int game_date;
