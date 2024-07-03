@@ -30,7 +30,6 @@ ConvenienceStoreSimulator/
 │   │
 │   ├── util/
 │   │   ├── InputValidator.java
-│   │   └── DateUtils.java
 │   │
 │   ├── AppStart.java
 │
@@ -39,6 +38,10 @@ ConvenienceStoreSimulator/
 │   │   └── database.properties
 │   └── database/
 │       └── schema.sql
+│
+├── docs/
+│   ├── er-diagram.md
+│   └── project-structure.md
 │
 ├── .gitignore
 └── README.md

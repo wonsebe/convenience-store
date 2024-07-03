@@ -7,12 +7,14 @@ package controller;
 import model.Game;
 import view.MainMenuView;
 import view.StoreManagementView;
+import view.ConsoleView;
 
 public class GameController {
     private static GameController instance;
     private Game game;
     private MainMenuView mainMenuView;
     private StoreManagementView storeManagementView;
+    private ConsoleView consoleView;
 
     private GameController() {
         // private 생성자
@@ -25,11 +27,12 @@ public class GameController {
         return instance;
     }
 
-    public void initialize(Game game, MainMenuView mainMenuView, StoreManagementView storeManagementView) {
+    public void initialize(Game game, MainMenuView mainMenuView, StoreManagementView storeManagementView, ConsoleView consoleView) {
         if (this.game == null) {
             this.game = game;
             this.mainMenuView = mainMenuView;
             this.storeManagementView = storeManagementView;
+            this.consoleView = consoleView;
         }
     }
 
@@ -47,7 +50,7 @@ public class GameController {
                     running = false;
                     break;
                 default:
-                    mainMenuView.displayMessage("유효하지 않은 선택입니다.");
+                    consoleView.displayMessage("유효하지 않은 선택입니다.");
             }
         }
     }
@@ -73,7 +76,7 @@ public class GameController {
                     gameRunning = false;
                     break;
                 default:
-                    storeManagementView.displayMessage("유효하지 않은 선택입니다.");
+                    consoleView.displayMessage("유효하지 않은 선택입니다.");
             }
 
             // 게임의 다음 턴으로 이동

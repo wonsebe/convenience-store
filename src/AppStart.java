@@ -18,9 +18,10 @@ import java.util.ArrayList;
 public class AppStart {
     public static void main(String[] args) {
         // 데이터베이스 연결 초기화
-        Connection connection = null;
+        Connection connection;
         try {
-            connection = Database.getConnection();
+            Database database = Database.getInstance();
+            connection = database.getConnection();
         } catch (SQLException e) {
             System.out.println("데이터베이스 연결 실패: " + e);
             return;
@@ -39,7 +40,7 @@ public class AppStart {
 
         // 컨트롤러 초기화
         GameController gameController = GameController.getInstance();
-        gameController.initialize(game, mainMenuView, storeManagementView);
+        gameController.initialize(game, mainMenuView, storeManagementView, consoleView);
         ProductController productController = ProductController.getInstance();
         EmployeeController employeeController = EmployeeController.getInstance();
         SalesController salesController = SalesController.getInstance();
