@@ -1,11 +1,12 @@
-package convenience-store;
+package controller;
 
-import convenience-store.model.ProductDao;
-import convenience-store.model.ProductDto;
+import model.dao.ProductDao;
+import model.dto.ProductDto;
+
 
 import java.util.Random;
 
-public class PcController {
+public class ProductController {
 
 
     // 1. 구매
@@ -28,13 +29,13 @@ public class PcController {
         int pCount = new Random().nextInt(11); // 0 ~ 10( 선택한 제품의 재고 수량 )
         System.out.println("구매수량 : "+ pCount +"입니다.");
 
-        Dao.getInstance().구매( );
+        ProductDao.getInstance().구매(pCount) ;
 
         return true;
     }
 
     public int 개별재고확인( int pNum ){
-        return Dao.getInstance().개별재고확인( pNum );
+        return ProductDao.getInstance().개별재고확인( pNum );
     }
 
 }
