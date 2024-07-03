@@ -28,10 +28,10 @@ public class AppStart {
         }
 
         // 모델 초기화
-        Store store = new Store();
+        Store store = Store.getInstance();
         ArrayList<Employee> employees = new ArrayList<>();
         ArrayList<Customer> customers = new ArrayList<>();
-        Game game = new Game(store, employees, customers);
+        Game game = Game.getInstance();
 
         // 뷰 초기화
         ConsoleView consoleView = ConsoleView.getInstance();

@@ -14,6 +14,7 @@ public class SalesController {
 
     private SalesController() {}
 
+    // 싱글톤 패턴 전역접근 가능한 getInstance 메서드 (인스턴스 반환)
     public static SalesController getInstance() {
         if (instance == null) {
             instance = new SalesController();

@@ -20,10 +20,11 @@ public class Database {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("config/database.properties")) {
             properties.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
     }
 
+    // 싱글톤 패턴 전역접근 가능한 getInstance 메서드 (인스턴스 반환)
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();

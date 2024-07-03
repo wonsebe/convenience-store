@@ -8,12 +8,21 @@ import model.dto.Product;
 import java.util.ArrayList;
 
 public class Store {
+    private static Store instance;
     private ArrayList<Product> inventory;
     private double revenue;
 
-    public Store() {
+    private Store() {
         this.inventory = new ArrayList<>();
-        this.revenue = 0.0; // 초기 매출 0
+        this.revenue = 0.0;
+    }
+
+    // 싱글톤 패턴 전역접근 가능한 getInstance 메서드 (인스턴스 반환)
+    public static Store getInstance() {
+        if (instance == null) {
+            instance = new Store();
+        }
+        return instance;
     }
 
     // 재고 추가
@@ -39,6 +48,13 @@ public class Store {
     // 매출 증가
     public void addRevenue(double amount) {
         revenue += amount;
+    }
+
+    // 스토어 리셋 메서드
+    public void resetStore() {
+        // Store의 모든 inventory(상품) 제거
+        this.inventory.clear();
+        this.revenue = 0.0;
     }
 
     // 게터 세터

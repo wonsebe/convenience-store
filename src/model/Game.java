@@ -12,21 +12,37 @@ import model.dto.Employee;
 import java.util.ArrayList;
 
 public class Game {
+    private static Game instance;
     private Store store;
     private ArrayList<Employee> employees;
     private ArrayList<Customer> customers;
     private int currentTurn;
 
-    public Game(Store store, ArrayList<Employee> employees, ArrayList<Customer> customers) {
-        this.store = store;
-        this.employees = employees;
-        this.customers = customers;
-        this.currentTurn = 0; // 게임 시작 시 0번째 턴
+    private Game() {
+        this.store = Store.getInstance();
+        this.employees = new ArrayList<>();
+        this.customers = new ArrayList<>();
+        this.currentTurn = 0;
     }
 
-    // 게임 초기화
+    // 싱글톤 패턴 전역접근 가능한 getInstance 메서드 (인스턴스 반환)
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
+    }
+
+    // 게임 초기화 (새 게임 시작 또는 재시작)
     public void initializeGame() {
-        // 초기 설정 수행
+        this.store = Store.getInstance();
+        this.store.resetStore();  // Store 클래스에 resetStore 메서드가 있다고 가정
+        this.employees = new ArrayList<>();
+        this.customers = new ArrayList<>();
+        this.currentTurn = 0;
+
+        // 추가적인 초기화 로직
+        // 예: 초기 상품 생성, 초기 고객 생성 등
     }
 
     // 게임 상태 저장
@@ -45,8 +61,7 @@ public class Game {
         // 각 턴에서 수행할 로직 추가
     }
 
-    // Getters and Setters
-
+    // 게터 세터
     public int getCurrentTurn() {
         return currentTurn;
     }
