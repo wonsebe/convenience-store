@@ -17,10 +17,13 @@ import java.util.ArrayList;
 
 public class AppStart {
     public static void main(String[] args) {
-        // 데이터베이스 연결 초기화
+        // 데이터베이스 초기화
+        Database database = Database.getInstance();
+        database.initializeDatabase();
+
+        // 데이터베이스 연결
         Connection connection;
         try {
-            Database database = Database.getInstance();
             connection = database.getConnection();
         } catch (SQLException e) {
             System.out.println("데이터베이스 연결 실패: " + e);
@@ -49,12 +52,6 @@ public class AppStart {
         gameController.startGame();
 
         // 데이터베이스 연결 종료
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            System.out.println("데이터베이스 연결 종료 실패: " + e.getMessage());
-        }
+        database.closeConnection();
     }
 }
