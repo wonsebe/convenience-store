@@ -91,6 +91,7 @@ public class InventoryDao {
         return 0; // 예외 발생 시 0 반환
     }
 
+    // 삭제
     public boolean pdelete(int productId) {
         try {
             String sql="delete from products where product_id=?";
@@ -106,6 +107,8 @@ public class InventoryDao {
 
     }
 
+
+    // 추가
     public boolean add(Products products) {
 
         try {
@@ -128,6 +131,7 @@ public class InventoryDao {
             System.out.println(e);
         }return false;
     }
+
     // 전체 출력
     public ArrayList<Products> pPrint(){
         ArrayList list = new ArrayList<>();
@@ -161,7 +165,7 @@ public class InventoryDao {
     // 물품 수정
     public boolean pUpdate(Products products) {
         try {
-            String sql = "update produuts set price = ? where product_id = ?;";
+            String sql = "update products set price = ? where product_id = ?;";
             ps = conn.prepareStatement(sql);
             ps.setInt(1,products.getPrice() );
             ps.setInt(2,products.getProductId());

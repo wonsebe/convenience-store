@@ -10,14 +10,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ProductView {
-    private static ProductView pView = new ProductView();
-
-    private ProductView() {
-    }
-
-    public static ProductView getInstance() {
-        return pView;
-    }
 
     private static final ProductView pView = new ProductView();
     // 사용자 입력을 받기 위한 Scanner 객체 생성
@@ -52,7 +44,7 @@ public class ProductView {
             if (choice == 1) {
                 // 사용자가 재고 구매를 선택한 경우
 
-            } else if (choice == 2) {
+            } else if (choice == 2) { pPrint ();
                 // 사용자가 재고 확인을 선택한 경우
                 for (int i = 1; i <= 30; i++) {
                     System.out.print(" 제품번호: " + i);
@@ -60,11 +52,9 @@ public class ProductView {
                     System.out.println("       재고 = " + inventory);
                 }
 
-            } else if (choice == 3) {
+            } else if (choice == 3) {pUpdate ();
 
-            } else if (choice == 4) {
-
-                //pDelete();
+            } else if (choice == 4) {pDelete();
             } else if (choice == 5) { // 다음 턴 선택
                 // 다음턴 넘기면 진행되는 메서드들
                 System.out.print("턴 넘김");
@@ -73,12 +63,12 @@ public class ProductView {
                     for (InventoryLog log : logs) {
                         System.out.printf("손님이 %s을 %d개 샀습니다.", log.getLogId(), log.getQuantity());
                     }
-
                 } else {
                     System.out.println("방문한 손님이 없습니다.");
                 }
                 turn++;  // 턴 수 증가
-            } else {
+            }else if (choice == 6){padd ();}
+            else {
                 // 잘못된 선택을 한 경우 경고 메시지 출력
                 System.out.println("잘못된 선택입니다. 다시 시도해주세요.");
             } // if문 끝

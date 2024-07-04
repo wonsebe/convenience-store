@@ -61,7 +61,7 @@ public class PcController {
 
 
     }
-
+    // 추가
     public boolean add(Products products) {
 
         return InventoryDao.getInstance().add(products);
