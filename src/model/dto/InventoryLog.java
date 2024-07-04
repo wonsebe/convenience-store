@@ -45,7 +45,7 @@ public class InventoryLog {
     public void setProductId(int productId) {
         this.productId = productId;
     }
-    
+
     public int getQuantity() {
         return quantity;
     }
@@ -60,5 +60,16 @@ public class InventoryLog {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "InventoryLog{" +
+                "logId=" + logId +
+                ", gameDate=" + gameDate +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

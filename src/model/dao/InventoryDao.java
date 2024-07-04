@@ -8,80 +8,74 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class InventoryDao {
-    // InventoryDao 클래스의 싱글톤 인스턴스
+    // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final InventoryDao iDao = new InventoryDao();
 
-
-    // 데이터베이스 연결 객체
+    // 데이터베이스 연결을 위한 객체들
     private Connection conn;
-
-    // SQL 쿼리 실행을 위한 객체
     private PreparedStatement ps;
-
-    // 쿼리 실행 결과를 저장하기 위한 객체
     private ResultSet rs;
 
-    // 생성자를 private로 하여 외부에서 인스턴스 생성 차단
+    // 생성자 (private으로 외부에서 인스턴스 생성 방지)
     private InventoryDao() {
         try {
-            // MySQL 드라이버 로드
+            // MySQL JDBC 드라이버 로드
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // 데이터베이스 연결 설정
+            // 데이터베이스 연결
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/convenience_store", "root", "1234");
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("데이터베이스 연결 중 오류 발생: " + e);
         }
-    }
+    } // 생성자 메서드 end
 
-    // 싱글톤 인스턴스에 접근할 수 있는 메서드
+    // 싱글톤 인스턴스 반환 메서드
     public static InventoryDao getInstance() {
         return iDao;
     }
 
-    // 구매 메서드
+    // 상품 구매 메서드
     public InventoryLog purchase(int productId, int quantity, int turn) {
-        // 반환할 재고 로그 1개
-        InventoryLog inventoryLogs = new InventoryLog();
+        InventoryLog inventoryLog = null;
         try {
-            // 재고 로그 테이블에 구매 기록 추가
+            // SQL 쿼리 준비 (재고 로그에 구매 기록 추가)
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
-                    "VALUES (?, ?, ?, 'Sales')";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, turn); // 턴 수 설정
-            ps.setInt(2, productId); // 제품 ID 설정
+                    "VALUES (?, ?, ?, '판매')";
+            ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, turn);
+            ps.setInt(2, productId);
             ps.setInt(3, -quantity);  // 구매 시 재고 감소 (음수 값으로 설정)
-            ps.executeUpdate(); // 쿼리 실행
+            int affectedRows = ps.executeUpdate();
 
-
-            return inventoryLogs; // 성공 시 재고 로그 반환
+            if (affectedRows > 0) {
+                // 삽입된 로그의 ID 가져오기
+                rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int logId = rs.getInt(1);
+                    // InventoryLog 객체 생성
+                    inventoryLog = new InventoryLog(logId, turn, productId, -quantity, "판매");
+                }
+            }
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("구매 처리 중 오류 발생: " + e);
         }
-        return null; // 실패 또는 예외시 null 반환
-    }
+        return inventoryLog;
+    } // 상품 구매 메서드 end
 
     // 재고 확인 메서드
     public int checkInventory(int productId) {
+        int sum = 0;
         try {
-            // 특정 제품의 재고를 확인하는 쿼리
-            String sql = "SELECT * FROM inventory_log WHERE product_id = ?";
+            // SQL 쿼리 준비 (특정 상품의 총 재고량 계산)
+            String sql = "SELECT SUM(quantity) as total FROM inventory_log WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, productId); // 제품 ID 설정
-            rs = ps.executeQuery(); // 쿼리 실행
-
-            // 재고 수량을 누적 합산하기 위한 변수
-            int sum = 0;
-            while (rs.next()) {
-                sum += rs.getInt("quantity"); // 각 행의 수량을 누적 합산
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                sum = rs.getInt("total");
             }
-            return sum; // 총 재고 수량 반환
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("재고 확인 중 오류 발생: " + e);
         }
-        return 0; // 예외 발생 시 0 반환
-    }
+        return sum;
+    } // 재고 확인 메서드 end
 }

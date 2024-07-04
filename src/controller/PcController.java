@@ -1,57 +1,85 @@
 package controller;
 
 import model.dao.InventoryDao;
+import model.dao.ProductDao;
 import model.dto.InventoryLog;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class PcController {
+    // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final PcController pControl = new PcController();
+    // 등록된 상품 종류의 수를 저장하는 변수
+    private int productTypeCount;
 
+    // 생성자 (private으로 외부에서 인스턴스 생성 방지)
     private PcController() {
+        // 초기화 시 등록된 상품 종류의 수 조회
+        this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
     }
 
+    // 싱글톤 인스턴스 반환 메서드
     public static PcController getInstance() {
         return pControl;
     }
 
-    // 1. 구매 메서드
+    // 구매 처리 메서드
     public ArrayList<InventoryLog> purchase(int turn) {
         ArrayList<InventoryLog> logs = new ArrayList<>();
-        // 0. 턴 넘기고 손님이 몇명 방문하는가?
-        int customerCount = new Random().nextInt(5) + 1; // 1~5명 사이
+        // 랜덤으로 1~5명의 방문 고객 생성
+        int customerCount = new Random().nextInt(5) + 1;
 
-        // 1. 랜덤으로 구매할 제품 선택
         for (int i = 0; i < customerCount; i++) {
-            int productId = new Random().nextInt(30) + 1; // 1~30 번 상품 중 랜덤
-            int buyCount = new Random().nextInt(5) + 1; // 1~5개 랜덤 구매
+            // 랜덤으로 상품 ID (1 ~ 등록된 상품 종류 수) 선택
+            int productId = new Random().nextInt(productTypeCount) + 1;
+            // 랜덤으로 구매 수량 (1~5) 결정
+            int buyCount = new Random().nextInt(5) + 1;
 
-            // 해당 상품 수량이 충분히 있는지 확인
+            // 현재 재고 확인
             int productCount = InventoryDao.getInstance().checkInventory(productId);
 
             if (productCount >= buyCount) {
-                // 만약 편의점에 있는 해당 물품 수량이 구매하려는 수량 이상이면 사려는 수량을 구매한다
-                logs.add(InventoryDao.getInstance().purchase(productId, buyCount, turn));
-            } else if (productCount == 0) {
-                // 찾는 상품이 0개이면 구매하지 않고 그냥 간다
-                return null;
+                // 재고가 충분한 경우 전체 수량 구매
+                InventoryLog log = InventoryDao.getInstance().purchase(productId, buyCount, turn);
+                if (log != null) {
+                    logs.add(log);
+                }
+            } else if (productCount > 0) {
+                // 재고가 부족한 경우 남은 수량만 구매
+                InventoryLog log = InventoryDao.getInstance().purchase(productId, productCount, turn);
+                if (log != null) {
+                    logs.add(log);
+                }
             } else {
-                // 1개 이상이지만 찾는 수량보다 적으면 재고 있는거만 구매한다.
-                logs.add(InventoryDao.getInstance().purchase(productId, productCount, turn));
-            } // if 끝
-        } // for 끝
-        return null;
-    } // purchase 메서드 끝
+                // 재고가 0인 경우 구매하지 않음
+                InventoryLog log = new InventoryLog();
+                log.setProductId(productId);
+                log.setQuantity(0);
+                log.setDescription("재고 부족으로 구매 실패");
+                logs.add(log);
+            }
+        }
+        return logs;
+    } // 구매 처리 메서드 end
 
     // 재고 확인 메서드
     public int checkInventory(int productId) {
         return InventoryDao.getInstance().checkInventory(productId);
-    }
+    } // 재고 확인 메서드 end
 
-//    public boolean pDelete(int productId) {
-//
-//}
+    // 상품 이름 조회 메서드
+    public String getProductName(int productId) {
+        return ProductDao.getInstance().getProductName(productId);
+    } // 상품 이름 조회 메서드 end
+
+    // 등록된 상품 종류 수 반환 메서드
+    public int getProductTypeCount() {
+        return this.productTypeCount;
+    } // 등록된 상품 종류 수 반환 메서드 end
+
+    // 등록된 상품 종류 수 갱신 메서드
+    public void updateProductTypeCount() {
+        this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
+    } // 등록된 상품 종류 수 갱신 메서드 end
 }
-
-

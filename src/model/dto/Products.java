@@ -51,4 +51,14 @@ public class Products {
     public void setExpiryTurns(int expiryTurns) {
         this.expiryTurns = expiryTurns;
     }
+
+    @Override
+    public String toString() {
+        return "Products{" +
+                "productId=" + productId +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", expiryTurns=" + expiryTurns +
+                '}';
+    }
 }
