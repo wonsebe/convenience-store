@@ -1,23 +1,46 @@
 import controller.PcController;
-
 import java.util.Scanner;
 
 public class AppStart {
     public static void main(String[] args) {
+        // 사용자 입력을 받기 위한 Scanner 객체 생성
         Scanner scan = new Scanner(System.in);
-        int 턴수 = 1;
-        while (true) {
-            for (int i = 1; i <= 10; i++) {
-                System.out.print(" 제품번호 : " + i);
-                int result = new PcController().개별재고확인(i);
-                System.out.println("       재고 = " + result);
-            }
-            System.out.print("마이 턴 : 1.재고 구매 2.재고 확인 : ");
-            int ch = scan.nextInt();
-            System.out.print("컴퓨터 턴 ");
 
-            new PcController().구매(턴수);
-            턴수++;
-        }
-    }
-}
+        // 현재 턴을 저장하는 변수 초기화
+        int turn = 1;
+
+        // PcController 객체 생성
+        PcController pcController = new PcController();
+
+        // 무한 루프를 통해 게임 진행
+        while (true) {
+            // 모든 제품에 대해 재고 확인
+            for (int i = 1; i <= 30; i++) {
+                System.out.print(" 제품번호: " + i);
+                int inventory = pcController.checkInventory(i);  // 개별 제품의 재고 확인
+                System.out.println("       재고 = " + inventory);
+            } // for문 끝
+
+            // 사용자에게 행동 선택을 요청
+            System.out.print("마이 턴 : 1.재고 구매 2.재고 확인 : ");
+            int choice = scan.nextInt();
+
+            if (choice == 1) {
+                // 사용자가 재고 구매를 선택한 경우
+                System.out.print("컴퓨터 턴 ");
+                pcController.purchase(turn);  // 현재 턴을 인자로 하여 구매 메서드 호출
+                turn++;  // 턴 수 증가
+            } else if (choice == 2) {
+                // 사용자가 재고 확인을 선택한 경우
+                for (int i = 1; i <= 30; i++) {
+                    System.out.print(" 제품번호: " + i);
+                    int inventory = pcController.checkInventory(i);  // 개별 제품의 재고 확인
+                    System.out.println("       재고 = " + inventory);
+                }
+            } else {
+                // 잘못된 선택을 한 경우 경고 메시지 출력
+                System.out.println("잘못된 선택입니다. 다시 시도해주세요.");
+            } // if문 끝
+        } // while 끝
+    } // main 함수 끝
+} // AppStart 클래스 끝
