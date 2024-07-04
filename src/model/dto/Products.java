@@ -5,7 +5,7 @@ public class Products {
     private int productId;
     private String name;
     private int price;
-    private int expiryTurns;
+    private int expiryTurns; //유통기한?
 
     // 생성자
     public Products() {

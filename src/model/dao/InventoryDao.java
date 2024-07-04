@@ -1,5 +1,7 @@
 package model.dao;
 
+import model.dto.Products;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -77,5 +79,43 @@ public class InventoryDao {
             System.out.println(e);
         }
         return 0; // 예외 발생 시 0 반환
+    }
+
+    public boolean pdelete(int productId) {
+        try {
+            String sql="delete from products where product_id=?";
+            ps=conn.prepareStatement(sql);
+            System.out.println(sql);
+            ps.setInt(1,productId);
+            int count=ps.executeUpdate();
+            if (count==1)return true;
+
+        }catch (Exception e){
+            System.out.println(e);
+        }return false;
+
+    }
+
+    public boolean add(Products products) {
+
+        try {
+
+            String sql="INSERT INTO products( product_Id , name , price,expiry_Turns ) VALUES( ? , ? , ?, ?  )";
+            System.out.println("sql = " + sql);
+            ps=conn.prepareStatement(sql);
+            ps.setInt(1,products.getProductId());
+            ps.setString(2,products.getName());
+            ps.setInt(3,products.getPrice());
+            ps.setInt(4,products.getExpiryTurns());
+            int count=ps.executeUpdate();
+            if (count==1){
+                return  true;
+            }
+
+
+
+        }catch (Exception e){
+            System.out.println(e);
+        }return false;
     }
 }

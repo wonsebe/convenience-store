@@ -1,6 +1,7 @@
 package controller;
 
 import model.dao.InventoryDao;
+import model.dto.Products;
 
 import java.util.Random;
 
@@ -38,9 +39,17 @@ public class PcController {
         return InventoryDao.getInstance().checkInventory(productId);
     }
 
-//    public boolean pDelete(int productId) {
-//
-//}
+    public boolean pDelete(int productId) {
+        return InventoryDao.getInstance().pdelete(productId);
+
+
+    }
+
+    public boolean add(Products products) {
+
+        return InventoryDao.getInstance().add(products);
+
+    }
 }
 
 

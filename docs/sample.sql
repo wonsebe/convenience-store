@@ -1,3 +1,5 @@
+
+
 -- 편의점 시뮬레이션 데이터베이스 생성
 CREATE DATABASE IF NOT EXISTS convenience_store;
 
@@ -10,7 +12,7 @@ DROP TABLE IF EXISTS products;
 
 -- 제품 테이블 생성
 CREATE TABLE products (
-    product_id INT PRIMARY KEY,         -- 제품 ID, 기본 키
+    product_id INT AUTO_INCREMENT PRIMARY KEY,         -- 제품 ID, 기본 키
     name VARCHAR(20) NOT NULL,          -- 제품 이름, NULL 불가
     price INT NOT NULL,                 -- 제품 가격, NULL 불가
     expiry_turns INT NOT NULL           -- 유통기한 (턴 단위), NULL 불가
@@ -23,7 +25,7 @@ CREATE TABLE inventory_log (
     product_id INT,                         -- 제품 ID, products 테이블의 product_id를 참조
     quantity INT NOT NULL,                  -- 수량, NULL 불가
     description VARCHAR(20),                -- 설명, NULL 가능
-    FOREIGN KEY (product_id) REFERENCES products(product_id)  -- 외래 키, products 테이블의 product_id를 참조
+    FOREIGN KEY (product_id) REFERENCES products(product_id) on delete cascade  -- 외래 키, products 테이블의 product_id를 참조
 );
 
 
@@ -92,3 +94,5 @@ INSERT INTO inventory_log (game_date, product_id, quantity, description) VALUES
     (1, 28, 15, '초기 입고'),  -- 피자
     (1, 29, 30, '초기 입고'),  -- 닭강정
     (1, 30, 40, '초기 입고');  -- 고구마튀김
+    
+    
