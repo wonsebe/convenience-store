@@ -1,27 +1,29 @@
 package model.dto;
 
+// 재고 로그 정보를 나타내는 데이터 전송 객체(DTO) 클래스
+// 이 클래스는 로그 ID, 게임 날짜, 상품 ID, 수량, 설명을 포함
 public class InventoryLog {
     // 멤버변수
-    private int logId;
-    private int gameDate;
-    private int productId;
-    private int quantity;
-    private String description;
+    private int logId;          // 로그의 고유 식별자
+    private int gameDate;       // 게임 턴 수
+    private int productId;      // 관련 상품의 ID
+    private int quantity;       // 재고 변동 수량
+    private String description; // 로그 설명
 
-    // 생성자
+    // 기본 생성자, 모든 필드를 기본값으로 초기화
     public InventoryLog() {
     }
 
-    // 풀 생성자
+    // 모든 필드를 초기화하는 생성자
     public InventoryLog(int logId, int gameDate, int productId, int quantity, String description) {
-        this.logId = logId;
-        this.gameDate = gameDate;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.description = description;
+        this.logId = logId;             // 로그의 고유 식별자
+        this.gameDate = gameDate;       // 게임 내 날짜 (턴수)
+        this.productId = productId;     // 관련 상품의 ID
+        this.quantity = quantity;       // 재고 변동 수량
+        this.description = description; // 로그 설명
     }
 
-    // 게터 세터
+    // Getter와 Setter 메서드들
     public int getLogId() {
         return logId;
     }
@@ -62,6 +64,7 @@ public class InventoryLog {
         this.description = description;
     }
 
+    // 객체의 문자열 표현 반환
     @Override
     public String toString() {
         return "InventoryLog{" +
@@ -72,4 +75,4 @@ public class InventoryLog {
                 ", description='" + description + '\'' +
                 '}';
     }
-}
+} // InventoryLog 클래스 end

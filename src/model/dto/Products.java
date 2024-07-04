@@ -1,24 +1,27 @@
 package model.dto;
 
+// 상품 정보를 나타내는 데이터 전송 객체(DTO) 클래스
 public class Products {
     // 멤버변수
-    private int productId;
-    private String name;
-    private int price;
-    private int expiryTurns;
+    private int productId;      // 상품의 고유 식별자
+    private String name;        // 상품의 이름
+    private int price;          // 상품의 가격
+    private int expiryTurns;    // 상품의 유통기한 (턴 단위)
 
-    // 생성자
+    // 기본 생성자, 모든 필드를 기본값으로 초기화
     public Products() {
     }
 
-    // product_id를 제외한 생성자 추가
+    // productId를 제외한 필드를 초기화하는 생성자
+    // 새로운 상품을 생성할 때 사용
     public Products(String name, int price, int expiryTurns) {
         this.name = name;
         this.price = price;
         this.expiryTurns = expiryTurns;
     }
 
-    // 풀 생성자 (기존과 동일)
+    // 모든 필드를 초기화하는 생성자
+    // 데이터베이스에서 상품 정보를 로드할 때 사용
     public Products(int productId, String name, int price, int expiryTurns) {
         this.productId = productId;
         this.name = name;
@@ -26,7 +29,7 @@ public class Products {
         this.expiryTurns = expiryTurns;
     }
 
-    // 게터 세터
+    // Getter와 Setter 메서드들
     public int getProductId() {
         return productId;
     }
@@ -59,6 +62,7 @@ public class Products {
         this.expiryTurns = expiryTurns;
     }
 
+    // 객체의 문자열 표현을 반환
     @Override
     public String toString() {
         return "Products{" +
@@ -68,4 +72,4 @@ public class Products {
                 ", expiryTurns=" + expiryTurns +
                 '}';
     }
-}
+} // Products 클래스 end
