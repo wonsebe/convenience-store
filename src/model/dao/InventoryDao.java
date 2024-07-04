@@ -9,6 +9,7 @@ public class InventoryDao {
     // InventoryDao 클래스의 싱글톤 인스턴스
     private static final InventoryDao iDao = new InventoryDao();
 
+
     // 데이터베이스 연결 객체
     private Connection conn;
 
