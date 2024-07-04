@@ -1,5 +1,7 @@
 package model.dao;
 
+import model.dto.InventoryLog;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -39,7 +41,9 @@ public class InventoryDao {
     }
 
     // 구매 메서드
-    public boolean purchase(int productId, int quantity, int turn) {
+    public InventoryLog purchase(int productId, int quantity, int turn) {
+        // 반환할 재고 로그 1개
+        InventoryLog inventoryLogs = new InventoryLog();
         try {
             // 재고 로그 테이블에 구매 기록 추가
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
@@ -49,12 +53,14 @@ public class InventoryDao {
             ps.setInt(2, productId); // 제품 ID 설정
             ps.setInt(3, -quantity);  // 구매 시 재고 감소 (음수 값으로 설정)
             ps.executeUpdate(); // 쿼리 실행
-            return true; // 성공 시 true 반환
+
+
+            return inventoryLogs; // 성공 시 재고 로그 반환
         } catch (Exception e) {
             // 예외 발생 시 예외 메시지 출력
             System.out.println(e);
         }
-        return false; // 실패 시 false 반환
+        return null; // 실패 또는 예외시 null 반환
     }
 
     // 재고 확인 메서드
