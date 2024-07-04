@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 
 
 public class Dao {
-    // -- tldrmfxhs
     // private static 변수에 해당 클래스의 객체 생성해서 대입
     private static final Dao dao = new Dao();
     Connection conn;
@@ -18,7 +17,7 @@ public class Dao {
     private Dao() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");  // com.mysql.cj.jdbc.Driver
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/test", "root", "1234");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/convenience_store", "root", "1234");
         } catch (Exception e) {
             System.out.println(e);
         }
