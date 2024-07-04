@@ -1,7 +1,9 @@
 package view;
 
 import controller.PcController;
+import model.dto.Products;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -17,7 +19,7 @@ public class ProductView {
     int turn = 1;
 
     //멤버변수 : 입력객체
-    public void index(){
+    public  void index(){
         PcController.getInstance().purchase(turn);
         // 무한 루프를 통해 게임 진행
         while (true) {
@@ -38,35 +40,33 @@ public class ProductView {
                 PcController.getInstance().purchase(turn);  // 현재 턴을 인자로 하여 구매 메서드 호출
                 turn++;  // 턴 수 증가
             }
-            else if (choice == 2) {
+            else if (choice == 2) {pPrint();
                 // 사용자가 재고 확인을 선택한 경우
-                for (int i = 1; i <= 30; i++) {
-                    System.out.print(" 제품번호: " + i);
-                    int inventory = PcController.getInstance().checkInventory(i);  // 개별 제품의 재고 확인
-                    System.out.println("       재고 = " + inventory);
-                }
+
+
 
             }
-            else if (choice ==3) { pUdate();}
+            else if (choice ==3) { pUpdate();     }
 
             else if (choice ==4) {
 
-            } else {
+                //pDelete();
+                }
+            else {
                 // 잘못된 선택을 한 경우 경고 메시지 출력
                 System.out.println("잘못된 선택입니다. 다시 시도해주세요.");
             } // if문 끝
         } // while 끝
+
+    // 상품조회
+    public void pPrint(){
+        ArrayList<Products> result = PcController.getInstance().pPrint();
+        System.out.println("제품번호\t 제품명\t\t 제품가격");
+        result.forEach(dto->{
+            System.out.printf("%d\t%s\t\t%s \n", dto.getProductId(), dto.getName() ,dto.getPrice());
+        }
+        );
     }
-
-    public void pUdate(){
-        System.out.println("수정하실 제품번호 :");
-        System.out.println("수정하실 금액 :");
-
-
-
-    }
-
-
 //재고 삭제 함수 :
 //    public void pDelete(){
 //        System.out.println("삭제 페이지"); int productId=scan.nextInt();
@@ -75,5 +75,28 @@ public class ProductView {
 //
 //
 //    }
+
+    // 물품가격 수정
+    public void pUpdate(){
+        System.out.println("변경하실 물품번호 :"); int productId = scan.nextInt();
+        System.out.println("변경하실 금액 :");    int price = scan.nextInt();
+
+        Products products = new Products();
+        products.setProductId(productId);
+        products.setPrice(price);
+
+        boolean result = PcController.getInstance().pUpdate(products);
+        if (result){
+            System.out.println("수정성공");
+        }else {
+            System.out.println("수정실패");
+        }
+
+
+
+
+    }
+
+
 
 }
