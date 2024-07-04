@@ -1,4 +1,6 @@
 import controller.PcController;
+import view.ProductView;
+
 import java.util.Scanner;
 
 public class AppStart {

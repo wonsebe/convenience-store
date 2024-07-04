@@ -1,7 +1,9 @@
 package controller;
 
 import model.dao.InventoryDao;
+import model.dto.Products;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PcController {
@@ -33,14 +35,23 @@ public class PcController {
         return true;
     }
 
+    // 전체 출력
+    public ArrayList<Products> pPrint(){
+        return InventoryDao.getInstance().pPrint();
+    }
+
+
     // 재고 확인 메서드
     public int checkInventory(int productId) {
         return InventoryDao.getInstance().checkInventory(productId);
     }
 
-//    public boolean pDelete(int productId) {
-//
-//}
+    // 물품 수정
+    public boolean pUpdate(Products products){
+        return InventoryDao.getInstance().pUpdate(products);
+    }
+
+
 }
 
 

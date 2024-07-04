@@ -1,9 +1,13 @@
 package model.dao;
 
+import com.sun.jdi.event.ExceptionEvent;
+import model.dto.Products;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class InventoryDao {
     // InventoryDao 클래스의 싱글톤 인스턴스
@@ -78,4 +82,49 @@ public class InventoryDao {
         }
         return 0; // 예외 발생 시 0 반환
     }
+    // 전체 출력
+    public ArrayList<Products> pPrint(){
+        ArrayList list = new ArrayList<>();
+
+        try {
+        String sql = "select product_id ,  name  , price  from products";
+        ps = conn.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        while (rs.next()){
+            int productid = rs.getInt("product_id");
+            String name = rs.getString("name");
+            int price = rs.getInt( "price");
+
+            Products product = new Products();
+            product.setProductId(productid);
+            product.setName(name);
+            product.setPrice(price);
+
+            list.add(product);
+        }
+        }catch (Exception e){
+            System.out.println(e);
+        }return list;
+
+    }
+
+
+
+
+    // 물품 수정
+    public boolean pUpdate(Products products) {
+        try {
+            String sql = "update produuts set price = ? where product_id = ?;";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,products.getPrice() );
+            ps.setInt(2,products.getProductId());
+
+            int count = ps.executeUpdate();
+            if (count == 1) return true;
+        }catch (Exception e){
+            System.out.println(e);
+        }return false;
+    }
+
 }
