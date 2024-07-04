@@ -46,6 +46,17 @@ public class PcController {
         return InventoryDao.getInstance().checkInventory(productId);
     }
 
+    public boolean pDelete(int productId) {
+        return InventoryDao.getInstance().pdelete(productId);
+
+
+    }
+
+    public boolean add(Products products) {
+
+        return InventoryDao.getInstance().add(products);
+
+    }
     // 물품 수정
     public boolean pUpdate(Products products){
         return InventoryDao.getInstance().pUpdate(products);

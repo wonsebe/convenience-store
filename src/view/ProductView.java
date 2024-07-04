@@ -31,7 +31,7 @@ public class ProductView {
             } // for문 끝
 
             // 사용자에게 행동 선택을 요청
-            System.out.print("마이 턴 : 1.재고 구매 2.재고 확인 3. 재고 수정 4. 재고 삭제  5. 턴넘기기 : ");
+            System.out.print("마이 턴 : 1.재고 구매 2.재고 확인 3. 재고 수정 4. 재고 삭제  5. 턴넘기기 6. 재고 추가 : ");
             int choice = scan.nextInt();
 
             if (choice == 1) {
@@ -48,10 +48,9 @@ public class ProductView {
             }
             else if (choice ==3) { pUpdate();     }
 
-            else if (choice ==4) {
-
-                //pDelete();
-                }
+            else if (choice ==4) {pDelete();}
+            else if (choice==5) {}
+            else if (choice==6) {padd();}
             else {
                 // 잘못된 선택을 한 경우 경고 메시지 출력
                 System.out.println("잘못된 선택입니다. 다시 시도해주세요.");
@@ -67,14 +66,51 @@ public class ProductView {
         }
         );
     }
-//재고 삭제 함수 :
-//    public void pDelete(){
-//        System.out.println("삭제 페이지"); int productId=scan.nextInt();
-//
-//        boolean result = PcController.getInstance().pDelete(productId);
-//
-//
-//    }
+// 4.재고 삭제 함수 :
+    public boolean pDelete(){
+        //삭제할 제품 번호를 입력받기
+        System.out.println("삭제 페이지");
+        System.out.print("삭제할 제품번호를 입력해주세요:");
+        int productId=scan.nextInt();
+
+        //PcController에서 pDelete함수에 매개변수로 가져온 제품번호를 가져와 result값에 대입
+        boolean result = PcController.getInstance().pDelete(productId);
+        //만약에 result값이 있으면 삭제 성공
+        if (result){
+            System.out.println("삭제성공!");
+            return  true;
+        }//result값이 없으면 삭제실패 후 초기화면 돌아가기
+        else {
+            System.out.println("삭제실패");
+            return false;
+        }
+
+
+    }//pDelete e
+
+
+    //6.재고 추가: 제품명과 가격 입력하면 제품이 추가되는 함수!
+    public void padd(){
+        //제품추가를 받을 이름과 가격을 입력받기
+        System.out.println("★재고 추가★");
+        scan.nextLine();
+        System.out.println("※[저장]※ 제품명을 입력: "); String name=scan.next();
+        System.out.println("※[저장]※ 제품가격을 입력: "); int price=scan.nextInt();
+        //dto에서 이름과 가격 불러와 저장
+        Products products=new Products();
+        products.setName(name);
+        products.setPrice(price);
+        boolean result=PcController.getInstance().add(products);
+        if (result){
+            System.out.println("★추가 성공★");
+        }else {
+            System.out.println(">>추가 실패");
+        }
+
+
+
+    }
+
 
     // 물품가격 수정
     public void pUpdate(){
