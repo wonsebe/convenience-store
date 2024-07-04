@@ -40,6 +40,8 @@ public class InventoryDao {
             // SQL 쿼리 준비 (재고 로그에 구매 기록 추가)
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
                     "VALUES (?, ?, ?, '판매')";
+            // RETURN_GENERATED_KEYS: 새로운 행을 삽입할 때 자동 생성된
+            // 키(auto_increment 설정된 primary key)를 반환받기 위해 사용
             ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, turn);
             ps.setInt(2, productId);
@@ -65,7 +67,6 @@ public class InventoryDao {
     public int checkInventory(int productId) {
         int sum = 0;
         try {
-            // SQL 쿼리 준비 (특정 상품의 총 재고량 계산)
             String sql = "SELECT SUM(quantity) as total FROM inventory_log WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, productId);
@@ -73,6 +74,7 @@ public class InventoryDao {
             if (rs.next()) {
                 sum = rs.getInt("total");
             }
+            // System.out.println("상품 ID " + productId + "의 현재 재고: " + sum); // 디버깅을 위한 출력
         } catch (Exception e) {
             System.out.println("재고 확인 중 오류 발생: " + e);
         }

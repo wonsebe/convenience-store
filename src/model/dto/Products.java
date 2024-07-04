@@ -11,7 +11,14 @@ public class Products {
     public Products() {
     }
 
-    // 풀 생성자
+    // product_id를 제외한 생성자 추가
+    public Products(String name, int price, int expiryTurns) {
+        this.name = name;
+        this.price = price;
+        this.expiryTurns = expiryTurns;
+    }
+
+    // 풀 생성자 (기존과 동일)
     public Products(int productId, String name, int price, int expiryTurns) {
         this.productId = productId;
         this.name = name;

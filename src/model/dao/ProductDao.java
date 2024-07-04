@@ -2,10 +2,7 @@ package model.dao;
 
 import model.dto.Products;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class ProductDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
@@ -68,24 +65,27 @@ public class ProductDao {
         return count;
     } // 등록된 상품 종류의 수를 반환하는 메서드 end
 
-    // 상품 추가 메서드
+    // 상품 추가 메서드 수정
     public boolean add(Products products) {
         try {
-            String sql = "INSERT INTO products(product_id, name, price, expiry_turns) VALUES(?, ?, ?, ?)";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, products.getProductId());
-            ps.setString(2, products.getName());
-            ps.setInt(3, products.getPrice());
-            ps.setInt(4, products.getExpiryTurns());
+            String sql = "INSERT INTO products(name, price, expiry_turns) VALUES(?, ?, ?)";
+            ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, products.getName());
+            ps.setInt(2, products.getPrice());
+            ps.setInt(3, products.getExpiryTurns());
             int count = ps.executeUpdate();
 
             if (count == 1) {
-                // 초기 재고 추가 (예: 10개)
-                sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES(0, ?, 10, '초기 입고')";
-                ps = conn.prepareStatement(sql);
-                ps.setInt(1, products.getProductId());
-                ps.executeUpdate();
-
+                // 생성된 product_id 가져오기
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int productId = rs.getInt(1);
+                    // 초기 재고 추가 (예: 10개)
+                    sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES(0, ?, 10, '초기 입고')";
+                    ps = conn.prepareStatement(sql);
+                    ps.setInt(1, productId);
+                    ps.executeUpdate();
+                }
                 return true;
             }
         } catch (Exception e) {

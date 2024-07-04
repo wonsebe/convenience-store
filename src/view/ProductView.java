@@ -49,9 +49,9 @@ public class ProductView {
                     return;  // 메서드 종료
                 }
                 default -> System.out.println("잘못된 선택입니다. 다시 선택해주세요.");  // 잘못된 입력 처리
-            }
-        }
-    }
+            } // switch 끝
+        } // while 끝
+    } // 게임의 메인 루프를 담당하는 메서드 end
 
     // 현재 모든 상품의 재고 상태를 출력하는 메서드
     private void displayInventory() {
@@ -60,7 +60,7 @@ public class ProductView {
             int inventory = PcController.getInstance().checkInventory(i);
             System.out.println("       재고 = " + inventory);
         }
-    }
+    } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
     // 상품 수정 메서드
     public void updateProduct() {
@@ -81,13 +81,11 @@ public class ProductView {
         } else {
             System.out.println("상품 수정 실패");
         }
-    }
+    } // 상품 수정 메서드 end
 
     // 상품 추가 메서드
     public void addProduct() {
         System.out.println("상품 추가 페이지");
-        System.out.print("상품 ID: ");
-        int productId = scan.nextInt();
         scan.nextLine(); // 버퍼 비우기
         System.out.print("상품명: ");
         String name = scan.nextLine();
@@ -96,7 +94,11 @@ public class ProductView {
         System.out.print("유통기한(턴): ");
         int expiryTurns = scan.nextInt();
 
-        Products newProduct = new Products(productId, name, price, expiryTurns);
+        Products newProduct = new Products();
+        newProduct.setName(name);
+        newProduct.setPrice(price);
+        newProduct.setExpiryTurns(expiryTurns);
+
         boolean result = PcController.getInstance().addProduct(newProduct);
 
         if (result) {
@@ -104,7 +106,7 @@ public class ProductView {
         } else {
             System.out.println("상품 추가 실패");
         }
-    }
+    } // 상품 추가 메서드 end
 
     // 재고 삭제 함수
     public boolean pDelete() {
@@ -124,7 +126,7 @@ public class ProductView {
             System.out.println("삭제 실패");
             return false;
         }
-    }
+    } // 재고 삭제 함수 end
 
     // 다음 턴을 처리하는 메서드
     private void processTurn() {
@@ -133,16 +135,18 @@ public class ProductView {
         if (logs.isEmpty()) {
             System.out.println("이번 턴에는 손님이 없었습니다.");
         } else {
-            // 각 거래에 대한 로그를 출력
             for (InventoryLog log : logs) {
                 String productName = PcController.getInstance().getProductName(log.getProductId());
-                if (log.getQuantity() > 0) {
-                    System.out.printf("손님이 %s을(를) %d개 구매했습니다.%n", productName, log.getQuantity());
+                int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
+                if (log.getQuantity() != 0) {  // 구매 성공 시 quantity는 음수 값
+                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
+                            productName, -log.getQuantity(), currentInventory);
                 } else {
-                    System.out.printf("손님이 %s을(를) 사려고 했으나 재고가 없어 그냥 나갔습니다.%n", productName);
+                    System.out.printf("손님이 %s을(를) 사려고 했으나 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
+                            productName, currentInventory);
                 }
             }
         }
-        turn++;  // 턴 수 증가
-    }
-}
+        turn++; // 턴 증가
+    } // 다음 턴을 처리하는 메서드 end
+} // ProductView 클래스 종료
