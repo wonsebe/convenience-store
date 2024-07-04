@@ -5,6 +5,10 @@ import model.dao.InventoryDao;
 import java.util.Random;
 
 public class PcController {
+    private static PcController pControl=new PcController();
+    private PcController(){}
+    public static PcController getInstance(){return pControl;}
+
     // 1. 구매 메서드
     public boolean purchase(int turn) {
         // 1. 랜덤으로 구매할 제품 선택
