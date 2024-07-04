@@ -3,6 +3,7 @@ package controller;
 import model.dao.InventoryDao;
 import model.dao.ProductDao;
 import model.dto.InventoryLog;
+import model.dto.Products;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -82,4 +83,24 @@ public class PcController {
     public void updateProductTypeCount() {
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
     } // 등록된 상품 종류 수 갱신 메서드 end
+
+    // 상품 추가 메서드
+    public boolean addProduct(Products product) {
+        boolean result = ProductDao.getInstance().add(product);
+        if (result) {
+            // 상품이 성공적으로 추가되면 상품 종류 수를 갱신
+            updateProductTypeCount();
+        }
+        return result;
+    } // 상품 추가 메서드 end
+
+    // 상품 수정 메서드
+    public boolean updateProduct(Products product) {
+        return ProductDao.getInstance().pUpdate(product);
+    } // 상품 수정 메서드 end
+
+    // 재고 삭제 메서드
+    public boolean pDelete(int productId) {
+        return InventoryDao.getInstance().pdelete(productId);
+    }
 }

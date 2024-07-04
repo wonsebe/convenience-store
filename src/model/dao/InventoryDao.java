@@ -78,4 +78,27 @@ public class InventoryDao {
         }
         return sum;
     } // 재고 확인 메서드 end
+
+    // 재고 삭제 메서드
+    public boolean pdelete(int productId) {
+        try {
+            String sql = "DELETE FROM products WHERE product_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, productId);
+            int count = ps.executeUpdate();
+
+            if (count == 1) {
+                // 관련된 재고 로그도 삭제
+                sql = "DELETE FROM inventory_log WHERE product_id = ?";
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, productId);
+                ps.executeUpdate();
+
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("재고 삭제 중 오류 발생: " + e);
+        }
+        return false;
+    } // 재고 삭제 메서드 end
 }

@@ -1,5 +1,7 @@
 package model.dao;
 
+import model.dto.Products;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -65,4 +67,48 @@ public class ProductDao {
         }
         return count;
     } // 등록된 상품 종류의 수를 반환하는 메서드 end
+
+    // 상품 추가 메서드
+    public boolean add(Products products) {
+        try {
+            String sql = "INSERT INTO products(product_id, name, price, expiry_turns) VALUES(?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, products.getProductId());
+            ps.setString(2, products.getName());
+            ps.setInt(3, products.getPrice());
+            ps.setInt(4, products.getExpiryTurns());
+            int count = ps.executeUpdate();
+
+            if (count == 1) {
+                // 초기 재고 추가 (예: 10개)
+                sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES(0, ?, 10, '초기 입고')";
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, products.getProductId());
+                ps.executeUpdate();
+
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("상품 추가 중 오류 발생: " + e);
+        }
+        return false;
+    } // 상품 추가 메서드 end
+
+    // 물품 수정 메서드
+    public boolean pUpdate(Products products) {
+        try {
+            String sql = "UPDATE products SET price = ? WHERE product_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, products.getPrice());
+            ps.setInt(2, products.getProductId());
+
+            int count = ps.executeUpdate();
+            if (count == 1) {
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("상품 수정 중 오류 발생: " + e);
+        }
+        return false;
+    } // 물품 수정 메서드 end
 }
