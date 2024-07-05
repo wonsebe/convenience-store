@@ -17,9 +17,7 @@ public class ProductView {
 
     // 현재 턴을 저장하는 변수 초기화
     int turn = 1;
-
-    private ProductView() {
-    }
+    private ProductView() {}
 
     public static ProductView getInstance() {
         return pView;
@@ -37,8 +35,35 @@ public class ProductView {
                 System.out.println("       재고 = " + inventory);
             } // for문 끝
 
+
+
+
+            System.out.println("\n     (/ΩΩ/)\n" +
+                    "　　 / •• /\n" +
+                    "　　(＿ノ |  어서오세요 jSS 입니다!★\n" +
+                    "　　　 |　|\n" +
+                    "　　　 |　|\n" +
+                    "　　 __|　|＿\n" +
+                    "　　/ヘ　　/ )\n" +
+                    "　　Lニニコ/\n" +
+                    "　　|￣￣￣ |\n" +
+                    "　　|　　　|――≦彡\n" +
+                    "　　|　∩　 |\n" +
+                    "　　|　||　|\n" +
+                    "　　|　||　|\n" +
+                    "　　|二||二|");
+
             // 사용자에게 행동 선택을 요청
-            System.out.print("마이 턴 : 1.재고 구매 2.재고 확인 3. 재고 수정 4. 재고 삭제  5. 턴넘기기 6. 재고 추가 : ");
+            System.out.println("￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n" +
+                    "|　어서오세요! 　JSS 편의점에 오신것을 환영합니다　　　　　　　　　　             [－][口][×] |\n" +
+                    "|￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣ |\n" +
+                    "|　오늘도 좋은 하루 보내세요~                                                         |\n" +
+                    "|　메뉴를 골라주세요　　　　　　　　　　　　　　　　　　　　　　                             |\n" +
+                    "|　　　　                                         　　　                            |\n" +
+                    "|내 턴: 1.재고 구매  2.재고 확인  3. 재고 수정  4. 재고 삭제   5. 턴넘기기   6. 재고 추가  " +
+                    "|　　　                                                                           \n" +
+                    "￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣");
+                        System.out.print("번호를 입력하세요:  ");
             int choice = scan.nextInt();
 
             if (choice == 1) {
@@ -143,6 +168,16 @@ public class ProductView {
             System.out.println("수정실패");
         }
     }
+
+    //이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
+    //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
+    public  void inrush(){
+
+        System.out.println("강도가 침입했습니다!");
+
+
+    }
+
 
 
 }

@@ -7,6 +7,7 @@ public class Products {
     private int price;
     private int expiryTurns; //유통기한?
 
+
     // 생성자
     public Products() {
     }
