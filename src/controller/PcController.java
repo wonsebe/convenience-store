@@ -104,4 +104,8 @@ public class PcController {
     public boolean pDelete(int productId) {
         return InventoryDao.getInstance().pdelete(productId);
     }
+    // 전체 출력
+    public ArrayList<Products> pPrint(){
+        return InventoryDao.getInstance().pPrint();
+    }
 } // PcController 클래스 end

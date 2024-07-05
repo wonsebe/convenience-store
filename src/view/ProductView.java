@@ -46,7 +46,8 @@ public class ProductView {
                     "3.상품 추가 " +
                     "4.상품 수정 " +
                     "5.재고 삭제 " +
-                    "6.게임 종료 " +
+                    "6.물품 확인 " +
+                    "7.게임 종료 " +
                     ": ");
             int choice = scan.nextInt();
 
@@ -57,8 +58,9 @@ public class ProductView {
                 case 2 -> displayInventory();  // 재고 확인
                 case 3 -> addProduct();  // 상품 추가
                 case 4 -> updateProduct();  // 상품 수정
-                case 5 -> pDelete();  // 재고 삭제
-                case 6 -> {
+                case 5 -> pDelete();
+                case 6 -> pPrint (); // 재고 삭제
+                case 7 -> {
                     System.out.println("게임을 종료합니다.");  // 게임 종료
                     return;  // 메서드 종료
                 }
@@ -166,29 +168,16 @@ public class ProductView {
         }
         turn++; // 턴 증가
     } // 다음 턴을 처리하는 메서드 end
+    // 상품조회
+    public void pPrint () {
+        ArrayList<Products> result = PcController.getInstance().pPrint();
+        System.out.println("제품번호\t 제품명\t\t 제품가격");
+        result.forEach(dto -> {
+            System.out.printf("%d\t%s\t\t\t%s \n", dto.getProductId(), dto.getName(), dto.getPrice());
+        });
+    }
+
+
 } // ProductView 클래스 종료
-            System.out.println(">>추가 실패");}
-
-    }
-
-    // 물품가격 수정
-    public void pUpdate () {
-        System.out.println("변경하실 물품번호 :");
-        int productId = scan.nextInt();
-        System.out.println("변경하실 금액 :");
-        int price = scan.nextInt();
-
-        Products products = new Products();
-        products.setProductId(productId);
-        products.setPrice(price);
-
-        boolean result = PcController.getInstance().pUpdate(products);
-        if (result) {
-            System.out.println("수정성공");
-        } else {
-            System.out.println("수정실패");
-        }
-    }
 
 
-}

@@ -1,11 +1,13 @@
 package model.dao;
 
 import model.dto.InventoryLog;
+import model.dto.Products;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class InventoryDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
@@ -118,4 +120,32 @@ public class InventoryDao {
         }
         return false;
     } // 재고 삭제 메서드 end
+
+    // 전체 출력
+    public ArrayList<Products> pPrint(){
+        ArrayList list = new ArrayList<>();
+
+        try {
+            String sql = "select product_id ,  name  , price  from products";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()){
+                int productid = rs.getInt("product_id");
+                String name = rs.getString("name");
+                int price = rs.getInt( "price");
+
+                Products product = new Products();
+                product.setProductId(productid);
+                product.setName(name);
+                product.setPrice(price);
+
+                list.add(product);
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }return list;
+
+    }
+
 }
