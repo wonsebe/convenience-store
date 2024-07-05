@@ -7,7 +7,7 @@ public class InventoryLog {
     private int logId;          // 로그의 고유 식별자
     private int gameDate;       // 게임 턴 수
     private int productId;      // 관련 상품의 ID
-    private int quantity;       // 재고 변동 수량
+    private int quantity;       // 기록 수량
     private String description; // 로그 설명
 
     // 기본 생성자, 모든 필드를 기본값으로 초기화
