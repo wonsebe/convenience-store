@@ -1,9 +1,12 @@
 package view;
 
 import controller.PcController;
+import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -164,3 +167,28 @@ public class ProductView {
         turn++; // 턴 증가
     } // 다음 턴을 처리하는 메서드 end
 } // ProductView 클래스 종료
+            System.out.println(">>추가 실패");}
+
+    }
+
+    // 물품가격 수정
+    public void pUpdate () {
+        System.out.println("변경하실 물품번호 :");
+        int productId = scan.nextInt();
+        System.out.println("변경하실 금액 :");
+        int price = scan.nextInt();
+
+        Products products = new Products();
+        products.setProductId(productId);
+        products.setPrice(price);
+
+        boolean result = PcController.getInstance().pUpdate(products);
+        if (result) {
+            System.out.println("수정성공");
+        } else {
+            System.out.println("수정실패");
+        }
+    }
+
+
+}
