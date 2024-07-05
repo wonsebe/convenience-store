@@ -64,7 +64,7 @@ public class ProductView {
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
 
-    // 현재 모든 상품의 재고 상태를 출력하는 메서드
+    // 2 현재 모든 상품의 재고 상태를 출력하는 메서드
     private void displayInventory() {
         for (int i = 1; i <= PcController.getInstance().getProductTypeCount(); i++) {
             System.out.print("상품번호: " + i);
@@ -73,7 +73,7 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
-    // 상품 수정 메서드
+    // 4 상품 수정 메서드
     // 사용자로부터 상품 ID와 새로운 가격을 입력받아 상품 정보 업데이트
     public void updateProduct() {
         System.out.println("상품 수정 페이지");
@@ -95,7 +95,7 @@ public class ProductView {
         }
     } // 상품 수정 메서드 end
 
-    // 상품 추가 메서드
+    // 3 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
     public void addProduct() {
         System.out.println("상품 추가 페이지");
@@ -121,7 +121,7 @@ public class ProductView {
         }
     } // 상품 추가 메서드 end
 
-    // 재고 삭제 함수
+    // 5 재고 삭제 함수
     public boolean pDelete() {
         // 삭제할 제품 번호를 입력받기
         System.out.println("삭제 페이지");
@@ -142,7 +142,7 @@ public class ProductView {
     } // 재고 삭제 함수 end
 
     // 다음 턴을 처리하는 메서드
-    // 현재 턴의 손님 방문 및 구매 로그를 처리하고 결과를 출력
+    // 1 현재 턴의 손님 방문 및 구매 로그를 처리하고 결과를 출력
     private void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
