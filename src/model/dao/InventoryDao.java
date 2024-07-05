@@ -126,7 +126,7 @@ public class InventoryDao {
         ArrayList list = new ArrayList<>();
 
         try {
-            String sql = "select product_id ,  name  , price  from products";
+            String sql = "select product_id ,  name  , price , stock , expiryTurns  from products";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
 
@@ -134,11 +134,15 @@ public class InventoryDao {
                 int productid = rs.getInt("product_id");
                 String name = rs.getString("name");
                 int price = rs.getInt( "price");
+                int stock = rs.getInt("stock");
+                int expiryTurns = rs.getInt("expiryTurns");
 
                 Products product = new Products();
                 product.setProductId(productid);
                 product.setName(name);
                 product.setPrice(price);
+                product.setStock(stock);
+                product.setExpiryTurns(expiryTurns);
 
                 list.add(product);
             }
