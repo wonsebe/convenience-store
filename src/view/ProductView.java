@@ -177,6 +177,16 @@ public class ProductView {
         });
     }
 
+    //이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
+    //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
+    public  void inrush(){
+
+        System.out.println("강도가 침입했습니다!");
+
+
+    }
+
+
 
 } // ProductView 클래스 종료
 

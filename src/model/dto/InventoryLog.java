@@ -14,7 +14,7 @@ public class InventoryLog {
     public InventoryLog() {
     }
 
-    // 모든 필드를 초기화하는 생성자
+    // 풀 생성자
     public InventoryLog(int logId, int gameDate, int productId, int quantity, String description) {
         this.logId = logId;             // 로그의 고유 식별자
         this.gameDate = gameDate;       // 게임 내 날짜 (턴수)
@@ -47,7 +47,7 @@ public class InventoryLog {
     public void setProductId(int productId) {
         this.productId = productId;
     }
-
+    
     public int getQuantity() {
         return quantity;
     }
