@@ -7,7 +7,10 @@ import java.sql.*;
 public class ProductDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final ProductDao pDao = new ProductDao();
-
+    // 데이터베이스 연결 정보
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/convenience_store";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "1234";
     // 데이터베이스 연결을 위한 객체들
     private Connection conn;
     private PreparedStatement ps;
@@ -18,8 +21,8 @@ public class ProductDao {
         try {
             // MySQL JDBC 드라이버 로드
             Class.forName("com.mysql.cj.jdbc.Driver");
-            // 데이터베이스 연결
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/convenience_store", "root", "1234");
+            // 등록된 멤버변수를 사용해 데이터베이스 연결
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         } catch (Exception e) {
             System.out.println("데이터베이스 연결 중 오류 발생: " + e);
         }
@@ -38,6 +41,9 @@ public class ProductDao {
             String sql = "SELECT name FROM products WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, productId);
+            // executeQuery()
+            // SELECT 문과 같이 데이터를 조회하는 SQL 문에 사용합니다.
+            // 결과를 ResultSet 객체로 반환
             rs = ps.executeQuery();
             if (rs.next()) {
                 name = rs.getString("name");
@@ -55,6 +61,9 @@ public class ProductDao {
             // SQL 쿼리 준비 (등록된 상품 종류의 총 개수 조회)
             String sql = "SELECT COUNT(DISTINCT product_id) as count FROM products";
             ps = conn.prepareStatement(sql);
+            // executeQuery()
+            // SELECT 문과 같이 데이터를 조회하는 SQL 문에 사용합니다.
+            // 결과를 ResultSet 객체로 반환
             rs = ps.executeQuery();
             if (rs.next()) {
                 count = rs.getInt("count");
@@ -73,6 +82,9 @@ public class ProductDao {
             ps.setString(1, products.getName());
             ps.setInt(2, products.getPrice());
             ps.setInt(3, products.getExpiryTurns());
+            // executeUpdate()
+            // INSERT, UPDATE, DELETE와 같이 데이터베이스의 상태를 변경하는 SQL 문에 사용
+            // 영향받은 행의 수를 정수로 반환.
             int count = ps.executeUpdate();
 
             if (count == 1) {
@@ -84,6 +96,9 @@ public class ProductDao {
                     sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES(0, ?, 10, '초기 입고')";
                     ps = conn.prepareStatement(sql);
                     ps.setInt(1, productId);
+                    // executeUpdate()
+                    // INSERT, UPDATE, DELETE와 같이 데이터베이스의 상태를 변경하는 SQL 문에 사용
+                    // 영향받은 행의 수를 정수로 반환.
                     ps.executeUpdate();
                 }
                 return true;
@@ -102,6 +117,9 @@ public class ProductDao {
             ps.setInt(1, products.getPrice());
             ps.setInt(2, products.getProductId());
 
+            // executeUpdate()
+            // INSERT, UPDATE, DELETE와 같이 데이터베이스의 상태를 변경하는 SQL 문에 사용
+            // 영향받은 행의 수를 정수로 반환.
             int count = ps.executeUpdate();
             if (count == 1) {
                 return true;
