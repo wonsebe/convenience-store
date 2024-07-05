@@ -1,180 +1,121 @@
 package model.dao;
 
-import com.sun.jdi.event.ExceptionEvent;
-import model.dto.Products;
-
-import model.dto.Products;
-
 import model.dto.InventoryLog;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 public class InventoryDao {
-    // InventoryDao 클래스의 싱글톤 인스턴스
+    // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final InventoryDao iDao = new InventoryDao();
-
-
-    // 데이터베이스 연결 객체
+    // 데이터베이스 연결 정보
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/convenience_store";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "1234";
+    // 데이터베이스 연결을 위한 객체들
     private Connection conn;
-
-    // SQL 쿼리 실행을 위한 객체
     private PreparedStatement ps;
-
-    // 쿼리 실행 결과를 저장하기 위한 객체
     private ResultSet rs;
 
-    // 생성자를 private로 하여 외부에서 인스턴스 생성 차단
+    // 생성자 (private으로 외부에서 인스턴스 생성 방지)
     private InventoryDao() {
         try {
-            // MySQL 드라이버 로드
+            // MySQL JDBC 드라이버 로드
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // 데이터베이스 연결 설정
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/convenience_store", "root", "1234");
+            // 등록된 멤버변수를 사용해 데이터베이스 연결
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("데이터베이스 연결 중 오류 발생: " + e);
         }
-    }
+    } // 생성자 메서드 end
 
-    // 싱글톤 인스턴스에 접근할 수 있는 메서드
+    // 싱글톤 인스턴스 반환 메서드
     public static InventoryDao getInstance() {
         return iDao;
     }
 
-    // 구매 메서드
+    // 상품 구매 메서드
     public InventoryLog purchase(int productId, int quantity, int turn) {
-        // 반환할 재고 로그 1개
-        InventoryLog inventoryLogs = new InventoryLog();
+        InventoryLog inventoryLog = null;
         try {
-            // 재고 로그 테이블에 구매 기록 추가
-            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
-                    "VALUES (?, ?, ?, 'Sales')";
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, turn); // 턴 수 설정
-            ps.setInt(2, productId); // 제품 ID 설정
+            // SQL 쿼리 준비 (재고 로그에 구매 기록 추가)
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " + "VALUES (?, ?, ?, '판매')";
+            // RETURN_GENERATED_KEYS: 새로운 행을 삽입할 때 자동 생성된
+            // 키(auto_increment 설정된 primary key)를 반환받기 위해 사용
+            ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, turn);
+            ps.setInt(2, productId);
             ps.setInt(3, -quantity);  // 구매 시 재고 감소 (음수 값으로 설정)
-            ps.executeUpdate(); // 쿼리 실행
+            // executeUpdate()
+            // INSERT, UPDATE, DELETE와 같이 데이터베이스의 상태를 변경하는 SQL 문에 사용
+            // 영향받은 행의 수를 정수로 반환.
+            int affectedRows = ps.executeUpdate();
 
-
-            return inventoryLogs; // 성공 시 재고 로그 반환
+            if (affectedRows > 0) {
+                // 삽입된 로그의 ID 가져오기
+                rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int logId = rs.getInt(1);
+                    // InventoryLog 객체 생성
+                    inventoryLog = new InventoryLog(logId, turn, productId, -quantity, "판매");
+                }
+            }
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("구매 처리 중 오류 발생: " + e);
         }
-        return null; // 실패 또는 예외시 null 반환
-    }
+        return inventoryLog;
+    } // 상품 구매 메서드 end
 
     // 재고 확인 메서드
     public int checkInventory(int productId) {
+        int sum = 0;
         try {
-            // 특정 제품의 재고를 확인하는 쿼리
-            String sql = "SELECT * FROM inventory_log WHERE product_id = ?";
+            String sql = "SELECT SUM(quantity) as total FROM inventory_log WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1, productId); // 제품 ID 설정
-            rs = ps.executeQuery(); // 쿼리 실행
-
-            // 재고 수량을 누적 합산하기 위한 변수
-            int sum = 0;
-            while (rs.next()) {
-                sum += rs.getInt("quantity"); // 각 행의 수량을 누적 합산
+            ps.setInt(1, productId);
+            // executeQuery()
+            // SELECT 문과 같이 데이터를 조회하는 SQL 문에 사용합니다.
+            // 결과를 ResultSet 객체로 반환
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                sum = rs.getInt("total");
             }
-            return sum; // 총 재고 수량 반환
+            // System.out.println("상품 ID " + productId + "의 현재 재고: " + sum); // 디버깅을 위한 출력
         } catch (Exception e) {
-            // 예외 발생 시 예외 메시지 출력
-            System.out.println(e);
+            System.out.println("재고 확인 중 오류 발생: " + e);
         }
-        return 0; // 예외 발생 시 0 반환
-    }
+        return sum;
+    } // 재고 확인 메서드 end
 
-    // 삭제
+    // 재고 삭제 메서드
     public boolean pdelete(int productId) {
         try {
-            String sql="delete from products where product_id=?";
-            ps=conn.prepareStatement(sql);
-            System.out.println(sql);
-            ps.setInt(1,productId);
-            int count=ps.executeUpdate();
-            if (count==1)return true;
-
-        }catch (Exception e){
-            System.out.println(e);
-        }return false;
-
-    }
-
-
-    // 추가
-    public boolean add(Products products) {
-
-        try {
-
-            String sql="INSERT INTO products( product_Id , name , price,expiry_Turns ) VALUES( ? , ? , ?, ?  )";
-            System.out.println("sql = " + sql);
-            ps=conn.prepareStatement(sql);
-            ps.setInt(1,products.getProductId());
-            ps.setString(2,products.getName());
-            ps.setInt(3,products.getPrice());
-            ps.setInt(4,products.getExpiryTurns());
-            int count=ps.executeUpdate();
-            if (count==1){
-                return  true;
-            }
-
-
-
-        }catch (Exception e){
-            System.out.println(e);
-        }return false;
-    }
-
-    // 전체 출력
-    public ArrayList<Products> pPrint(){
-        ArrayList list = new ArrayList<>();
-
-        try {
-        String sql = "select product_id ,  name  , price  from products";
-        ps = conn.prepareStatement(sql);
-        rs = ps.executeQuery();
-
-        while (rs.next()){
-            int productid = rs.getInt("product_id");
-            String name = rs.getString("name");
-            int price = rs.getInt( "price");
-
-            Products product = new Products();
-            product.setProductId(productid);
-            product.setName(name);
-            product.setPrice(price);
-
-            list.add(product);
-        }
-        }catch (Exception e){
-            System.out.println(e);
-        }return list;
-
-    }
-
-
-
-
-    // 물품 수정
-    public boolean pUpdate(Products products) {
-        try {
-            String sql = "update products set price = ? where product_id = ?;";
+            // products 테이블에서 해당 product_id를 가진 상품을 삭제하는 SQL 쿼리 준비
+            String sql = "DELETE FROM products WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setInt(1,products.getPrice() );
-            ps.setInt(2,products.getProductId());
-
+            ps.setInt(1, productId);
+            // executeUpdate()
+            // DELETE 문은 데이터베이스의 상태를 변경하므로 executeUpdate() 사용.
+            // 영향받은 행의 수를 반환합니다.
             int count = ps.executeUpdate();
-            if (count == 1) return true;
-        }catch (Exception e){
-            System.out.println(e);
-        }return false;
-    }
 
+            if (count == 1) {
+                // 상품이 성공적으로 삭제되었다면 관련된 재고 로그도 삭제
+                sql = "DELETE FROM inventory_log WHERE product_id = ?";
+                ps = conn.prepareStatement(sql);
+                ps.setInt(1, productId);
+
+                // executeUpdate()
+                // DELETE 문은 데이터베이스의 상태를 변경하므로 executeUpdate()를 사용
+                ps.executeUpdate();
+
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("재고 삭제 중 오류 발생: " + e);
+        }
+        return false;
+    } // 재고 삭제 메서드 end
 }
