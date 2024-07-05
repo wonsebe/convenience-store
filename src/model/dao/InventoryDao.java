@@ -123,10 +123,10 @@ public class InventoryDao {
 
     // 전체 출력
     public ArrayList<Products> pPrint(){
-        ArrayList list = new ArrayList<>();
+        ArrayList<Products> list = new ArrayList<>();
 
         try {
-            String sql = "select product_id ,  name  , price , stock , expiryTurns  from products";
+            String sql = "select  product_id ,  name  , price , stock , expiry_turns  from products";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
 
@@ -135,7 +135,7 @@ public class InventoryDao {
                 String name = rs.getString("name");
                 int price = rs.getInt( "price");
                 int stock = rs.getInt("stock");
-                int expiryTurns = rs.getInt("expiryTurns");
+                int expiryTurns = rs.getInt("expiry_turns");
 
                 Products product = new Products();
                 product.setProductId(productid);
@@ -144,6 +144,8 @@ public class InventoryDao {
                 product.setStock(stock);
                 product.setExpiryTurns(expiryTurns);
 
+
+                System.out.println(product);
                 list.add(product);
             }
         }catch (Exception e){

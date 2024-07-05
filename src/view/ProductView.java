@@ -173,7 +173,7 @@ public class ProductView {
         ArrayList<Products> result = PcController.getInstance().pPrint();
         System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
         result.forEach(dto -> {
-            System.out.printf("%d\t%s\t\t\t%s\n%s\t%s", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),dto.getExpiryTurns()  );
+            System.out.printf("%d\t%s\t\t\t%s\t%d\t%d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),dto.getExpiryTurns()  );
         });
     }
 
