@@ -121,8 +121,8 @@ public class ProductView {
         if (result) {
             System.out.println("★추가 성공★");
         } else {
-            System.out.println(">>추가 실패");
-        }
+            System.out.println(">>추가 실패");}
+
     }
 
     // 물품가격 수정
