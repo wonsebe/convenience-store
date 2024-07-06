@@ -1,18 +1,41 @@
 package view;
 
 import controller.PcController;
-import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
 // 싱글톤 패턴을 사용해 구현
 public class ProductView {
+    // ANSI 이스케이프 코드 (텍스트 색상)
+    public static final String RESET = "\u001B[0m";
+    public static final String BLACK = "\u001B[30m";
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String BLUE = "\u001B[34m";
+    public static final String PURPLE = "\u001B[35m";
+    public static final String CYAN = "\u001B[36m";
+    public static final String WHITE = "\u001B[37m";
+
+    // ANSI 이스케이프 코드 (배경 색상)
+    public static final String BLACK_BACKGROUND = "\u001B[40m";
+    public static final String RED_BACKGROUND = "\u001B[41m";
+    public static final String GREEN_BACKGROUND = "\u001B[42m";
+    public static final String YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String BLUE_BACKGROUND = "\u001B[44m";
+    public static final String PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String CYAN_BACKGROUND = "\u001B[46m";
+    public static final String WHITE_BACKGROUND = "\u001B[47m";
+
+    // ANSI 이스케이프 코드 (텍스트 스타일)
+    public static final String BOLD = "\u001B[1m";
+    public static final String UNDERLINE = "\u001B[4m";
+
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final ProductView pView = new ProductView();
 
@@ -34,73 +57,87 @@ public class ProductView {
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
+        // 인사말 출력
+        System.out.println(YELLOW + "\n          (/ΩΩ/)\n" +
+                                   "　     　 / •• /\n" +
+                                   "　　    　(＿ノ |  " + GREEN + "어서오세요 jSS\n" + YELLOW +
+                                   "　　    　　 |　|" + GREEN + "       편의점 입니다!★\n" + YELLOW +
+                                   "　　    　　 |　|\n" +
+                                   "　　    　 __|　|＿\n" +
+                                   "　    　　/ヘ　　/ )\n" +
+                                   "　　    　L ニニコ/\n" +
+                                   "　　    　|￣￣￣ |\n" +
+                                   "　　    　|　　 　|――≦彡\n" +
+                                   "　　    　|　∩　 |\n" +
+                                   "　　    　|　||　|\n" +
+                                   "　　    　|　||　|\n" +
+                                   "　　    　|二||二|\n" + RESET);
+
         while (true) {
-            // 현재 모든 상품의 재고 상태를 출력 (비활성화)
-            // displayInventory();
-
             // 사용자 행동 선택 메뉴 출력 및 입력 받기
-            System.out.print("행동 선택 : " +
-                    "0.다음 턴 " +
-                    "1.재고 구매 " +
-                    "2.재고 확인 " +
-                    "3.상품 추가 " +
-                    "4.상품 수정 " +
-                    "5.재고 삭제 " +
-                    "6.물품 확인 " +
-                    "7.게임 종료 " +
-                    ": ");
-            int choice = scan.nextInt();
+            System.out.print(CYAN + "1" + RESET + " - 재고 구매\t\t");
+            System.out.print(CYAN + "2" + RESET + " - 재고 확인\t\t");
+            System.out.print(CYAN + "3" + RESET + " - 상품 추가\t\t");
+            System.out.print(CYAN + "4" + RESET + " - 상품 수정\t\t");
+            System.out.println();
+            System.out.print(CYAN + "5" + RESET + " - 재고 삭제\t\t");
+            System.out.print(CYAN + "6" + RESET + " - 물품 확인\t\t");
+            System.out.print(CYAN + "7" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(CYAN + "8" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.println();
+            System.out.print(CYAN + "9" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(CYAN + "10" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(CYAN + "11" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(CYAN + "12" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.println();
 
-            // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
-            switch (choice) {
-                case 0 -> processTurn();  // 다음 턴 진행
-                case 1 -> System.out.println("재고 구매 기능은 아직 구현되지 않았습니다.");  // 재고 구매 (미구현)
-                case 2 -> displayInventory();  // 재고 확인
-                case 3 -> addProduct();  // 상품 추가
-                case 4 -> updateProduct();  // 상품 수정
-                case 5 -> pDelete();
-                case 6 -> pPrint (); // 재고 삭제
-                case 7 -> {
-                    System.out.println("게임을 종료합니다.");  // 게임 종료
-                    return;  // 메서드 종료
-                }
-                default -> System.out.println("잘못된 선택입니다. 다시 선택해주세요."); // 잘못된 입력 처리
-            } // switch 끝
+            // 다음 턴 및 종료는 최하단에 표시
+            System.out.println();
+            System.out.print(CYAN + "99" + RESET + " - 다음 턴\t\t");
+            System.out.print(CYAN + "100" + RESET + " - 게임 종료\t\t");
+            System.out.println();
+
+            try {
+                System.out.print("행동 선택: ");
+                int choice = scan.nextInt();
+
+                // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
+                switch (choice) {
+                    case 1 -> System.out.println("재고 구매 기능은 아직 구현되지 않았습니다.");  // 재고 구매 (미구현)
+                    case 2 -> displayInventory();  // 재고 확인
+                    case 3 -> addProduct();  // 상품 추가
+                    case 4 -> updateProduct();  // 상품 수정
+                    case 5 -> pDelete(); // 재고 삭제
+                    case 6 -> pPrint(); // 물품 확인
+                    case 99 -> processTurn();  // 다음 턴 진행
+                    case 100 -> {
+                        System.out.println("게임을 종료합니다.");  // 게임 종료
+                        return;  // 메서드 종료
+                    }
+                    default -> System.out.println("잘못된 선택입니다. 다시 선택해주세요."); // 잘못된 입력 처리
+                } // switch 끝
+            } catch (InputMismatchException e) {
+                System.out.println("잘못된 입력입니다. 숫자를 입력해주세요.");
+                scan.next(); // 잘못된 입력을 버리고 넘어가기
+            }
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
 
-    // 2 현재 모든 상품의 재고 상태를 출력하는 메서드
+    // 1 - 재고 구매 메서드 (미구현)
+    private void ddddddddd() {
+
+    }
+
+    // 2 - 재고 확인 메서드
     private void displayInventory() {
         for (int i = 1; i <= PcController.getInstance().getProductTypeCount(); i++) {
             System.out.print("상품번호: " + i);
             int inventory = PcController.getInstance().checkInventory(i);
             System.out.println("       재고 = " + inventory);
         }
-    } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
+    } // 2 - 재고 확인 메서드 end
 
-    // 4 상품 수정 메서드
-    // 사용자로부터 상품 ID와 새로운 가격을 입력받아 상품 정보 업데이트
-    public void updateProduct() {
-        System.out.println("상품 수정 페이지");
-        System.out.print("수정할 상품 ID: ");
-        int productId = scan.nextInt();
-        System.out.print("새로운 가격: ");
-        int newPrice = scan.nextInt();
-
-        Products updatedProduct = new Products();
-        updatedProduct.setProductId(productId);
-        updatedProduct.setPrice(newPrice);
-
-        boolean result = PcController.getInstance().updateProduct(updatedProduct);
-
-        if (result) {
-            System.out.println("상품 수정 성공!");
-        } else {
-            System.out.println("상품 수정 실패");
-        }
-    } // 상품 수정 메서드 end
-
-    // 3 상품 추가 메서드
+    // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
     public void addProduct() {
         System.out.println("상품 추가 페이지");
@@ -124,9 +161,31 @@ public class ProductView {
         } else {
             System.out.println("상품 추가 실패");
         }
-    } // 상품 추가 메서드 end
+    } // 3- 상품 추가 메서드 end
 
-    // 5 재고 삭제 함수
+    // 4 - 상품 수정 메서드
+    // 사용자로부터 상품 ID와 새로운 가격을 입력받아 상품 정보 업데이트
+    public void updateProduct() {
+        System.out.println("상품 수정 페이지");
+        System.out.print("수정할 상품 ID: ");
+        int productId = scan.nextInt();
+        System.out.print("새로운 가격: ");
+        int newPrice = scan.nextInt();
+
+        Products updatedProduct = new Products();
+        updatedProduct.setProductId(productId);
+        updatedProduct.setPrice(newPrice);
+
+        boolean result = PcController.getInstance().updateProduct(updatedProduct);
+
+        if (result) {
+            System.out.println("상품 수정 성공!");
+        } else {
+            System.out.println("상품 수정 실패");
+        }
+    } // 4- 상품 수정 메서드 end
+
+    // 5 - 재고 삭제 함수
     public boolean pDelete() {
         // 삭제할 제품 번호를 입력받기
         System.out.println("삭제 페이지");
@@ -144,12 +203,27 @@ public class ProductView {
             System.out.println("삭제 실패");
             return false;
         }
-    } // 재고 삭제 함수 end
+    } // 5- 재고 삭제 함수 end
 
-    // 다음 턴을 처리하는 메서드
-    // 1 현재 턴의 손님 방문 및 구매 로그를 처리하고 결과를 출력
-    private void processTurn() {
+    // 6 - 물품 확인
+    public void pPrint() {
+        ArrayList<Products> result = PcController.getInstance().pPrint();
+        System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
+        result.forEach(dto -> {
+            System.out.printf("%d\t%s\t\t\t%s\t%d\t%d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
+        });
+    } // 6 - 물품 확인 메서드 end
+
+    // 99 - 다음 턴 진행 메서드
+    public void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
+        // 현재 턴의 손님 방문 및 구매 로그를 처리하고 결과를 출력
+        simulateCustomerVisits();
+        turn++; // 턴 증가
+    } // 99 - 다음 턴 진행 메서드 end
+
+    // 99.1 - 손님 방문 메서드
+    public void simulateCustomerVisits() {
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
         if (logs.isEmpty()) {
             System.out.println("이번 턴에는 손님이 없었습니다.");
@@ -158,35 +232,19 @@ public class ProductView {
                 String productName = PcController.getInstance().getProductName(log.getProductId());
                 int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
                 if (log.getQuantity() != 0) {  // 구매 성공 시 quantity는 음수 값
-                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
-                            productName, -log.getQuantity(), currentInventory);
+                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n", productName, -log.getQuantity(), currentInventory);
                 } else {
-                    System.out.printf("손님이 %s을(를) 사려고 했으나 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
-                            productName, currentInventory);
-                }
-            }
-        }
-        turn++; // 턴 증가
-    } // 다음 턴을 처리하는 메서드 end
-    // 상품조회
-    public void pPrint () {
-        ArrayList<Products> result = PcController.getInstance().pPrint();
-        System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
-        result.forEach(dto -> {
-            System.out.printf("%d\t%s\t\t\t%s\t%d\t%d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),dto.getExpiryTurns()  );
-        });
+                    System.out.printf("손님이 %s을(를) 사려고 했으나 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n", productName, currentInventory);
+                } // if 끝
+            } // for 끝
+        } // if 끝
     }
 
     //이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
     //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
-    public  void inrush(){
-
+    public void inrush() {
         System.out.println("강도가 침입했습니다!");
-
-
     }
-
-
 
 } // ProductView 클래스 종료
 

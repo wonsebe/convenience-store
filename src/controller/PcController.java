@@ -32,14 +32,14 @@ public class PcController {
     // 랜덤한 수의 고객이 랜덤한 상품을 랜덤 수량으로 구매하려 시도
     public ArrayList<InventoryLog> purchase(int turn) {
         ArrayList<InventoryLog> logs = new ArrayList<>();
-        // 1~5명의 랜덤한 고객 수 생성
-        int customerCount = new Random().nextInt(5) + 1;
+        // 3~15명의 랜덤한 고객 수 생성
+        int customerCount = new Random().nextInt(13) + 3;
 
         for (int i = 0; i < customerCount; i++) {
             // 랜덤한 상품 ID 선택
             int productId = new Random().nextInt(productTypeCount) + 1;
-            // 1~5개의 랜덤한 구매 수량 생성
-            int buyCount = new Random().nextInt(5) + 1;
+            // 1~3개의 랜덤한 구매 수량 생성
+            int buyCount = new Random().nextInt(3) + 1;
 
             int productCount = InventoryDao.getInstance().checkInventory(productId);
             // 확인용 콘솔
@@ -104,8 +104,9 @@ public class PcController {
     public boolean pDelete(int productId) {
         return InventoryDao.getInstance().pdelete(productId);
     }
+
     // 전체 출력
-    public ArrayList<Products> pPrint(){
+    public ArrayList<Products> pPrint() {
         return InventoryDao.getInstance().pPrint();
     }
 } // PcController 클래스 end
