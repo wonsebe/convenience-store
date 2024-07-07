@@ -8,6 +8,7 @@ USE convenience_store;
 DROP TABLE IF EXISTS inventory_log;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS sales;
+DROP TABLE IF EXISTS store_balance;
 
 -- 제품 테이블 생성
 CREATE TABLE products
@@ -21,12 +22,13 @@ CREATE TABLE products
 -- 재고 로그 테이블 생성
 CREATE TABLE inventory_log
 (
-    log_id      INT PRIMARY KEY AUTO_INCREMENT,                                 -- 로그 ID, 기본 키, 자동 증가
-    game_date   INT NOT NULL,                                                   -- 게임 내 날짜를 나타내는 정수값, NULL 불가
-    product_id  INT,                                                            -- 제품 ID, products 테이블의 product_id를 참조
-    quantity    INT NOT NULL,                                                   -- 수량, NULL 불가
-    description VARCHAR(20),                                                    -- 설명, NULL 가능
-    FOREIGN KEY (product_id) REFERENCES products (product_id) on delete cascade -- 외래 키, products 테이블의 product_id를 참조
+    log_id      INT PRIMARY KEY AUTO_INCREMENT, -- 로그 ID, 기본 키, 자동 증가
+    game_date   INT NOT NULL,                   -- 게임 내 날짜를 나타내는 정수값, NULL 불가
+    product_id  INT,                            -- 제품 ID, products 테이블의 product_id를 참조
+    quantity    INT NOT NULL,                   -- 수량, NULL 불가
+    description VARCHAR(20),                    -- 설명, NULL 가능
+    FOREIGN KEY (product_id) REFERENCES products (product_id)
+        on delete cascade                       -- 외래 키, products 테이블의 product_id를 참조
 );
 
 -- 매출액 테이블 생성, 게임의 각 턴별 매출 정보 저장
@@ -40,7 +42,7 @@ CREATE TABLE sales
 
 -- inventory_log 테이블에 sale_price 컬럼 추가
 ALTER TABLE inventory_log
-    ADD COLUMN sale_price INT;
+    ADD COLUMN sale_price INT; -- 매출 계산에 활용
 
 CREATE TABLE store_balance
 (

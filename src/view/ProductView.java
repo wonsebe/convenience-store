@@ -186,6 +186,7 @@ public class ProductView {
     } // 4 - 상품 수정 메서드 end
 
     // 5 - 재고 삭제 메서드
+    // 수정이 필요한 메서드입니다 (세원 코멘트)
     public boolean pDelete() {
         // 삭제할 제품 번호를 입력받기
         System.out.println("삭제 페이지");
