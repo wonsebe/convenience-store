@@ -4,3 +4,5 @@
 
 - [데이터베이스 샘플](docs/sample.sql)
 - [폴더 구조](docs/folder-structure.md)
+- [ER 다이어그램](docs/erdiagram.md)
+- [아이콘](docs/convenience-store.ico)
