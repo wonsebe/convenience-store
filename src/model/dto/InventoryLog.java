@@ -9,18 +9,20 @@ public class InventoryLog {
     private int productId;      // 관련 상품의 ID
     private int quantity;       // 기록 수량
     private String description; // 로그 설명
+    private int salePrice;      // 개별 거래의 판매 금액 (판매 시에만 사용)
 
     // 기본 생성자, 모든 필드를 기본값으로 초기화
     public InventoryLog() {
     }
 
     // 풀 생성자
-    public InventoryLog(int logId, int gameDate, int productId, int quantity, String description) {
+    public InventoryLog(int logId, int gameDate, int productId, int quantity, String description, int salePrice) {
         this.logId = logId;             // 로그의 고유 식별자
-        this.gameDate = gameDate;       // 게임 내 날짜 (턴수)
+        this.gameDate = gameDate;       // 게임 턴 수
         this.productId = productId;     // 관련 상품의 ID
-        this.quantity = quantity;       // 재고 변동 수량
+        this.quantity = quantity;       // 기록 수량
         this.description = description; // 로그 설명
+        this.salePrice = salePrice;     // 개별 거래의 판매 금액 (판매 시에만 사용)
     }
 
     // Getter와 Setter 메서드들
@@ -47,7 +49,7 @@ public class InventoryLog {
     public void setProductId(int productId) {
         this.productId = productId;
     }
-    
+
     public int getQuantity() {
         return quantity;
     }
@@ -64,6 +66,14 @@ public class InventoryLog {
         this.description = description;
     }
 
+    public int getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(int salePrice) {
+        this.salePrice = salePrice;
+    }
+
     // 객체의 문자열 표현 반환
     @Override
     public String toString() {
@@ -73,6 +83,7 @@ public class InventoryLog {
                 ", productId=" + productId +
                 ", quantity=" + quantity +
                 ", description='" + description + '\'' +
+                ", salePrice=" + salePrice +
                 '}';
     }
 } // InventoryLog 클래스 end

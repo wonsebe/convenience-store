@@ -74,7 +74,7 @@ public class ProductDao {
         return count;
     } // 등록된 상품 종류의 수를 반환하는 메서드 end
 
-    // 상품 추가 메서드 수정
+    // 상품 추가 메서드
     public boolean add(Products products) {
         try {
             String sql = "INSERT INTO products(name, price, expiry_turns) VALUES(?, ?, ?)";

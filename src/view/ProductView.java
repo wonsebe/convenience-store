@@ -92,12 +92,12 @@ public class ProductView {
             System.out.println();
 
             // 다음 턴 및 종료는 최하단에 표시
-            System.out.println();
-            System.out.print(CYAN + "99" + RESET + " - 다음 턴\t\t");
-            System.out.print(CYAN + "100" + RESET + " - 게임 종료\t\t");
+            System.out.print("=============\t" + CYAN + "99" + RESET + " - 다음 턴\t\t");
+            System.out.print(CYAN + "100" + RESET + " - 게임 종료" + "\t=============");
             System.out.println();
 
             try {
+                // 새 턴 시작
                 System.out.print("행동 선택: ");
                 int choice = scan.nextInt();
 
@@ -124,12 +124,12 @@ public class ProductView {
     } // 게임의 메인 루프를 담당하는 메서드 end
 
     // 1 - 재고 구매 메서드 (미구현)
-    private void ddddddddd() {
+    public void ddddddddd() {
 
-    }
+    } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드
-    private void displayInventory() {
+    public void displayInventory() {
         for (int i = 1; i <= PcController.getInstance().getProductTypeCount(); i++) {
             System.out.print("상품번호: " + i);
             int inventory = PcController.getInstance().checkInventory(i);
@@ -161,7 +161,7 @@ public class ProductView {
         } else {
             System.out.println("상품 추가 실패");
         }
-    } // 3- 상품 추가 메서드 end
+    } // 3 - 상품 추가 메서드 end
 
     // 4 - 상품 수정 메서드
     // 사용자로부터 상품 ID와 새로운 가격을 입력받아 상품 정보 업데이트
@@ -183,9 +183,9 @@ public class ProductView {
         } else {
             System.out.println("상품 수정 실패");
         }
-    } // 4- 상품 수정 메서드 end
+    } // 4 - 상품 수정 메서드 end
 
-    // 5 - 재고 삭제 함수
+    // 5 - 재고 삭제 메서드
     public boolean pDelete() {
         // 삭제할 제품 번호를 입력받기
         System.out.println("삭제 페이지");
@@ -203,9 +203,9 @@ public class ProductView {
             System.out.println("삭제 실패");
             return false;
         }
-    } // 5- 재고 삭제 함수 end
+    } // 5 - 재고 삭제 메서드 end
 
-    // 6 - 물품 확인
+    // 6 - 물품 확인 메서드
     public void pPrint() {
         ArrayList<Products> result = PcController.getInstance().pPrint();
         System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
@@ -218,13 +218,15 @@ public class ProductView {
     public void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
         // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
-        simulateCustomerVisits(); // 99.1 - 손님 방문 메서드
+        PcController.getInstance().processPurchaseAndSales(turn);
+        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+        simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
+        displayTotalSalesAndBalance(); // 총 매출액 출력
         turn++; // 턴 증가
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
-    public void simulateCustomerVisits() {
-        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+    public void simulateCustomerVisits(ArrayList<InventoryLog> logs) {
         if (logs.isEmpty()) {
             System.out.println("이번 턴에는 손님이 없었습니다.");
         } else {
@@ -260,13 +262,21 @@ public class ProductView {
                 } // if 끝
             } // for 끝
         } // if 끝
-    } // simulateCustomerVisits 메서드 end
+    } // 99.1 - 손님 방문 메서드 end
 
     // 99.2 - 이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
     //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
     public void inrush() {
         System.out.println("강도가 침입했습니다!");
-    }
+    } // 99.2 - 강도 침입 메서드 end
+
+    // 턴의 총 매출액과 잔고를 구하는 메서드
+    public void displayTotalSalesAndBalance() {
+        int totalSales = PcController.getInstance().getLastTurnTotalSales();
+        int storeBalance = PcController.getInstance().getStoreBalance();
+        System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
+        System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
+    } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
 } // ProductView 클래스 종료
 
