@@ -38,8 +38,8 @@ public class PcController {
         for (int i = 0; i < customerCount; i++) {
             // 랜덤한 상품 ID 선택
             int productId = new Random().nextInt(productTypeCount) + 1;
-            // 1~3개의 랜덤한 구매 수량 생성
-            int buyCount = new Random().nextInt(3) + 1;
+            // 1~5개의 랜덤한 구매 수량 생성
+            int buyCount = new Random().nextInt(5) + 1;
 
             int productCount = InventoryDao.getInstance().checkInventory(productId);
             // 확인용 콘솔

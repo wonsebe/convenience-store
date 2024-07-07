@@ -119,7 +119,7 @@ public class ProductView {
             } catch (InputMismatchException e) {
                 System.out.println("잘못된 입력입니다. 숫자를 입력해주세요.");
                 scan.next(); // 잘못된 입력을 버리고 넘어가기
-            }
+            } // try 끝
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
 
@@ -217,8 +217,8 @@ public class ProductView {
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
-        // 현재 턴의 손님 방문 및 구매 로그를 처리하고 결과를 출력
-        simulateCustomerVisits();
+        // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
+        simulateCustomerVisits(); // 99.1 - 손님 방문 메서드
         turn++; // 턴 증가
     } // 99 - 다음 턴 진행 메서드 end
 
@@ -232,15 +232,37 @@ public class ProductView {
                 String productName = PcController.getInstance().getProductName(log.getProductId());
                 int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
                 if (log.getQuantity() != 0) {  // 구매 성공 시 quantity는 음수 값
-                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n", productName, -log.getQuantity(), currentInventory);
+                    if (currentInventory == 0) {
+                        System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
+                                          productName, -log.getQuantity(), RED, currentInventory, RESET
+                        );
+                        // null 뜰때 확인용 콘솔
+                        // System.out.println(log);
+                    } else if (currentInventory <= 5) {
+                        System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
+                                          productName, -log.getQuantity(), BLUE, currentInventory, RESET
+                        );
+                        // null 뜰때 확인용 콘솔
+                        // System.out.println(log);
+                    } else {
+                        System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
+                                          productName, -log.getQuantity(), currentInventory
+                        );
+                        // null 뜰때 확인용 콘솔
+                        // System.out.println(log);
+                    }
                 } else {
-                    System.out.printf("손님이 %s을(를) 사려고 했으나 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n", productName, currentInventory);
+                    System.out.printf("손님이 %s을(를) 사려고 했으나 %s재고가 부족%s하여 구매하지 못했습니다. (현재 재고: %s%d%s)%n",
+                                      productName, RED, RESET, RED, currentInventory, RESET
+                    );
+                    // null 뜰때 확인용 콘솔
+                    // System.out.println(log);
                 } // if 끝
             } // for 끝
         } // if 끝
-    }
+    } // simulateCustomerVisits 메서드 end
 
-    //이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
+    // 99.2 - 이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
     //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
     public void inrush() {
         System.out.println("강도가 침입했습니다!");
