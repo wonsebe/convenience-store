@@ -84,7 +84,7 @@ public class ProductView {
         if (choice ==1){
             index();
         }else {
-            return;
+            System.out.println("게임종료");
         }
     }
 
@@ -161,7 +161,7 @@ public class ProductView {
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
-                        return;  // 메서드 종료
+                        start(); // 메서드 종료
                     }
                     default -> System.out.println("잘못된 선택입니다. 다시 선택해주세요."); // 잘못된 입력 처리
                 } // switch 끝
