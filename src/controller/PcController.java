@@ -2,8 +2,6 @@ package controller;
 
 import model.dao.InventoryDao;
 import model.dao.ProductDao;
-import model.dao.SalesDao;
-import model.dao.StoreDao;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
@@ -102,7 +100,6 @@ public class PcController {
                 // System.out.println("구매 실패: 상품 ID " + productId + ", 요청 수량 " + buyCount + ", 현재 재고 " + productCount); // 디버깅을 위한 출력
             }
         }
-
         return logs;
     } // 99.1 - 손님 방문 메서드 end
 
@@ -142,4 +139,17 @@ public class PcController {
     }
 
 
+    public void inrush() {
+        Random random = new Random();
+        // 랜덤하게 상품 선택
+
+        int productId = random.nextInt(productTypeCount) + 1;
+        // 랜덤하게 감소할 수량 선택
+        int quantity = random.nextInt(3) + 1; //1부터 3까지 수량을 랜덤으로 가져감
+
+
+        //이름과 수량을 다오로 보냄
+        InventoryDao.getInstance().inrush(productId, quantity);
+
+    }
 } // PcController 클래스 end

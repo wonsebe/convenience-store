@@ -1,11 +1,13 @@
 package view;
 
 import controller.PcController;
+import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
@@ -74,6 +76,9 @@ public class ProductView {
                                    "　　    　|二||二|\n" + RESET);
 
         while (true) {
+            // 현재 모든 상품의 재고 상태를 출력 (비활성화)
+            // displayInventory();
+
             // 사용자 행동 선택 메뉴 출력 및 입력 받기
             System.out.print(CYAN + "1" + RESET + " - 재고 구매\t\t");
             System.out.print(CYAN + "2" + RESET + " - 재고 확인\t\t");
@@ -109,6 +114,7 @@ public class ProductView {
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
+                    case 7 -> inrush (); //강도 침입 함수
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
@@ -135,7 +141,9 @@ public class ProductView {
             int inventory = PcController.getInstance().checkInventory(i);
             System.out.println("       재고 = " + inventory);
         }
-    } // 2 - 재고 확인 메서드 end
+    } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
+
+  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -270,6 +278,9 @@ public class ProductView {
     public void inrush() {
         System.out.println("강도가 침입했습니다!");
     } // 99.2 - 강도 침입 메서드 end
+        //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
+        ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
+
 
     // 턴의 총 매출액과 잔고를 구하는 메서드
     public void displayTotalSalesAndBalance() {
@@ -278,6 +289,29 @@ public class ProductView {
         System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
         System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
+        //still 리스트에 있는 각 인벤토리 로그를 순회하면서, 각각의 상품에 대해 이름과 재고를 확인
+        for (InventoryLog stills : still) { //still 리스트에서 InventoryLog 객체를 하나씩 가져와서 stills라는 변수에 할당
+            String productName = PcController.getInstance().getProductName(stills.getProductId());
+            //해당 상품 ID에 대한 상품 이름을 가져옴 ,stills 객체가 가리키는 상품의 이름을   productName 문자열 변수에 할당
+            int currentInventory = PcController.getInstance().checkInventory(stills.getProductId());
+            //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
+            if (stills.getQuantity() != 0) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
+                System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n",
+                        //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
+                        productName, -stills.getQuantity(), currentInventory); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
+            } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
+                System.out.printf(
+                        "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
+                        productName);return; //초기화면으로 돌아가기
+            }
+            // 강도 함수 호출
+            PcController.getInstance().inrush(); //PcController의 inrush를 호출함
+
+        } //for end
+
+    }//강도함수 end
+
+
 
 } // ProductView 클래스 종료
 
