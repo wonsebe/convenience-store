@@ -34,8 +34,9 @@ public class PcController {
     }
 
     // 1 - 재고 구매 메서드 (미구현)
-    public void ddddddddd() {
-
+    public boolean supplyRestock(int pId, int quantity, int orderFunds, int turn) {
+        // 제품 번호, 수량, 구매자금을 전달한다
+        return InventoryDao.getInstance().supplyRestock(pId, quantity, orderFunds, turn);
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드

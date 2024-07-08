@@ -38,6 +38,15 @@ public class InventoryDao {
         return iDao;
     }
 
+    // 1 - 재고 구매 메서드 (미구현)
+    public boolean supplyRestock(int pId, int quantity, int orderFunds, int turn) {
+        InventoryLog inventoryLog = null;
+        StoreDao.getInstance().updateBalance(orderFunds, turn);
+        // 돈이 있으면 제품 번호, 수량을 DAO에 전달하고 잔고를 깍는다
+
+        return false;
+    } // 1 - 재고 구매 메서드 end
+
     // 턴넘기면 손님 방문 및 상품 구매 메서드
     public InventoryLog purchase(int productId, int quantity, int turn) {
         InventoryLog inventoryLog = null;
@@ -180,7 +189,6 @@ public class InventoryDao {
                 product.setExpiryTurns(expiryTurns);
 
 
-
                 list.add(product);
             }
         } catch (Exception e) {
@@ -189,6 +197,7 @@ public class InventoryDao {
         return list;
 
     }
+
     //강도함수
     public void inrush(int productId, int quantity) {
         try {
