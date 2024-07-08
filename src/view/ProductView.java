@@ -49,12 +49,15 @@ public class ProductView {
 
     // private 생성자로 외부에서의 인스턴스 생성을 방지
     private ProductView() {
+
     }
 
     // 싱글톤 인스턴스를 반환하는 메서드
     public static ProductView getInstance() {
         return pView;
     }
+
+    public void start(){}
 
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
@@ -217,9 +220,9 @@ public class ProductView {
     // 6 - 물품 확인 메서드
     public void pPrint() {
         ArrayList<Products> result = PcController.getInstance().pPrint();
-        System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
+        System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
         result.forEach(dto -> {
-            System.out.printf("%d\t%s\t\t\t%s\t%d\t%d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
+            System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
         });
     } // 6 - 물품 확인 메서드 end
 
@@ -231,6 +234,8 @@ public class ProductView {
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
         simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
         displayTotalSalesAndBalance(); // 총 매출액 출력
+        // 승리조건
+        if (turn >= 100){ System.out.println("게임 승리"); }
         turn++; // 턴 증가
     } // 99 - 다음 턴 진행 메서드 end
 

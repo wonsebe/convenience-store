@@ -158,30 +158,27 @@ public class InventoryDao {
 
     // 전체 출력
     public ArrayList<Products> pPrint() {
-        ArrayList<Products> list = new ArrayList<>();
+        ArrayList<Products> list = new ArrayList<>();   // list 객체 생성 제품번호 제품명 제품가격 수량 유통기한 출력
 
         try {
-            String sql = "select  product_id ,  name  , price , stock , expiry_turns  from products";
+            String sql = "select  product_id ,  name  , price  , expiry_turns  from products";   // 제품번호 , 이름 가격 , 수량 ,유통기한을 출력하는 sql
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
 
-            while (rs.next()) {
+            while (rs.next()) { // 조회된 레코드/행 만큼 반복 //  1개 행/레코드 -> 제품1개 -> products 1개
                 int productid = rs.getInt("product_id");
                 String name = rs.getString("name");
                 int price = rs.getInt("price");
-                int stock = rs.getInt("stock");
                 int expiryTurns = rs.getInt("expiry_turns");
 
-                Products product = new Products();
+                Products product = new Products();  // 302번지 객체 // 402번지 객체 // 502번지 객체
                 product.setProductId(productid);
                 product.setName(name);
                 product.setPrice(price);
-                product.setStock(stock);
                 product.setExpiryTurns(expiryTurns);
 
+                list.add(product); // 302번지 객체  // 402번지 객체 // 502번지 객체
 
-
-                list.add(product);
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -203,6 +200,23 @@ public class InventoryDao {
         } catch (Exception e) {
             System.out.println("강도 침입 처리 중 오류 발생: " + e);
         }
+    }
+
+    // 재고 구하기
+    public int stock(int product_id){
+        try {
+            String sql = "select * from inventory_log where product_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, product_id);
+            rs = ps.executeQuery();
+            int sum = 0;
+            while (rs.next()){
+                sum += rs.getInt(4);
+            }
+            return sum;
+        }catch (Exception e){
+            System.out.println(e);
+        }return 0;
     }
 
 }

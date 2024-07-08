@@ -65,7 +65,18 @@ public class PcController {
 
     // 6 - 물품 확인
     public ArrayList<Products> pPrint() {
-        return InventoryDao.getInstance().pPrint();
+
+        ArrayList<Products> result = InventoryDao.getInstance().pPrint();
+    // 물품확인 리스트내 있는 모든 제품수량에 대한 구매 혹은 판매에 대한 누적 값 구하기
+        for (int i = 0 ; i < result.size(); i ++){  // result 0부터 result 마지막까지 1씩 플러스 한다.
+            Products products = result.get(i);      // result에 있는 i번째의 인덱스 값을 products에 대입한다.
+            // products : 0인덱스[ Products = 첫번째 레코드 ] 1인덱스 [ Products = 두번째 레코드 ] 2인덱스[ Products = 세번째 레코드 ] ~~~
+            // - 제품수량에 대한 구매 혹은 판매에 대한 누적 값 구하기
+            int stock = InventoryDao.getInstance().stock(products.getProductId()); // i번째 레코드의 제품번호의 재고 수량 계산
+            // i번째 레코드의 제품번호 객체의 재고 수량 대입
+            products.setStock( stock );
+        }
+        return result;
     } // 6 - 물품 확인 메서드 end
 
     // 99.1 - 손님 방문 메서드
