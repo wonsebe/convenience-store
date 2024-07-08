@@ -16,8 +16,7 @@ CREATE TABLE products
     product_id   INT AUTO_INCREMENT PRIMARY KEY, -- 제품 ID, 기본 키
     name         VARCHAR(20) NOT NULL,           -- 제품 이름, NULL 불가
     price        INT         NOT NULL,           -- 제품 가격, NULL 불가
-    expiry_turns INT         NOT NULL           -- 유통기한 (턴 단위), NULL 불가
-
+    expiry_turns INT         NOT NULL            -- 유통기한 (턴 단위), NULL 불가
 );
 
 -- 재고 로그 테이블 생성
@@ -122,5 +121,3 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 29, 10, '초기 입고'), -- 닭강정
        (1, 30, 20, '초기 입고'); -- 고구마튀김
 
-
-select * from inventory_log where product_id = 1

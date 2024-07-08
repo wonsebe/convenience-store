@@ -165,8 +165,30 @@ public class ProductView {
     } // 게임의 메인 루프를 담당하는 메서드 end
 
     // 1 - 재고 구매 메서드 (미구현)
-    public void ddddddddd() {
+    public void supplyRestock() {
+        // 구매할 제품 번호를 입력한다
+        System.out.println("입고할 제품 번호를 입력하세요.");
+        System.out.print(">>");
+        int pId = scan.nextInt();
+        // 구매할 제품의 수량을 입력한다
+        System.out.println("입고할 수량을 입력하세요.");
+        System.out.print(">>");
+        int quantity = scan.nextInt();
+        int orderFunds = pId * quantity;
+        // 편의점 자금이 부족하면 구매 불가를 출력한다
+        if (orderFunds >= StoreDao.getInstance().getBalance()) {
+            System.out.println("구매할 자금이 부족합니다.");
+        } else {
+            // 돈이 있으면 컨트롤러의 supplyRestock() 함수 호출
+            // 매개변수는 pId, quantity, orderFunds
+            boolean result = PcController.getInstance().supplyRestock(pId, quantity, orderFunds, turn);
+            if (result) {
+                System.out.println("구매 완료!");
+            }
+        }
 
+
+        // 구입가는 판매가의 70% 가격
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드
@@ -242,8 +264,10 @@ public class ProductView {
         // 삭제 결과에 따른 메시지 출력
         if (result) {
             System.out.println("삭제 성공!");
+            return true;
         } else {
             System.out.println("삭제 실패");
+            return false;
         }
     } // 5 - 재고 삭제 메서드 end
 
@@ -338,8 +362,9 @@ public class ProductView {
             //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
             if (stills.getQuantity() != 0) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
                 System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n",
-                        //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
-                        productName, -stills.getQuantity(), currentInventory); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
+                                  //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
+                                  productName, -stills.getQuantity(), currentInventory
+                ); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
             } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
                 System.out.printf(
                         "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
