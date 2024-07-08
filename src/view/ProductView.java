@@ -47,7 +47,8 @@ public class ProductView {
                     "4.상품 수정 " +
                     "5.재고 삭제 " +
                     "6.물품 확인 " +
-                    "7.게임 종료 " +
+                    "7.강도 침입 이벤트 발생 " +
+                    "8.게임 종료 " +
                     ": ");
             int choice = scan.nextInt();
 
@@ -60,7 +61,8 @@ public class ProductView {
                 case 4 -> updateProduct();  // 상품 수정
                 case 5 -> pDelete();
                 case 6 -> pPrint (); // 재고 삭제
-                case 7 -> {
+                case 7 -> inrush (); //강도 침입 함수
+                case 8 -> {
                     System.out.println("게임을 종료합니다.");  // 게임 종료
                     return;  // 메서드 종료
                 }
@@ -173,21 +175,42 @@ public class ProductView {
         ArrayList<Products> result = PcController.getInstance().pPrint();
         System.out.println("제품번호\t 제품명\t\t 제품가격\t제품수량\t유통기한");
         result.forEach(dto -> {
-            System.out.printf("%d\t%s\t\t\t%s\n%s\t%s", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),dto.getExpiryTurns()  );
+            System.out.printf("%d\t%s\t\t\t%s\t%d\t%d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),dto.getExpiryTurns()  );
         });
     }
 
     //이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
-    //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
-    public  void inrush(){
-
+    //어떤 상품을 ,몇개 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기
+    public void inrush() {
+        //강도침입알림
         System.out.println("강도가 침입했습니다!");
+        //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
+        ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
 
 
-    }
+        //still 리스트에 있는 각 인벤토리 로그를 순회하면서, 각각의 상품에 대해 이름과 재고를 확인
+        for (InventoryLog stills : still) { //still 리스트에서 InventoryLog 객체를 하나씩 가져와서 stills라는 변수에 할당
+            String productName = PcController.getInstance().getProductName(stills.getProductId());
+            //해당 상품 ID에 대한 상품 이름을 가져옴 ,stills 객체가 가리키는 상품의 이름을   productName 문자열 변수에 할당
+            int currentInventory = PcController.getInstance().checkInventory(stills.getProductId());
+            //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
+            if (stills.getQuantity() != 0) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
+                System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n",
+                        //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
+                        productName, -stills.getQuantity(), currentInventory); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
+            } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
+                System.out.printf(
+                        "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
+                        productName);return; //초기화면으로 돌아가기
+            }
+            // 강도 함수 호출
+            PcController.getInstance().inrush(); //PcController의 inrush를 호출함
+
+        } //for end
+
+    }//강도함수 end
 
 
 
 } // ProductView 클래스 종료
-
 

@@ -108,4 +108,21 @@ public class PcController {
     public ArrayList<Products> pPrint(){
         return InventoryDao.getInstance().pPrint();
     }
+
+
+    public void inrush() {
+        Random random = new Random();
+        // 랜덤하게 상품 선택
+
+        int productId = random.nextInt(productTypeCount) + 1;
+        // 랜덤하게 감소할 수량 선택
+        int quantity = random.nextInt(3) + 1; //1부터 3까지 수량을 랜덤으로 가져감
+
+
+        //이름과 수량을 다오로 보냄
+        InventoryDao.getInstance().inrush(productId, quantity);
+
+    }
 } // PcController 클래스 end
+
+

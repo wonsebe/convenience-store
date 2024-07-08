@@ -151,5 +151,20 @@ public class InventoryDao {
         }return list;
 
     }
+    //강도함수
+    public void inrush(int productId, int quantity) {
+        try {
+            // 감소할 수량을 음수로 저장 (로그 기록)
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
+                    "VALUES (0, ?, ?, '강도에 의한 재고 감소')";
+            //
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, productId);
+            ps.setInt(2, -quantity);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("강도 침입 처리 중 오류 발생: " + e);
+        }
+    }
 
 }
