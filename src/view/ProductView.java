@@ -49,7 +49,6 @@ public class ProductView {
 
     // private 생성자로 외부에서의 인스턴스 생성을 방지
     private ProductView() {
-
     }
 
     // 싱글톤 인스턴스를 반환하는 메서드
@@ -57,13 +56,46 @@ public class ProductView {
         return pView;
     }
 
-    public void start(){}
+
+
+    public  void start(){
+        System.out.print(
+
+                "         ____________________________\n" +
+                        "       .'                  '----'  '.\n" +
+                        "      . \"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\" .\n" +
+                        "     .   .\"\"\"\"\"\".   .--\"\"\"\"\"\"\"\"\"\"-,   .\n" +
+                        "    . \"\"\".       \"\"'  .--\"\"\"\"\"--.. \"\"\" .\n" +
+                        "   .\"\"\"\"\"'-\"\"\"\"\"-  .-'   |\"|\"|   .'\"\"\"\"\".\n" +
+                        "  .   .''.'.     .'      |\"|\"|    .      .\n" +
+                        "  '._( ()   \\\"\"\".  _     _\"\"\"  _   .____.'\n" +
+                        "    |.'.  ()'   ' --------------------.|\n" +
+                        "    ||  '--'\"\"\"\"\"'          |         ||\n" +
+                        "    ||    '.------'     |\"\"|\"\"|\"\"|    ||\n" +
+                        "    ||     |.-.-.||-----|--|--|--|----||\n" +
+                        "    ||     || | |||     |__|_-\"-_|    ||\n" +
+                        "    ||     ||_|_|||    .-\"-\" ()  '.   ||\n" +
+                        "    || .--.| [-] ||   .' ()     () .  ||\n" +
+                        "    |.'    '.    || .'\"\"\"\"\"\"\"\"\"\"\"\"\"'. ||\n" +
+                        "    |: ()   |    ||--\\mga   .   .  /---|\n" +
+                        "    /    () \\____||___\\___________/____|\n" +
+                        "    '-------'\n");
+        System.out.print("1. 시작하기 ");   System.out.println("2. 종료");
+        System.out.print("선택하세요: ");
+        int choice = scan.nextInt();
+        if (choice ==1){
+            index();
+        }else {
+            return;
+        }
+    }
+
 
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
         // 인사말 출력
-        System.out.println(YELLOW + "\n          (/ΩΩ/)\n" +
+        System.out.print(YELLOW + "\n          (/ΩΩ/)\n" +
                                    "　     　 / •• /\n" +
                                    "　　    　(＿ノ |  " + GREEN + "어서오세요 jSS\n" + YELLOW +
                                    "　　    　　 |　|" + GREEN + "       편의점 입니다!★\n" + YELLOW +
@@ -198,7 +230,7 @@ public class ProductView {
 
     // 5 - 재고 삭제 메서드
     // 수정이 필요한 메서드입니다 (세원 코멘트)
-    public boolean pDelete() {
+    public void pDelete() {
         // 삭제할 제품 번호를 입력받기
         System.out.println("삭제 페이지");
         System.out.print("삭제할 제품번호를 입력해주세요: ");
@@ -210,10 +242,8 @@ public class ProductView {
         // 삭제 결과에 따른 메시지 출력
         if (result) {
             System.out.println("삭제 성공!");
-            return true;
         } else {
             System.out.println("삭제 실패");
-            return false;
         }
     } // 5 - 재고 삭제 메서드 end
 
@@ -236,7 +266,21 @@ public class ProductView {
         displayTotalSalesAndBalance(); // 총 매출액 출력
         // 승리조건
         if (turn >= 100){ System.out.println("게임 승리"); }
+
+        // 이벤트 함수( 강도 )
+            // 1. 난수
+        int rand = new Random().nextInt(100)+1; // 1 ~ 100 난수 생성
+            // 2. 1~100 중 50 이하 이면 5:5
+        if( rand <= 30 ){ inrush ();  }
+        else{
+            // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
+            PcController.getInstance().processPurchaseAndSales(turn);
+            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+            simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
+            displayTotalSalesAndBalance(); // 총 매출액 출력
+        }
         turn++; // 턴 증가
+        lose();
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
@@ -279,7 +323,7 @@ public class ProductView {
     } // 99.1 - 손님 방문 메서드 end
 
     // 99.2 - 이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
-    //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
+    //어떤 상품을, 몇개 빼앗아 가는지 inventory log 기록 함수를 사용해서 하기
     public void inrush() {
 
         System.out.println("강도가 침입했습니다!");
@@ -299,7 +343,7 @@ public class ProductView {
             } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
                 System.out.printf(
                         "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
-                        productName);return; //초기화면으로 돌아가기
+                        productName);gameOver();//초기화면으로 돌아가기
             }
             // 강도 함수 호출
             PcController.getInstance().inrush(); //PcController의 inrush를 호출함
@@ -319,6 +363,46 @@ public class ProductView {
         System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
+
+
+    //패배조건 : 10개 물품의 재고가 0개되면 탈락
+    public  void lose(){
+
+        int ZeroInventory = 0; //현재 재고가 0인 상품의 개수를 세는 변수 ZeroInventory 0으로 초기화
+
+        int totalProductTypes = PcController.getInstance().getProductTypeCount();
+        //PcController에 등록된 상품 종류 수 반환 메서드 getProductTypeCount 를 참조하여  상품 종류 수를 반복하여 처리하거나,
+        // 특정 상품의 재고를 확인하는 totalProductTypes에 대입
+
+        for (int i = 1; i <= totalProductTypes; i++) {
+            int inventory = PcController.getInstance().checkInventory(i);
+            //재고 확인 메서드의(checkInventory) i번째에 있는 물품의 수를  inventory 변수에 대입
+            //inventory 변수에는 PcController 클래스를 통해 조회한 특정 상품의 재고가 할당
+
+            if (inventory == 0) {//만약에 재고가 없다면
+                ZeroInventory++; //재고가 0인 상품의 개수를 세기 위해 ( 몇종류의 재고가 0인지 카운트)
+                if (ZeroInventory >= 10) { //재고 종류가 10개 이상이면
+                    gameOver(); // 패배 조건 충족 시 게임 오버 처리
+                    return; //초기화면으로 돌아가기
+                }
+            }//if end
+        }//for end
+    }//lose end
+
+    private void gameOver() { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
+        System.out.println("게임 오버: 10개의 물품 재고가 모두 소진되었습니다.");
+        System.out.println("   ______    ______   __       __  ________         ______   __     __  ________  _______  \n" +
+                        " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
+                        "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
+                        "$$ | _$$/ $$ |__$$ |$$$  \\ /$$$ |$$ |__          $$ |  $$ |$$ |   $$ |$$ |__    $$ |__$$ |\n" +
+                        "$$ |/    |$$    $$ |$$$$  /$$$$ |$$    |         $$ |  $$ |$$  \\ /$$/ $$    |   $$    $$< \n" +
+                        "$$ |$$$$ |$$$$$$$$ |$$ $$ $$/$$ |$$$$$/          $$ |  $$ | $$  /$$/  $$$$$/    $$$$$$$  |\n" +
+                        "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
+                        "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
+                        " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
+        System.exit(0); // 게임 종료
+
+    }//게임오버 함수 end
 
 
 } // ProductView 클래스 종료
