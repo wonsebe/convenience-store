@@ -2,6 +2,8 @@ package controller;
 
 import model.dao.InventoryDao;
 import model.dao.ProductDao;
+import model.dao.SalesDao;
+import model.dao.StoreDao;
 import model.dto.InventoryLog;
 import model.dto.Products;
 

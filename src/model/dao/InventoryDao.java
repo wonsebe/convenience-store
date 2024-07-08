@@ -180,7 +180,7 @@ public class InventoryDao {
                 product.setExpiryTurns(expiryTurns);
 
 
-                System.out.println(product);
+
                 list.add(product);
             }
         } catch (Exception e) {

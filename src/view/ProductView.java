@@ -276,19 +276,11 @@ public class ProductView {
     // 99.2 - 이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
     //어떤 상품을 몇개 몇 턴수에 빼앗아 가는지 ,inventory log 기록 함수를 사용해서 하기?
     public void inrush() {
+
         System.out.println("강도가 침입했습니다!");
-    } // 99.2 - 강도 침입 메서드 end
         //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
         ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
 
-
-    // 턴의 총 매출액과 잔고를 구하는 메서드
-    public void displayTotalSalesAndBalance() {
-        int totalSales = PcController.getInstance().getLastTurnTotalSales();
-        int storeBalance = PcController.getInstance().getStoreBalance();
-        System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
-        System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
-    } // 턴의 총 매출액과 잔고를 구하는 메서드 end
         //still 리스트에 있는 각 인벤토리 로그를 순회하면서, 각각의 상품에 대해 이름과 재고를 확인
         for (InventoryLog stills : still) { //still 리스트에서 InventoryLog 객체를 하나씩 가져와서 stills라는 변수에 할당
             String productName = PcController.getInstance().getProductName(stills.getProductId());
@@ -310,6 +302,17 @@ public class ProductView {
         } //for end
 
     }//강도함수 end
+
+ // 99.2 - 강도 침입 메서드 end
+
+
+    // 턴의 총 매출액과 잔고를 구하는 메서드
+    public void displayTotalSalesAndBalance() {
+        int totalSales = PcController.getInstance().getLastTurnTotalSales();
+        int storeBalance = PcController.getInstance().getStoreBalance();
+        System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
+        System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
+    } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
 
 
