@@ -178,14 +178,12 @@ public class InventoryDao {
                 int productid = rs.getInt("product_id");
                 String name = rs.getString("name");
                 int price = rs.getInt("price");
-                int stock = rs.getInt("stock");
                 int expiryTurns = rs.getInt("expiry_turns");
 
                 Products product = new Products();  // 302번지 객체 // 402번지 객체 // 502번지 객체
                 product.setProductId(productid);
                 product.setName(name);
                 product.setPrice(price);
-                product.setStock(stock);
                 product.setExpiryTurns(expiryTurns);
 
                 list.add(product); // 302번지 객체  // 402번지 객체 // 502번지 객체

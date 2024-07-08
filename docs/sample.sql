@@ -16,7 +16,8 @@ CREATE TABLE products
     product_id   INT AUTO_INCREMENT PRIMARY KEY, -- 제품 ID, 기본 키
     name         VARCHAR(20) NOT NULL,           -- 제품 이름, NULL 불가
     price        INT         NOT NULL,           -- 제품 가격, NULL 불가
-    expiry_turns INT         NOT NULL            -- 유통기한 (턴 단위), NULL 불가
+    expiry_turns INT         NOT NULL           -- 유통기한 (턴 단위), NULL 불가
+
 );
 
 -- 재고 로그 테이블 생성
@@ -56,7 +57,7 @@ INSERT INTO store_balance (balance, game_turn)
 VALUES (1000000, 1);
 
 -- Products 테이블 샘플 데이터
-INSERT INTO products (product_id, name, price, expiry_turns , stock)
+INSERT INTO products (product_id, name, price, expiry_turns )
 VALUES (1, '삼각김밥', 1200, 5 ),
            (2, '초코파이', 1500, 10 ),
            (3, '새우깡', 1300, 20),
@@ -120,4 +121,5 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 28, 15, '초기 입고'), -- 피자
        (1, 29, 10, '초기 입고'), -- 닭강정
        (1, 30, 20, '초기 입고'); -- 고구마튀김
+
 

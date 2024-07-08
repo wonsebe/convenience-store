@@ -7,7 +7,7 @@ public class Products {
     private String name;        // 상품의 이름
     private int price;          // 상품의 가격
     private int expiryTurns;    // 상품의 유통기한 (턴 단위)
-    private int stock;          // 재고
+    private int stock;
 
     // 기본 생성자, 모든 필드를 기본값으로 초기화
     public Products() {

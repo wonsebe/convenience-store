@@ -1,14 +1,13 @@
 package view;
 
 import controller.PcController;
+import model.dao.StoreDao;
 import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
+import java.util.*;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
 // 싱글톤 패턴을 사용해 구현
@@ -264,10 +263,10 @@ public class ProductView {
         // 삭제 결과에 따른 메시지 출력
         if (result) {
             System.out.println("삭제 성공!");
-            return true;
+
         } else {
             System.out.println("삭제 실패");
-            return false;
+
         }
     } // 5 - 재고 삭제 메서드 end
 
@@ -277,17 +276,16 @@ public class ProductView {
         System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
         result.forEach(dto -> {
             System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
+
         });
+
     } // 6 - 물품 확인 메서드 end
 
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
         // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
-        PcController.getInstance().processPurchaseAndSales(turn);
-        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
-        simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
-        displayTotalSalesAndBalance(); // 총 매출액 출력
+
         // 승리조건
         if (turn >= 100){ System.out.println("게임 승리"); }
 

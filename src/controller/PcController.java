@@ -75,7 +75,7 @@ public class PcController {
             // - 제품수량에 대한 구매 혹은 판매에 대한 누적 값 구하기
             int stock = InventoryDao.getInstance().stock(products.getProductId()); // i번째 레코드의 제품번호의 재고 수량 계산
             // i번째 레코드의 제품번호 객체의 재고 수량 대입
-            products.setStock( stock );
+            products.setStock(stock);
         }
         return result;
     } // 6 - 물품 확인 메서드 end
