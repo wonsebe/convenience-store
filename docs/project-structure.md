@@ -2,8 +2,11 @@
 convenience-store
 │
 ├── docs
+│ ├── convenience-store.ico
+│ ├── er-diagram.md
+│ ├── tasks.md
 │ ├── sample.sql
-│ └── folder-structure.md
+│ └── project-structure.md
 │
 ├── src
 │ ├── controller
