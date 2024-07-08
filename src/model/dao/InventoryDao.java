@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+// 편의점 재고 관리를 위한 Data Access Object (DAO) 클래스
+// 재고 확인, 구매, 삭제 등
 public class InventoryDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final InventoryDao iDao = new InventoryDao();
@@ -38,13 +40,28 @@ public class InventoryDao {
         return iDao;
     }
 
-    // 1 - 재고 구매 메서드 (미구현)
-    public boolean supplyRestock(int pId, int quantity, int orderFunds, int turn) {
+    // 1 - 재고 구매 메서드
+    public void supplyRestock(int pId, int quantity, int turn) {
         InventoryLog inventoryLog = null;
-        StoreDao.getInstance().updateBalance(orderFunds, turn);
-        // 돈이 있으면 제품 번호, 수량을 DAO에 전달하고 잔고를 깍는다
+        try {
+            //
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES (?, ?, ?, '재고 입고')";
 
-        return false;
+            // PreparedStatement 객체 생성
+            // RETURN_GENERATED_KEYS를 사용하여 자동 생성된 키 값을 얻을 수 있게 설정
+            ps = conn.prepareStatement(sql);
+
+            // 쿼리 파라미터 설정
+            ps.setInt(1, turn);  // 현재 게임 턴(날짜)
+            ps.setInt(2, pId);  // 구매한 상품의 ID
+            ps.setInt(3, quantity);  // 상품 입고
+
+            ps.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("재고 구매 처리 중 오류 발생: " + e);
+        }
+
+
     } // 1 - 재고 구매 메서드 end
 
     // 턴넘기면 손님 방문 및 상품 구매 메서드
@@ -74,7 +91,7 @@ public class InventoryDao {
                 price = priceRs.getInt("price");
             }
 
-            // 재고 로그에 구매 기록 추가
+            // 재고 로그에 손님 구매 기록 추가
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price) VALUES (?, ?, ?, '판매', ?)";
 
             // PreparedStatement 객체 생성
@@ -104,10 +121,9 @@ public class InventoryDao {
                     inventoryLog = new InventoryLog(logId, turn, productId, -quantity, "판매", price * quantity);
                 }
             }
-
         } catch (Exception e) {
             // 예외 발생 시 에러 메시지 출력
-            System.out.println("구매 처리 중 오류 발생: " + e);
+            System.out.println("손님 구매 처리 중 오류 발생: " + e);
         }
 
         // 생성된 inventoryLog 객체 반환 (오류 발생 시 null일 수 있음)
@@ -189,7 +205,6 @@ public class InventoryDao {
                 list.add(product); // 302번지 객체  // 402번지 객체 // 502번지 객체
 
 
-
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -197,6 +212,7 @@ public class InventoryDao {
         return list;
 
     }
+
     //강도함수
     public void inrush(int productId, int quantity) {
         try {
@@ -214,20 +230,21 @@ public class InventoryDao {
     }
 
     // 재고 구하기
-    public int stock(int product_id){
+    public int stock(int product_id) {
         try {
             String sql = "select * from inventory_log where product_id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, product_id);
             rs = ps.executeQuery();
             int sum = 0;
-            while (rs.next()){
+            while (rs.next()) {
                 sum += rs.getInt(4);
             }
             return sum;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
-        }return 0;
+        }
+        return 0;
     }
 
 }

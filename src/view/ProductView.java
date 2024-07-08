@@ -1,13 +1,13 @@
 package view;
 
 import controller.PcController;
-import model.dao.StoreDao;
-import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
-import java.util.*;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Random;
+import java.util.Scanner;
 
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
 // 싱글톤 패턴을 사용해 구현
@@ -56,8 +56,7 @@ public class ProductView {
     }
 
 
-
-    public  void start(){
+    public void start() {
         System.out.print(
 
                 "         ____________________________\n" +
@@ -79,12 +78,13 @@ public class ProductView {
                         "    |: ()   |    ||--\\mga   .   .  /---|\n" +
                         "    /    () \\____||___\\___________/____|\n" +
                         "    '-------'\n");
-        System.out.print("1. 시작하기 ");   System.out.println("2. 종료");
+        System.out.print("1. 시작하기 ");
+        System.out.println("2. 종료");
         System.out.print("선택하세요: ");
         int choice = scan.nextInt();
-        if (choice ==1){
+        if (choice == 1) {
             index();
-        }else {
+        } else {
             System.out.println("게임종료");
         }
     }
@@ -95,19 +95,19 @@ public class ProductView {
     public void index() {
         // 인사말 출력
         System.out.print(YELLOW + "\n          (/ΩΩ/)\n" +
-                                   "　     　 / •• /\n" +
-                                   "　　    　(＿ノ |  " + GREEN + "어서오세요 jSS\n" + YELLOW +
-                                   "　　    　　 |　|" + GREEN + "       편의점 입니다!★\n" + YELLOW +
-                                   "　　    　　 |　|\n" +
-                                   "　　    　 __|　|＿\n" +
-                                   "　    　　/ヘ　　/ )\n" +
-                                   "　　    　L ニニコ/\n" +
-                                   "　　    　|￣￣￣ |\n" +
-                                   "　　    　|　　 　|――≦彡\n" +
-                                   "　　    　|　∩　 |\n" +
-                                   "　　    　|　||　|\n" +
-                                   "　　    　|　||　|\n" +
-                                   "　　    　|二||二|\n" + RESET);
+                                 "　     　 / •• /\n" +
+                                 "　　    　(＿ノ |  " + GREEN + "어서오세요 jSS\n" + YELLOW +
+                                 "　　    　　 |　|" + GREEN + "       편의점 입니다!★\n" + YELLOW +
+                                 "　　    　　 |　|\n" +
+                                 "　　    　 __|　|＿\n" +
+                                 "　    　　/ヘ　　/ )\n" +
+                                 "　　    　L ニニコ/\n" +
+                                 "　　    　|￣￣￣ |\n" +
+                                 "　　    　|　　 　|――≦彡\n" +
+                                 "　　    　|　∩　 |\n" +
+                                 "　　    　|　||　|\n" +
+                                 "　　    　|　||　|\n" +
+                                 "　　    　|二||二|\n" + RESET);
 
         while (true) {
             // 현재 모든 상품의 재고 상태를 출력 (비활성화)
@@ -142,13 +142,13 @@ public class ProductView {
 
                 // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
                 switch (choice) {
-                    case 1 -> System.out.println("재고 구매 기능은 아직 구현되지 않았습니다.");  // 재고 구매 (미구현)
+                    case 1 -> supplyRestock();  // 재고 구매
                     case 2 -> displayInventory();  // 재고 확인
                     case 3 -> addProduct();  // 상품 추가
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush (); //강도 침입 함수
+                    case 7 -> inrush(); //강도 침입 함수
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
@@ -163,7 +163,7 @@ public class ProductView {
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
 
-    // 1 - 재고 구매 메서드 (미구현)
+    // 1 - 재고 구매 메서드
     public void supplyRestock() {
         // 구매할 제품 번호를 입력한다
         System.out.println("입고할 제품 번호를 입력하세요.");
@@ -173,21 +173,11 @@ public class ProductView {
         System.out.println("입고할 수량을 입력하세요.");
         System.out.print(">>");
         int quantity = scan.nextInt();
-        int orderFunds = pId * quantity;
-        // 편의점 자금이 부족하면 구매 불가를 출력한다
-        if (orderFunds >= StoreDao.getInstance().getBalance()) {
-            System.out.println("구매할 자금이 부족합니다.");
-        } else {
-            // 돈이 있으면 컨트롤러의 supplyRestock() 함수 호출
-            // 매개변수는 pId, quantity, orderFunds
-            boolean result = PcController.getInstance().supplyRestock(pId, quantity, orderFunds, turn);
-            if (result) {
-                System.out.println("구매 완료!");
-            }
-        }
+        // 제품번호와 수량을 컨트롤러에 넘겨 여러 절차를 검증한다
+        String result = PcController.getInstance().supplyRestock(pId, quantity, turn);
 
-
-        // 구입가는 판매가의 70% 가격
+        // 절차 검증이 완료되고 해당하는 결과 문자열 출력
+        System.out.println(result);
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드
@@ -199,7 +189,6 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
-  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -285,24 +274,25 @@ public class ProductView {
     public void processTurn() {
         System.out.println(turn + "번째 턴을 진행합니다.");
         // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
+        PcController.getInstance().processPurchaseAndSales(turn);
+        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+        simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
+        displayTotalSalesAndBalance(); // 총 매출액 출력
 
         // 승리조건
-        if (turn >= 100){ System.out.println("게임 승리"); }
+        if (turn >= 100) {
+            System.out.println("게임 승리");
+        }
 
         // 이벤트 함수( 강도 )
-            // 1. 난수
-        int rand = new Random().nextInt(100)+1; // 1 ~ 100 난수 생성
-            // 2. 1~100 중 50 이하 이면 5:5
-        if( rand <= 30 ){ inrush ();  }
-        else{
-            // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
-            PcController.getInstance().processPurchaseAndSales(turn);
-            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
-            simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
-            displayTotalSalesAndBalance(); // 총 매출액 출력
+        // 1. 난수
+        int rand = new Random().nextInt(100) + 1; // 1 ~ 100 난수 생성
+        // 2. 1~100 중 50 이하 이면 5:5
+        if (rand <= 30) {
+            inrush();
         }
         turn++; // 턴 증가
-        lose();
+        checkLoseCondition();
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
@@ -366,7 +356,9 @@ public class ProductView {
             } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
                 System.out.printf(
                         "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
-                        productName);gameOver();//초기화면으로 돌아가기
+                        productName
+                );
+                gameOver();//초기화면으로 돌아가기
             }
             // 강도 함수 호출
             PcController.getInstance().inrush(); //PcController의 inrush를 호출함
@@ -375,7 +367,7 @@ public class ProductView {
 
     }//강도함수 end
 
- // 99.2 - 강도 침입 메서드 end
+    // 99.2 - 강도 침입 메서드 end
 
 
     // 턴의 총 매출액과 잔고를 구하는 메서드
@@ -387,9 +379,8 @@ public class ProductView {
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
 
-
     //패배조건 : 10개 물품의 재고가 0개되면 탈락
-    public  void lose(){
+    public void checkLoseCondition() {
 
         int ZeroInventory = 0; //현재 재고가 0인 상품의 개수를 세는 변수 ZeroInventory 0으로 초기화
 
@@ -415,14 +406,14 @@ public class ProductView {
     private void gameOver() { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
         System.out.println("게임 오버: 10개의 물품 재고가 모두 소진되었습니다.");
         System.out.println("   ______    ______   __       __  ________         ______   __     __  ________  _______  \n" +
-                        " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
-                        "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
-                        "$$ | _$$/ $$ |__$$ |$$$  \\ /$$$ |$$ |__          $$ |  $$ |$$ |   $$ |$$ |__    $$ |__$$ |\n" +
-                        "$$ |/    |$$    $$ |$$$$  /$$$$ |$$    |         $$ |  $$ |$$  \\ /$$/ $$    |   $$    $$< \n" +
-                        "$$ |$$$$ |$$$$$$$$ |$$ $$ $$/$$ |$$$$$/          $$ |  $$ | $$  /$$/  $$$$$/    $$$$$$$  |\n" +
-                        "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
-                        "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
-                        " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
+                                   " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
+                                   "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
+                                   "$$ | _$$/ $$ |__$$ |$$$  \\ /$$$ |$$ |__          $$ |  $$ |$$ |   $$ |$$ |__    $$ |__$$ |\n" +
+                                   "$$ |/    |$$    $$ |$$$$  /$$$$ |$$    |         $$ |  $$ |$$  \\ /$$/ $$    |   $$    $$< \n" +
+                                   "$$ |$$$$ |$$$$$$$$ |$$ $$ $$/$$ |$$$$$/          $$ |  $$ | $$  /$$/  $$$$$/    $$$$$$$  |\n" +
+                                   "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
+                                   "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
+                                   " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
         System.exit(0); // 게임 종료
 
     }//게임오버 함수 end

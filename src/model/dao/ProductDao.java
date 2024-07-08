@@ -4,6 +4,8 @@ import model.dto.Products;
 
 import java.sql.*;
 
+// 편의점 상품 관리를 위한 Data Access Object (DAO) 클래스
+// 상품 정보 조회, 추가, 수정 등
 public class ProductDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final ProductDao pDao = new ProductDao();
@@ -32,6 +34,12 @@ public class ProductDao {
     public static ProductDao getInstance() {
         return pDao;
     } // 싱글톤 인스턴스 반환 메서드 end
+
+    // 요청한 상품의 가격을 반환하는 메서드
+    public int getProductPrice(int productId) {
+
+        return 0;
+    }
 
     // 상품 이름 조회 메서드
     public String getProductName(int productId) {
