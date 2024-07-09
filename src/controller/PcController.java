@@ -1,14 +1,13 @@
 package controller;
 
-import model.dao.InventoryDao;
-import model.dao.ProductDao;
-import model.dao.SalesDao;
-import model.dao.StoreDao;
+import model.dao.*;
+import model.dto.BoardDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 // 편의점 시뮬레이션 게임의 핵심 로직을 관리하는 컨트롤러 클래스
@@ -18,9 +17,11 @@ public class PcController {
     private static final PcController pControl = new PcController();
     private static final int RENT_AMOUNT = 300000; // 월세 금액
     private static final int RENT_INTERVAL = 5; // 월세 납부 주기 (턴)
+    private final GameSaveDao gameSaveDao = GameSaveDao.getInstance();
     private int productTypeCount; // 등록된 상품 종류의 수를 저장
     private int lastTurnTotalSales; // 마지막 턴의 총 매출액을 저장
     private int storeBalance; // 편의점 현금
+    private String currentLoginId;
 
     // private 생성자. 외부에서 인스턴스 생성 방지
     // 초기화 시 등록된 상품 종류의 수 조회
@@ -34,6 +35,53 @@ public class PcController {
     // 싱글톤 인스턴스 반환 메서드
     public static PcController getInstance() {
         return pControl;
+    }
+
+    public void saveGameState() {
+        GameState gameState = new GameState(
+                turn,
+                new ArrayList<>(/* 현재 재고 로그 */),
+                storeBalance,
+                new ArrayList<>(/* 현재 공지사항 */)
+        );
+        gameSaveDao.saveGame(currentLoginId, gameState);
+    }
+
+    public void loadGameState() {
+        GameState gameState = gameSaveDao.loadGame(currentLoginId);
+        if (gameState != null) {
+            this.turn = gameState.getCurrentTurn();
+            this.storeBalance = gameState.getStoreBalance();
+
+            // 재고 로그 복원
+            List<InventoryLog> inventoryLogs = gameState.getInventoryLogs();
+            // 여기서 inventoryLogs를 사용하여 현재 재고 상태를 업데이트
+            updateInventoryFromLogs(inventoryLogs);
+
+            // 공지사항 복원
+            List<BoardDto> boardNotices = gameState.getBoardNotices();
+            updateBoardNotices(boardNotices);
+
+            // 상품 정보 복원 (만약 상품 정보가 GameState에 포함되어 있다면)
+            if (gameState.getProducts() != null) {
+                updateProducts(gameState.getProducts());
+            }
+
+            // 마지막 턴 매출액 복원
+            this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
+
+            // 등록된 상품 종류 수 복원
+            this.productTypeCount = gameState.getProductTypeCount();
+
+            // 기타 필요한 게임 상태 변수들 복원
+            // 예: 이벤트 상태, 특별 조건 등
+            restoreAdditionalGameStates(gameState);
+
+            System.out.println("게임 상태가 성공적으로 로드되었습니다. 현재 턴: " + this.turn);
+        } else {
+            System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
+            initializeNewGame();
+        }
     }
 
     // 1 - 재고 구매 메서드
@@ -169,6 +217,8 @@ public class PcController {
         // 잔고 업데이트
         this.storeBalance += totalSales;
         StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+        // 턴이 끝날 때마다 게임 상태 저장, 맨 마지막에 있어야 함 (메서드 수정시 주의)
+        saveGameState();
     } // 구매 처리, 총 매출 계산, 매출 저장, 잔고 저장 end
 
     // 마지막 턴 매출액 가져오기

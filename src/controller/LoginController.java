@@ -2,7 +2,6 @@ package controller;
 
 import model.dao.LoginDao;
 import model.dto.AccountDto;
-import util.InputValidator;
 
 public class LoginController {
     private static final LoginController loginCon = new LoginController();
@@ -15,15 +14,10 @@ public class LoginController {
     }
 
     public boolean login(String loginId, String loginPwd) {
-        if (!InputValidator.isValidInput(loginId, loginPwd)) {
-            System.out.println("Invalid username or password.");
-            return false;
+        if (LoginDao.getInstance().login(new AccountDto(loginId, loginPwd))) {
+            PcController.getInstance().setCurrentLoginId(loginId);
+            return true;
         }
-
-        AccountDto account = new AccountDto();
-        account.setLoginId(loginId);
-        account.setLoginPwd(loginPwd);
-
-        return LoginDao.getInstance().login(account);
+        return false;
     }
 }

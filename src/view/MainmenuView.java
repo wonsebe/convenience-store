@@ -1,6 +1,7 @@
 package view;
 
 import controller.LoginController;
+import controller.PcController;
 import controller.SignupController;
 import util.ColorUtil;
 
@@ -87,8 +88,8 @@ public class MainmenuView {
         // LoginController를 통해 로그인 시도
         boolean loginSuccess = LoginController.getInstance().login(id, password);
         if (loginSuccess) {
-            // 로그인 성공 시 메시지 출력 및 ProductView로 이동
             System.out.println(ColorUtil.getColor("GREEN") + "로그인 성공!" + ColorUtil.getColor("RESET"));
+            PcController.getInstance().loadGameState();  // 로그인 성공 후 게임 상태 로드
             ProductView.getInstance().index();
         } else {
             // 로그인 실패 시 오류 메시지 출력

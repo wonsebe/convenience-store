@@ -35,6 +35,8 @@ public class ProductView {
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
+        // 아래는 index() 메서드 시작시 맨 처음에 있어야 함 (수정시 주의)
+        PcController.getInstance().loadGameState();  // 게임 시작 시 상태 로드
         // 인사말 출력
         System.out.print(ColorUtil.getColor("YELLOW") + "\n          (/ΩΩ/)\n" +
                                  "　     　 / •• /\n" +
@@ -259,6 +261,8 @@ public class ProductView {
 
         turn++; // 턴 증가
         checkLoseCondition();
+        // 이 메서드 내에서 이미 게임 상태가 저장됨
+        PcController.getInstance().processPurchaseAndSales(turn);
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
