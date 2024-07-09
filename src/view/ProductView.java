@@ -78,15 +78,29 @@ public class ProductView {
                         "    |: ()   |    ||--\\mga   .   .  /---|\n" +
                         "    /    () \\____||___\\___________/____|\n" +
                         "    '-------'\n");
-        System.out.print("1. 시작하기 ");
-        System.out.println("2. 종료");
-        System.out.print("선택하세요: ");
+        System.out.println("1:로그인 / 2:회원가입 / 3:게임종료");
+        System.out.print("번호선택 >> ");
         int choice = scan.nextInt();
-        if (choice == 1) {
-            index();
-        } else {
-            System.out.println("게임종료");
-            System.exit(0); // 게임 종료
+        switch (choice) {
+            case 1 -> { // 게임 로그인
+                // 아이디 입력
+
+                // 암호 입력
+
+                // Controller로 아이디와 암호 전송
+
+                // 아이디가 없으면 계정 없다고 출력
+
+                // 아이디가 있고 비밀번호가 잘못되었으면
+
+                //
+            }
+            case 2 -> { // 게임 회원가입 (계정생성)
+
+            }
+            case 3 -> { // 게임종료
+                System.exit(0);
+            }
         }
     }
 

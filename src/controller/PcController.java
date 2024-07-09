@@ -29,7 +29,6 @@ public class PcController {
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
         this.lastTurnTotalSales = 0;
         this.storeBalance = StoreDao.getInstance().getBalance();
-
     }
 
     // 싱글톤 인스턴스 반환 메서드
