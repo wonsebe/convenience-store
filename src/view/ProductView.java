@@ -2,13 +2,10 @@ package view;
 
 import controller.PcController;
 import model.dao.InventoryDao;
-import model.dao.InventoryDao;
-import model.dao.StoreDao;
-import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
+import util.ColorUtil;
 
-import java.util.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
@@ -17,31 +14,6 @@ import java.util.Scanner;
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
 // 싱글톤 패턴을 사용해 구현
 public class ProductView {
-    // ANSI 이스케이프 코드 (텍스트 색상)
-    public static final String RESET = "\u001B[0m";
-    public static final String BLACK = "\u001B[30m";
-    public static final String RED = "\u001B[31m";
-    public static final String GREEN = "\u001B[32m";
-    public static final String YELLOW = "\u001B[33m";
-    public static final String BLUE = "\u001B[34m";
-    public static final String PURPLE = "\u001B[35m";
-    public static final String CYAN = "\u001B[36m";
-    public static final String WHITE = "\u001B[37m";
-
-    // ANSI 이스케이프 코드 (배경 색상)
-    public static final String BLACK_BACKGROUND = "\u001B[40m";
-    public static final String RED_BACKGROUND = "\u001B[41m";
-    public static final String GREEN_BACKGROUND = "\u001B[42m";
-    public static final String YELLOW_BACKGROUND = "\u001B[43m";
-    public static final String BLUE_BACKGROUND = "\u001B[44m";
-    public static final String PURPLE_BACKGROUND = "\u001B[45m";
-    public static final String CYAN_BACKGROUND = "\u001B[46m";
-    public static final String WHITE_BACKGROUND = "\u001B[47m";
-
-    // ANSI 이스케이프 코드 (텍스트 스타일)
-    public static final String BOLD = "\u001B[1m";
-    public static final String UNDERLINE = "\u001B[4m";
-
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final ProductView pView = new ProductView();
 
@@ -60,68 +32,14 @@ public class ProductView {
         return pView;
     }
 
-
-
-    public  void start(){
-
-
-
-        System.out.print(
-
-                "         ____________________________\n" +
-                        "       .'                  '----'  '.\n" +
-                        "      . \"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\" .\n" +
-                        "     .   .\"\"\"\"\"\".   .--\"\"\"\"\"\"\"\"\"\"-,   .\n" +
-                        "    . \"\"\".       \"\"'  .--\"\"\"\"\"--.. \"\"\" .\n" +
-                        "   .\"\"\"\"\"'-\"\"\"\"\"-  .-'   |\"|\"|   .'\"\"\"\"\".\n" +
-                        "  .   .''.'.     .'      |\"|\"|    .      .\n" +
-                        "  '._( ()   \\\"\"\".  _     _\"\"\"  _   .____.'\n" +
-                        "    |.'.  ()'   ' --------------------.|\n" +
-                        "    ||  '--'\"\"\"\"\"'          |         ||\n" +
-                        "    ||    '.------'     |\"\"|\"\"|\"\"|    ||\n" +
-                        "    ||     |.-.-.||-----|--|--|--|----||\n" +
-                        "    ||     || | |||     |__|_-\"-_|    ||\n" +
-                        "    ||     ||_|_|||    .-\"-\" ()  '.   ||\n" +
-                        "    || .--.| [-] ||   .' ()     () .  ||\n" +
-                        "    |.'    '.    || .'\"\"\"\"\"\"\"\"\"\"\"\"\"'. ||\n" +
-                        "    |: ()   |    ||--\\mga   .   .  /---|\n" +
-                        "    /    () \\____||___\\___________/____|\n" +
-                        "    '-------'\n");
-        System.out.println("1:로그인 / 2:회원가입 / 3:게임종료");
-        System.out.print("번호선택 >> ");
-        int choice = scan.nextInt();
-        switch (choice) {
-            case 1 -> { // 게임 로그인
-                // 아이디 입력
-
-                // 암호 입력
-
-                // Controller로 아이디와 암호 전송
-
-                // 아이디가 없으면 계정 없다고 출력
-
-                // 아이디가 있고 비밀번호가 잘못되었으면
-
-                //
-            }
-            case 2 -> { // 게임 회원가입 (계정생성)
-
-            }
-            case 3 -> { // 게임종료
-                System.exit(0);
-            }
-        }
-    }
-
-
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
         // 인사말 출력
-        System.out.print(YELLOW + "\n          (/ΩΩ/)\n" +
+        System.out.print(ColorUtil.getColor("YELLOW") + "\n          (/ΩΩ/)\n" +
                                  "　     　 / •• /\n" +
-                                 "　　    　(＿ノ |  " + GREEN + "어서오세요 jSS\n" + YELLOW +
-                                 "　　    　　 |　|" + GREEN + "       편의점 입니다!★\n" + YELLOW +
+                                 "　　    　(＿ノ |  " + ColorUtil.getColor("GREEN") + "어서오세요 jSS\n" + ColorUtil.getColor("YELLOW") +
+                                 "　　    　　 |　|" + ColorUtil.getColor("GREEN") + "       편의점 입니다!★\n" + ColorUtil.getColor("YELLOW") +
                                  "　　    　　 |　|\n" +
                                  "　　    　 __|　|＿\n" +
                                  "　    　　/ヘ　　/ )\n" +
@@ -131,32 +49,29 @@ public class ProductView {
                                  "　　    　|　∩　 |\n" +
                                  "　　    　|　||　|\n" +
                                  "　　    　|　||　|\n" +
-                                 "　　    　|二||二|\n" + RESET);
+                                 "　　    　|二||二|\n" + ColorUtil.getColor("RESET"));
 
         while (true) {
-            // 현재 모든 상품의 재고 상태를 출력 (비활성화)
-            // displayInventory();
-
             // 사용자 행동 선택 메뉴 출력 및 입력 받기
-            System.out.print(CYAN + "1" + RESET + " - 재고 구매\t\t");
-            System.out.print(CYAN + "2" + RESET + " - 재고 확인\t\t");
-            System.out.print(CYAN + "3" + RESET + " - 상품 추가\t\t");
-            System.out.print(CYAN + "4" + RESET + " - 상품 수정\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "1" + ColorUtil.getColor("RESET") + " - 재고 구매\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "2" + ColorUtil.getColor("RESET") + " - 재고 확인\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "3" + ColorUtil.getColor("RESET") + " - 상품 추가\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "4" + ColorUtil.getColor("RESET") + " - 상품 수정\t\t");
             System.out.println();
-            System.out.print(CYAN + "5" + RESET + " - 재고 삭제\t\t");
-            System.out.print(CYAN + "6" + RESET + " - 물품 확인\t\t");
-            System.out.print(CYAN + "7" + RESET + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(CYAN + "8" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 재고 삭제\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 물품 확인\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
             System.out.println();
-            System.out.print(CYAN + "9" + RESET + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(CYAN + "10" + RESET + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(CYAN + "11" + RESET + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(CYAN + "12" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
             System.out.println();
 
             // 다음 턴 및 종료는 최하단에 표시
-            System.out.print("=============\t" + CYAN + "99" + RESET + " - 다음 턴\t\t");
-            System.out.print(CYAN + "100" + RESET + " - 게임 종료" + "\t=============");
+            System.out.print("=============\t" + ColorUtil.getColor("CYAN") + "99" + ColorUtil.getColor("RESET") + " - 다음 턴\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "100" + ColorUtil.getColor("RESET") + " - 게임 종료" + "\t=============");
             System.out.println();
 
             try {
@@ -172,11 +87,11 @@ public class ProductView {
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush (); //강도 침입 함수
+                    case 7 -> inrush(); //강도 침입 함수
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
-                        start(); // 메서드 종료
+                        MainmenuView.getInstance().start(); // 메인메뉴로 이동
                     }
                     default -> System.out.println("잘못된 선택입니다. 다시 선택해주세요."); // 잘못된 입력 처리
                 } // switch 끝
@@ -217,7 +132,6 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
-  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -315,15 +229,21 @@ public class ProductView {
         }
 
         // 승리조건
-        if (turn >= 100){ System.out.println("게임 승리"); }
+        if (turn >= 100) {
+            System.out.println("게임 승리");
+        }
 
         // 이벤트 함수( 강도 )
-            // 1. 난수
-        int randInrush = new Random().nextInt(99)+1; // 1 ~ 100 난수 생성
-        int randBread = new Random().nextInt(99)+1; // 1 ~ 100 난수 생성
-            // 2. 1~100 중 50 이하 이면 5:5
-        if( randInrush <= 30 ){ inrush ();  }
-        if (randBread <=30){bread();}
+        // 1. 난수
+        int randInrush = new Random().nextInt(99) + 1; // 1 ~ 100 난수 생성
+        int randBread = new Random().nextInt(99) + 1; // 1 ~ 100 난수 생성
+        // 2. 1~100 중 50 이하 이면 5:5
+        if (randInrush <= 30) {
+            inrush();
+        }
+        if (randBread <= 30) {
+            bread();
+        }
 
         turn++; // 턴 증가
         checkLoseCondition();
@@ -340,13 +260,13 @@ public class ProductView {
                 if (log.getQuantity() < InventoryDao.getInstance().checkInventory(log.getProductId())) {  // 구매 성공 시 quantity는 음수 값
                     if (currentInventory == 0) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), RED, currentInventory, RESET
+                                          productName, -log.getQuantity(), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
                     } else if (currentInventory <= 5) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), YELLOW, currentInventory, RESET
+                                          productName, -log.getQuantity(), ColorUtil.getColor("YELLOW"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
@@ -359,7 +279,7 @@ public class ProductView {
                     }
                 } else {
                     System.out.printf("손님이 %s을(를) 사려고 했으나 %s재고가 부족%s하여 구매하지 못했습니다. (현재 재고: %s%d%s)%n",
-                                      productName, RED, RESET, RED, currentInventory, RESET
+                                      productName, ColorUtil.getColor("RED"), ColorUtil.getColor("RESET"), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                     );
                     // null 뜰때 확인용 콘솔
                     // System.out.println(log);
@@ -373,16 +293,16 @@ public class ProductView {
     public void inrush() {
 
         System.out.println("＿人人人人人人人人人＿\n" +
-                "＞살금살금살금살금살금＜\n" +
-                "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
-                "\n" +
-                "　　　　ハ_ハ\n" +
-                "　／＼（´◔౪◔）／＼\n" +
-                "((⊂  ／＼　　　／＼  つ))\n" +
-                "　　　　)　　ノ\n" +
-                "　　　　(＿⌒ヽ\n" +
-                "　　　　ヽ  ヘ   |\n" +
-                "　　　　 ノノ  Ｊ\n");
+                                   "＞살금살금살금살금살금＜\n" +
+                                   "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
+                                   "\n" +
+                                   "　　　　ハ_ハ\n" +
+                                   "　／＼（´◔౪◔）／＼\n" +
+                                   "((⊂  ／＼　　　／＼  つ))\n" +
+                                   "　　　　)　　ノ\n" +
+                                   "　　　　(＿⌒ヽ\n" +
+                                   "　　　　ヽ  ヘ   |\n" +
+                                   "　　　　 ノノ  Ｊ\n");
         System.out.println("강도가 침입했습니다!");
         //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
         ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
@@ -393,7 +313,7 @@ public class ProductView {
             //해당 상품 ID에 대한 상품 이름을 가져옴 ,stills 객체가 가리키는 상품의 이름을   productName 문자열 변수에 할당
             int currentInventory = PcController.getInstance().checkInventory(stills.getProductId());
             //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
-            if (stills.getQuantity() < InventoryDao.getInstance().checkInventory(stills.getProductId())){ //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
+            if (stills.getQuantity() < InventoryDao.getInstance().checkInventory(stills.getProductId())) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
                 System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n ",
                                   //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
                                   productName, -stills.getQuantity(), currentInventory
@@ -419,11 +339,10 @@ public class ProductView {
         System.out.println("=========================================================");
         int totalSales = PcController.getInstance().getLastTurnTotalSales();
         int storeBalance = PcController.getInstance().getStoreBalance();
-        System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
-        System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
+        System.out.println(ColorUtil.getColor("YELLOW") + "이번 턴의 총 매출액: " + totalSales + "원" + ColorUtil.getColor("RESET"));
+        System.out.println(ColorUtil.getColor("GREEN") + "편의점 현재 잔고: " + storeBalance + "원" + ColorUtil.getColor("RESET"));
         System.out.println("=========================================================");
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
-
 
 
     //패배조건 : 10개 물품의 재고가 0개되면 탈락
@@ -451,7 +370,7 @@ public class ProductView {
     } // checkLoseCondition end
 
     public void gameOver(String reason) { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
-        System.out.println(ProductView.RED + "게임 오버: " + reason + ProductView.RESET);
+        System.out.println(ColorUtil.getColor("RED") + "게임 오버: " + reason + ColorUtil.getColor("RESET"));
         System.out.println("   ______    ______   __       __  ________         ______   __     __  ________  _______  \n" +
                                    " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
                                    "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
@@ -461,18 +380,16 @@ public class ProductView {
                                    "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
                                    "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
                                    " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
-        start(); // 초기화면으로 돌아감
+        MainmenuView.getInstance().start(); // 초기화면으로 돌아감
 
     }//게임오버 함수 end
 
 
     //굿이벤트 (포켓몬빵)
     //랜덤으로 포켓몬 빵이 들어오는 날이 오면 손님 50명이 우르르 몰려서 재고를 사는 함수
-    public void bread(){
+    public void bread() {
         System.out.println("포켓몬 빵이 들어왔습니다!");
         //편의점 포켓몬빵 입고
-
-
 
 
         // 손님 수를 랜덤으로 설정
@@ -484,7 +401,7 @@ public class ProductView {
             int productId = 120; // "포켓몬 빵" 상품 ID (가정)
 
             // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
-            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
+            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
 
             // 결과 출력
             for (InventoryLog log : logs) {
@@ -493,10 +410,12 @@ public class ProductView {
 
                 if (log.getQuantity() < 0) { // 구매 성공
                     System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
-                            productName, -log.getQuantity(), currentInventory);
+                                      productName, -log.getQuantity(), currentInventory
+                    );
                 } else { // 구매 실패 (재고 부족)
                     System.out.printf("%s을(를) 구매할 수 있는 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
-                            productName, currentInventory);
+                                      productName, currentInventory
+                    );
                 }
             }
         }

@@ -148,21 +148,4 @@ public class ProductDao {
         }
         return false;
     } // 물품 수정 메서드 end
-
-    // 요청한 상품의 가격을 반환하는 메서드
-    public int getProductPrice(int productId) {
-        int price = 0;
-        try {
-            String sql = "SELECT price FROM products WHERE product_id = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, productId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                price = rs.getInt("price");
-            }
-        } catch (SQLException e) {
-            System.out.println("상품 가격 조회 중 오류 발생: " + e);
-        }
-        return price;
-    }
 }

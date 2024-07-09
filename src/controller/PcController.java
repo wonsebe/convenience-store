@@ -6,7 +6,7 @@ import model.dao.SalesDao;
 import model.dao.StoreDao;
 import model.dto.InventoryLog;
 import model.dto.Products;
-import view.ProductView;
+import util.ColorUtil;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -47,7 +47,7 @@ public class PcController {
 
         // 편의점 자금이 부족하면 구매 불가를 출력한다
         if (orderFunds >= this.storeBalance) {
-            return ProductView.RED + "구매할 자금이 부족합니다." + ProductView.RESET;
+            return ColorUtil.getColor("RED") + "구매할 자금이 부족합니다." + ColorUtil.getColor("RESET");
         } else {
             // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
             int newBalance = this.storeBalance - orderFunds;
@@ -57,9 +57,9 @@ public class PcController {
                 this.storeBalance = newBalance; // 잔고 변경
                 // InventoryDao 에서 상품의 수량도 변경한다
                 InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
-                return ProductView.GREEN + "구매완료!" + ProductView.RESET;
+                return ColorUtil.getColor("GREEN") + "구매완료!" + ColorUtil.getColor("RESET");
             } else {
-                return ProductView.RED + "잔고 업데이트 실패. 다시 시도해주세요." + ProductView.RESET;
+                return ColorUtil.getColor("RED") + "잔고 업데이트 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET");
             }
         }
     } // 1 - 재고 구매 메서드 end
@@ -183,11 +183,11 @@ public class PcController {
                 this.storeBalance -= RENT_AMOUNT;
                 StoreDao.getInstance().updateBalance(this.storeBalance, turn);
                 System.out.println("=========================================================");
-                System.out.println(ProductView.YELLOW + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ProductView.RESET);
+                System.out.println(ColorUtil.getColor("YELLOW") + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ColorUtil.getColor("RESET"));
                 System.out.println("=========================================================");
                 return true;
             } else {
-                System.out.println(ProductView.RED + "월세를 낼 돈이 부족합니다. 게임 오버!" + ProductView.RESET);
+                System.out.println(ColorUtil.getColor("RED") + "월세를 낼 돈이 부족합니다. 게임 오버!" + ColorUtil.getColor("RESET"));
                 return false;
             }
         }
@@ -219,7 +219,7 @@ public class PcController {
     }
 
     //
-    public void bread(){
+    public void bread() {
 
 
     }
