@@ -265,9 +265,7 @@ public class ProductView {
         System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
         result.forEach(dto -> {
             System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
-
         });
-
     } // 6 - 물품 확인 메서드 end
 
     // 99 - 다음 턴 진행 메서드
