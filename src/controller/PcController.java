@@ -10,7 +10,7 @@ import util.ColorUtil;
 
 import java.util.ArrayList;
 import java.util.Random;
- 
+
 // 편의점 시뮬레이션 게임의 핵심 로직을 관리하는 컨트롤러 클래스
 // 싱글톤 패턴을 사용해 구현됨
 public class PcController {
@@ -223,4 +223,5 @@ public class PcController {
 
 
     }
+
 } // PcController 클래스 end

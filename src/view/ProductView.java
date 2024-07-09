@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
- 
+
 // 편의점 시뮬레이션 게임의 사용자 인터페이스를 담당하는 뷰 클래스
 // 싱글톤 패턴을 사용해 구현
 public class ProductView {
@@ -112,15 +112,27 @@ public class ProductView {
         System.out.println("입고할 수량을 입력하세요.");
         System.out.print(">>");
         int quantity = scan.nextInt();
-        // 제품번호와 수량을 컨트롤러에 넘겨 여러 절차를 검증한다
-        int previousBalance = PcController.getInstance().getStoreBalance();
-        String result = PcController.getInstance().supplyRestock(pId, quantity, turn);
+
+        // 현재 잔고 확인
         int currentBalance = PcController.getInstance().getStoreBalance();
 
-        // 절차 검증이 완료되고 해당하는 결과 문자열 출력
-        System.out.println(result);
-        System.out.println("이전 잔고: " + previousBalance + "원");
         System.out.println("현재 잔고: " + currentBalance + "원");
+        System.out.print("구매를 진행하시겠습니까? (y/n): ");
+
+        String confirm = scan.next().toLowerCase();
+        if (confirm.equals("y")) {
+            // 컨트롤러의 supplyRestock 메서드 호출
+            String result = PcController.getInstance().supplyRestock(pId, quantity, turn);
+
+            // 결과 출력
+            System.out.println(result);
+
+            // 구매 후 실제 잔고 출력
+            int newBalance = PcController.getInstance().getStoreBalance();
+            System.out.println("구매 후 실제 잔고: " + newBalance + "원");
+        } else {
+            System.out.println("구매가 취소되었습니다.");
+        }
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드

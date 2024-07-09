@@ -49,51 +49,68 @@ public class MainmenuView {
                         ColorUtil.getColor("RESET")
         );
 
+        // 사용자에게 로그인, 회원가입, 게임종료 옵션을 제시
         System.out.println(ColorUtil.getColor("CYAN") + "1:로그인 / 2:회원가입 / 3:게임종료" + ColorUtil.getColor("RESET"));
         System.out.print("번호선택 >> ");
+
+        // 사용자의 선택을 입력받음
         int choice = scan.nextInt();
+
+        // 사용자의 선택에 따라 다른 동작을 수행
         switch (choice) {
             case 1 -> {
-                handleLogin();
+                handleLogin(); // 로그인 처리
             }
             case 2 -> {
-                handleSignup();
+                handleSignup(); // 회원가입 처리
             }
             case 3 -> {
+                // 게임 종료 메시지 출력 후 프로그램 종료
                 System.out.println(ColorUtil.getColor("YELLOW") + "게임을 종료합니다. 안녕히 가세요!" + ColorUtil.getColor("RESET"));
                 System.exit(0);
             }
             default -> {
+                // 잘못된 입력에 대한 오류 메시지 출력
                 System.out.println(ColorUtil.getColor("RED") + "잘못된 선택입니다. 다시 선택해주세요." + ColorUtil.getColor("RESET"));
             }
         }
     }
 
     private void handleLogin() {
+        // 사용자로부터 아이디 입력 받기
         System.out.print("아이디: ");
         String id = scan.next();
+        // 사용자로부터 비밀번호 입력 받기
         System.out.print("비밀번호: ");
         String password = scan.next();
 
+        // LoginController를 통해 로그인 시도
         boolean loginSuccess = LoginController.getInstance().login(id, password);
         if (loginSuccess) {
+            // 로그인 성공 시 메시지 출력 및 ProductView로 이동
             System.out.println(ColorUtil.getColor("GREEN") + "로그인 성공!" + ColorUtil.getColor("RESET"));
             ProductView.getInstance().index();
         } else {
+            // 로그인 실패 시 오류 메시지 출력
             System.out.println(ColorUtil.getColor("RED") + "로그인 실패. 아이디 또는 비밀번호를 확인해주세요." + ColorUtil.getColor("RESET"));
         }
     }
 
     private void handleSignup() {
+        // 사용자로부터 새 아이디 입력 받기
         System.out.print("새로운 아이디: ");
         String id = scan.next();
+        // 사용자로부터 새 비밀번호 입력 받기
         System.out.print("새로운 비밀번호: ");
         String password = scan.next();
 
+        // SignupController를 통해 회원가입 시도
         boolean signupSuccess = SignupController.getInstance().signup(id, password);
         if (signupSuccess) {
+            // 회원가입 성공 시 성공 메시지 출력
             System.out.println(ColorUtil.getColor("GREEN") + "회원가입 성공! 로그인해주세요." + ColorUtil.getColor("RESET"));
         } else {
+            // 회원가입 실패 시 오류 메시지 출력
             System.out.println(ColorUtil.getColor("RED") + "회원가입 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET"));
         }
     }
