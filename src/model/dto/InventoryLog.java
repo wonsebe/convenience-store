@@ -1,5 +1,5 @@
 package model.dto;
-
+ 
 // 재고 로그 정보를 나타내는 데이터 전송 객체(DTO) 클래스
 // 이 클래스는 로그 ID, 게임 날짜, 상품 ID, 수량, 설명을 포함
 public class InventoryLog {

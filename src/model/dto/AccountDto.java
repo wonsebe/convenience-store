@@ -1,5 +1,5 @@
 package model.dto;
-
+ 
 public class AccountDto {
     // 멤버변수
     private int id;

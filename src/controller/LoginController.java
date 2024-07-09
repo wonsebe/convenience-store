@@ -1,18 +1,29 @@
 package controller;
 
+import model.dao.LoginDao;
+import model.dto.AccountDto;
+import util.InputValidator;
+
 public class LoginController {
-    // 싱글턴 인스턴스 생성
     private static final LoginController loginCon = new LoginController();
 
-    // 생성자
     private LoginController() {
-
     }
 
-    // 싱글턴 메서드 반환
     public static LoginController getInstance() {
         return loginCon;
     }
 
+    public boolean login(String loginId, String loginPwd) {
+        if (!InputValidator.isValidInput(loginId, loginPwd)) {
+            System.out.println("Invalid username or password.");
+            return false;
+        }
 
+        AccountDto account = new AccountDto();
+        account.setLoginId(loginId);
+        account.setLoginPwd(loginPwd);
+
+        return LoginDao.getInstance().login(account);
+    }
 }

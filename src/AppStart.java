@@ -1,7 +1,7 @@
 // ProductView 클래스를 import
 
 import view.MainmenuView;
-
+ 
 // 애플리케이션의 시작점을 정의하는 클래스
 public class AppStart {
     // 프로그램의 진입점 main 메서드

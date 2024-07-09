@@ -1,5 +1,5 @@
 package model.dto;
-
+ 
 public class BoardDto {
     private int bmo;
     private String bcontent;
@@ -7,8 +7,10 @@ public class BoardDto {
     private String store_id;
 
 
-    public BoardDto(){}
-    public BoardDto(int bmo , String bcontent, String bdate, String store_id ) {
+    public BoardDto() {
+    }
+
+    public BoardDto(int bmo, String bcontent, String bdate, String store_id) {
         this.bmo = bmo;
         this.bcontent = bcontent;
         this.bdate = bdate;
