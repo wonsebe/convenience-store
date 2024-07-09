@@ -6,6 +6,7 @@ import model.dao.SalesDao;
 import model.dao.StoreDao;
 import model.dto.InventoryLog;
 import model.dto.Products;
+import view.ProductView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,10 +34,32 @@ public class PcController {
         return pControl;
     }
 
-    // 1 - 재고 구매 메서드 (미구현)
-    public boolean supplyRestock(int pId, int quantity, int orderFunds, int turn) {
-        // 제품 번호, 수량, 구매자금을 전달한다
-        return InventoryDao.getInstance().supplyRestock(pId, quantity, orderFunds, turn);
+    // 1 - 재고 구매 메서드
+    public String supplyRestock(int pId, int quantity, int turn) {
+        // 구매할 제품의 소매가를 가져온다
+        int retailPrice = ProductDao.getInstance().getProductPrice(pId);
+        // 도매가를 계산한다. (소매가의 60%)
+        int wholeSalePrice = (int) (retailPrice * 0.6);
+        // 총 구매가격을 계산한다
+        int orderFunds = wholeSalePrice * quantity;
+
+        // 편의점 자금이 부족하면 구매 불가를 출력한다
+        if (orderFunds >= this.storeBalance) {
+            return ProductView.RED + "구매할 자금이 부족합니다." + ProductView.RESET;
+        } else {
+            // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
+            int newBalance = this.storeBalance - orderFunds;
+            this.storeBalance -= orderFunds;
+            boolean updateSuccess = StoreDao.getInstance().updateBalance(newBalance, turn);
+            if (updateSuccess) {
+                this.storeBalance = newBalance; // 잔고 변경
+                // InventoryDao 에서 상품의 수량도 변경한다
+                InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
+                return ProductView.GREEN + "구매완료!" + ProductView.RESET;
+            } else {
+                return ProductView.RED + "잔고 업데이트 실패. 다시 시도해주세요." + ProductView.RESET;
+            }
+        }
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드
@@ -92,6 +115,8 @@ public class PcController {
             int productId = new Random().nextInt(productTypeCount) + 1;
             // 1~5개의 랜덤한 구매 수량 생성
             int buyCount = new Random().nextInt(5) + 1;
+
+            int purchaseQuantity = new Random().nextInt(2) + 1; // 1부터 2개 사이의 랜덤 구매 수량
 
             int productCount = InventoryDao.getInstance().checkInventory(productId);
             // 확인용 콘솔
@@ -159,11 +184,17 @@ public class PcController {
 
         int productId = random.nextInt(productTypeCount) + 1;
         // 랜덤하게 감소할 수량 선택
-        int quantity = random.nextInt(3) + 1; //1부터 3까지 수량을 랜덤으로 가져감
+        int quantity = random.nextInt(2) + 1; //1부터 3까지 수량을 랜덤으로 가져감
 
 
         //이름과 수량을 다오로 보냄
         InventoryDao.getInstance().inrush(productId, quantity);
+
+    }
+
+    //
+    public void bread(){
+
 
     }
 } // PcController 클래스 end

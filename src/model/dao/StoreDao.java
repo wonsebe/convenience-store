@@ -62,11 +62,12 @@ public class StoreDao {
      *
      * @param amount 새로운 잔고 금액
      * @param turn   현재 게임 턴
+     * @return
      */
-    public void updateBalance(int amount, int turn) {
+    public boolean updateBalance(int amount, int turn) {
         if (conn == null) {
             System.out.println("데이터베이스 연결이 설정되지 않았습니다.");
-            return;
+            return false;
         }
         try {
             // 새로운 잔고 기록을 삽입하는 SQL 쿼리
@@ -74,10 +75,12 @@ public class StoreDao {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, amount);
                 ps.setInt(2, turn);
-                ps.executeUpdate();
+                int affectedRows = ps.executeUpdate();
+                return affectedRows > 0;
             }
         } catch (SQLException e) {
             System.out.println("잔고 업데이트 중 오류 발생: " + e);
+            return false;
         }
     }
 }

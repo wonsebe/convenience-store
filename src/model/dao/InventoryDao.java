@@ -38,13 +38,29 @@ public class InventoryDao {
         return iDao;
     }
 
-    // 1 - 재고 구매 메서드 (미구현)
-    public boolean supplyRestock(int pId, int quantity, int orderFunds, int turn) {
+    // 1 - 재고 구매 메서드
+    public void supplyRestock(int pId, int quantity, int turn) {
         InventoryLog inventoryLog = null;
-        StoreDao.getInstance().updateBalance(orderFunds, turn);
-        // 돈이 있으면 제품 번호, 수량을 DAO에 전달하고 잔고를 깍는다
+        try {
+            // 인벤토리 로그에 재고 입고 기록 추가 준비
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES (?, ?, ?, ?)";
 
-        return false;
+            // PreparedStatement 객체 생성
+            // RETURN_GENERATED_KEYS를 사용하여 자동 생성된 키 값을 얻을 수 있게 설정
+            ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            // 쿼리 파라미터 설정
+            ps.setInt(1, turn);  // 현재 게임 턴(날짜)
+            ps.setInt(2, pId);  // 구매한 상품의 ID
+            ps.setInt(3, quantity);  // 상품 입고
+            ps.setString(4, "재고 입고");
+
+            // 인벤토리 로그 갱신
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println("재고 구매 처리 중 오류 발생: " + e);
+        }
     } // 1 - 재고 구매 메서드 end
 
     // 턴넘기면 손님 방문 및 상품 구매 메서드
