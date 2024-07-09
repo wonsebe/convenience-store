@@ -118,6 +118,8 @@ public class PcController {
             // 1~5개의 랜덤한 구매 수량 생성
             int buyCount = new Random().nextInt(5) + 1;
 
+            int purchaseQuantity = new Random().nextInt(2) + 1; // 1부터 2개 사이의 랜덤 구매 수량
+
             int productCount = InventoryDao.getInstance().checkInventory(productId);
             // 확인용 콘솔
             // System.out.println("상품 ID " + productId + " 구매 시도: 요청 수량 " + buyCount + ", 현재 재고 " + productCount); // 디버깅을 위한 출력
@@ -208,11 +210,17 @@ public class PcController {
 
         int productId = random.nextInt(productTypeCount) + 1;
         // 랜덤하게 감소할 수량 선택
-        int quantity = random.nextInt(3) + 1; //1부터 3까지 수량을 랜덤으로 가져감
+        int quantity = random.nextInt(2) + 1; //1부터 3까지 수량을 랜덤으로 가져감
 
 
         //이름과 수량을 다오로 보냄
         InventoryDao.getInstance().inrush(productId, quantity);
+
+    }
+
+    //
+    public void bread(){
+
 
     }
 } // PcController 클래스 end
