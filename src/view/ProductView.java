@@ -321,7 +321,7 @@ public class ProductView {
                         // System.out.println(log);
                     } else if (currentInventory <= 5) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), BLUE, currentInventory, RESET
+                                          productName, -log.getQuantity(), YELLOW, currentInventory, RESET
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
