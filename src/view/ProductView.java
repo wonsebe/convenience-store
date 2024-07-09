@@ -484,7 +484,7 @@ public class ProductView {
             int productId = 120; // "포켓몬 빵" 상품 ID (가정)
 
             // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
-            // ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
+            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
 
             // 결과 출력
             for (InventoryLog log : logs) {
