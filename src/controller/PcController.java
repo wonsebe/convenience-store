@@ -181,7 +181,9 @@ public class PcController {
             if (this.storeBalance >= RENT_AMOUNT) {
                 this.storeBalance -= RENT_AMOUNT;
                 StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+                System.out.println("=========================================================");
                 System.out.println(ProductView.YELLOW + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ProductView.RESET);
+                System.out.println("=========================================================");
                 return true;
             } else {
                 System.out.println(ProductView.RED + "월세를 낼 돈이 부족합니다. 게임 오버!" + ProductView.RESET);

@@ -1,6 +1,7 @@
 package view;
 
 import controller.PcController;
+import model.dao.InventoryDao;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
@@ -312,7 +313,7 @@ public class ProductView {
             for (InventoryLog log : logs) {
                 String productName = PcController.getInstance().getProductName(log.getProductId());
                 int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
-                if (log.getQuantity() != 0) {  // 구매 성공 시 quantity는 음수 값
+                if (log.getQuantity() < InventoryDao.getInstance().checkInventory(log.getProductId())) {  // 구매 성공 시 quantity는 음수 값
                     if (currentInventory == 0) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
                                           productName, -log.getQuantity(), RED, currentInventory, RESET
@@ -357,14 +358,14 @@ public class ProductView {
             //해당 상품 ID에 대한 상품 이름을 가져옴 ,stills 객체가 가리키는 상품의 이름을   productName 문자열 변수에 할당
             int currentInventory = PcController.getInstance().checkInventory(stills.getProductId());
             //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
-            if (stills.getQuantity() != 0) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
-                System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n",
+            if (stills.getQuantity() < InventoryDao.getInstance().checkInventory(stills.getProductId())){ //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
+                System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n ",
                                   //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
                                   productName, -stills.getQuantity(), currentInventory
                 ); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
             } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
                 System.out.printf(
-                        "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
+                        "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★ \n ",
                         productName
                 );
             }
@@ -380,10 +381,12 @@ public class ProductView {
 
     // 턴의 총 매출액과 잔고를 구하는 메서드
     public void displayTotalSalesAndBalance() {
+        System.out.println("=========================================================");
         int totalSales = PcController.getInstance().getLastTurnTotalSales();
         int storeBalance = PcController.getInstance().getStoreBalance();
         System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
         System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
+        System.out.println("=========================================================");
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
 
