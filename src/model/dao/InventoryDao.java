@@ -247,5 +247,13 @@ public class InventoryDao {
         }
         return 0;
     }
+    //편의점 포켓몬빵 입고
+
+    public void bread2(){
+
+
+    }
+
+
 
 }

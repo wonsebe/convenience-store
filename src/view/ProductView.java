@@ -2,9 +2,13 @@ package view;
 
 import controller.PcController;
 import model.dao.InventoryDao;
+import model.dao.InventoryDao;
+import model.dao.StoreDao;
+import model.dto.Products;
 import model.dto.InventoryLog;
 import model.dto.Products;
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
@@ -57,7 +61,11 @@ public class ProductView {
     }
 
 
-    public void start() {
+
+    public  void start(){
+
+
+
         System.out.print(
 
                 "         ____________________________\n" +
@@ -164,7 +172,7 @@ public class ProductView {
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush(); //강도 침입 함수
+                    case 7 -> inrush (); //강도 침입 함수
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
@@ -209,6 +217,7 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
+  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -285,7 +294,9 @@ public class ProductView {
         System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
         result.forEach(dto -> {
             System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
+
         });
+
     } // 6 - 물품 확인 메서드 end
 
     // 99 - 다음 턴 진행 메서드
@@ -304,17 +315,16 @@ public class ProductView {
         }
 
         // 승리조건
-        if (turn >= 100) {
-            System.out.println("게임 승리");
-        }
+        if (turn >= 100){ System.out.println("게임 승리"); }
 
         // 이벤트 함수( 강도 )
-        // 1. 난수
-        int rand = new Random().nextInt(100) + 1; // 1 ~ 100 난수 생성
-        // 2. 1~100 중 50 이하 이면 5:5
-        if (rand <= 30) {
-            inrush();
-        }
+            // 1. 난수
+        int randInrush = new Random().nextInt(99)+1; // 1 ~ 100 난수 생성
+        int randBread = new Random().nextInt(99)+1; // 1 ~ 100 난수 생성
+            // 2. 1~100 중 50 이하 이면 5:5
+        if( randInrush <= 30 ){ inrush ();  }
+        else if (randBread <=30){bread();}
+
         turn++; // 턴 증가
         checkLoseCondition();
     } // 99 - 다음 턴 진행 메서드 end
@@ -362,6 +372,17 @@ public class ProductView {
     //어떤 상품을, 몇개 빼앗아 가는지 inventory log 기록 함수를 사용해서 하기
     public void inrush() {
 
+        System.out.println("＿人人人人人人人人人＿\n" +
+                "＞살금살금살금살금살금＜\n" +
+                "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
+                "\n" +
+                "　　　　ハ_ハ\n" +
+                "　／＼（´◔౪◔）／＼\n" +
+                "((⊂  ／＼　　　／＼  つ))\n" +
+                "　　　　)　　ノ\n" +
+                "　　　　(＿⌒ヽ\n" +
+                "　　　　ヽ  ヘ   |\n" +
+                "　　　　 ノノ  Ｊ\n");
         System.out.println("강도가 침입했습니다!");
         //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
         ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
@@ -404,6 +425,7 @@ public class ProductView {
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
 
+
     //패배조건 : 10개 물품의 재고가 0개되면 탈락
     public void checkLoseCondition() {
 
@@ -442,6 +464,45 @@ public class ProductView {
         start(); // 초기화면으로 돌아감
 
     }//게임오버 함수 end
+
+
+    //굿이벤트 (포켓몬빵)
+    //랜덤으로 포켓몬 빵이 들어오는 날이 오면 손님 50명이 우르르 몰려서 재고를 사는 함수
+    public void bread(){
+        System.out.println("포켓몬 빵이 들어왔습니다!");
+        //편의점 포켓몬빵 입고
+        PcController.getInstance().bread1(turn);
+        // 손님 수를 랜덤으로 설정
+        int numCustomers = new Random().nextInt(21); // 0부터 20명 사이의 랜덤 손님 수
+        numCustomers += 30; //30에서 50
+
+        // 손님들이 포켓몬 빵을 최대 2개씩 구매
+        for (int i = 0; i < numCustomers; i++) {
+            int purchaseQuantity = new Random().nextInt(5) + 1; // 1부터 5개 사이의 랜덤 구매 수량
+            InventoryLog inventoryLog = PcController.getInstance().bread2(turn,purchaseQuantity);
+            System.out.println(inventoryLog);
+            //int productId = 120; // "포켓몬 빵" 상품 ID (가정)
+
+            // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
+            //ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
+
+            // 결과 출력
+//            for (InventoryLog log : logs) {
+//                String productName = PcController.getInstance().getProductName(log.getProductId());
+//                int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
+//
+//                if (log.getQuantity() < 0) { // 구매 성공
+//                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
+//                            productName, -log.getQuantity(), currentInventory);
+//                } else { // 구매 실패 (재고 부족)
+//                    System.out.printf("%s을(를) 구매할 수 있는 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
+//                            productName, currentInventory);
+//                }
+//            }
+        }
+
+
+    }
 
 
 } // ProductView 클래스 종료

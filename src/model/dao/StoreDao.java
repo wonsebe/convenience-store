@@ -60,6 +60,7 @@ public class StoreDao {
      *
      * @param amount 새로운 잔고 금액
      * @param turn   현재 게임 턴
+     * @return
      */
     public boolean updateBalance(int amount, int turn) {
         if (conn == null) {
