@@ -86,6 +86,7 @@ public class ProductView {
             index();
         } else {
             System.out.println("게임종료");
+            System.exit(0); // 게임 종료
         }
     }
 
@@ -174,10 +175,14 @@ public class ProductView {
         System.out.print(">>");
         int quantity = scan.nextInt();
         // 제품번호와 수량을 컨트롤러에 넘겨 여러 절차를 검증한다
+        int previousBalance = PcController.getInstance().getStoreBalance();
         String result = PcController.getInstance().supplyRestock(pId, quantity, turn);
+        int currentBalance = PcController.getInstance().getStoreBalance();
 
         // 절차 검증이 완료되고 해당하는 결과 문자열 출력
         System.out.println(result);
+        System.out.println("이전 잔고: " + previousBalance + "원");
+        System.out.println("현재 잔고: " + currentBalance + "원");
     } // 1 - 재고 구매 메서드 end
 
     // 2 - 재고 확인 메서드
@@ -276,6 +281,12 @@ public class ProductView {
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
         simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
         displayTotalSalesAndBalance(); // 총 매출액 출력
+        // 월세 차감 처리
+        boolean rentPaid = PcController.getInstance().deductRent(turn);
+        if (!rentPaid) {
+            gameOver("월세를 낼 돈이 부족합니다.");
+            return;
+        }
 
         // 승리조건
         if (turn >= 100) {
@@ -356,7 +367,6 @@ public class ProductView {
                         "★강도가 %s을(를) 훔치려다가 인기척을 느끼고 도망갔습니다!★  ",
                         productName
                 );
-                gameOver();//초기화면으로 돌아가기
             }
             // 강도 함수 호출
             PcController.getInstance().inrush(); //PcController의 inrush를 호출함
@@ -394,15 +404,15 @@ public class ProductView {
             if (inventory == 0) {//만약에 재고가 없다면
                 ZeroInventory++; //재고가 0인 상품의 개수를 세기 위해 ( 몇종류의 재고가 0인지 카운트)
                 if (ZeroInventory >= 10) { //재고 종류가 10개 이상이면
-                    gameOver(); // 패배 조건 충족 시 게임 오버 처리
+                    gameOver("게임 오버: 10개의 물품 재고가 모두 소진되었습니다."); // 패배 조건 충족 시 게임 오버 처리
                     return; //초기화면으로 돌아가기
                 }
-            }//if end
-        }//for end
-    }//lose end
+            } // if end
+        } // for end
+    } // checkLoseCondition end
 
-    private void gameOver() { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
-        System.out.println("게임 오버: 10개의 물품 재고가 모두 소진되었습니다.");
+    public void gameOver(String reason) { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
+        System.out.println(ProductView.RED + "게임 오버: " + reason + ProductView.RESET);
         System.out.println("   ______    ______   __       __  ________         ______   __     __  ________  _______  \n" +
                                    " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
                                    "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
@@ -412,7 +422,7 @@ public class ProductView {
                                    "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
                                    "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
                                    " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
-        System.exit(0); // 게임 종료
+        start(); // 초기화면으로 돌아감
 
     }//게임오버 함수 end
 

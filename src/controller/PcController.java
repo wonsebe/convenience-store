@@ -16,6 +16,8 @@ import java.util.Random;
 public class PcController {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final PcController pControl = new PcController();
+    private static final int RENT_AMOUNT = 300000; // 월세 금액
+    private static final int RENT_INTERVAL = 5; // 월세 납부 주기 (턴)
     private int productTypeCount; // 등록된 상품 종류의 수를 저장
     private int lastTurnTotalSales; // 마지막 턴의 총 매출액을 저장
     private int storeBalance; // 편의점 현금
@@ -27,6 +29,7 @@ public class PcController {
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
         this.lastTurnTotalSales = 0;
         this.storeBalance = StoreDao.getInstance().getBalance();
+
     }
 
     // 싱글톤 인스턴스 반환 메서드
@@ -44,15 +47,21 @@ public class PcController {
         int orderFunds = wholeSalePrice * quantity;
 
         // 편의점 자금이 부족하면 구매 불가를 출력한다
-        if (orderFunds >= StoreDao.getInstance().getBalance()) {
+        if (orderFunds >= this.storeBalance) {
             return ProductView.RED + "구매할 자금이 부족합니다." + ProductView.RESET;
         } else {
             // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
-            StoreDao.getInstance().updateBalance(-orderFunds, turn);
-            // InventoryDao 에서 상품의 수량도 변경한다
-            InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
-
-            return ProductView.GREEN + "구매완료!" + ProductView.RESET;
+            int newBalance = this.storeBalance - orderFunds;
+            this.storeBalance -= orderFunds;
+            boolean updateSuccess = StoreDao.getInstance().updateBalance(newBalance, turn);
+            if (updateSuccess) {
+                this.storeBalance = newBalance; // 잔고 변경
+                // InventoryDao 에서 상품의 수량도 변경한다
+                InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
+                return ProductView.GREEN + "구매완료!" + ProductView.RESET;
+            } else {
+                return ProductView.RED + "잔고 업데이트 실패. 다시 시도해주세요." + ProductView.RESET;
+            }
         }
     } // 1 - 재고 구매 메서드 end
 
@@ -161,14 +170,36 @@ public class PcController {
         StoreDao.getInstance().updateBalance(this.storeBalance, turn);
     } // 구매 처리, 총 매출 계산, 매출 저장, 잔고 저장 end
 
+    // 마지막 턴 매출액 가져오기
     public int getLastTurnTotalSales() {
         return this.lastTurnTotalSales;
     }
 
+    // 월세 내는 메서드
+    public boolean deductRent(int turn) {
+        if (turn % RENT_INTERVAL == 0) {
+            if (this.storeBalance >= RENT_AMOUNT) {
+                this.storeBalance -= RENT_AMOUNT;
+                StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+                System.out.println(ProductView.YELLOW + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ProductView.RESET);
+                return true;
+            } else {
+                System.out.println(ProductView.RED + "월세를 낼 돈이 부족합니다. 게임 오버!" + ProductView.RESET);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 편의점 잔고 가져오기
     public int getStoreBalance() {
         return this.storeBalance;
     }
 
+    // 편의점 잔고 갱신
+    public void updateStoreBalance(int amount) {
+        this.storeBalance = amount;
+    }
 
     public void inrush() {
         Random random = new Random();
