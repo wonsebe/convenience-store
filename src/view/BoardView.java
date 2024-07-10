@@ -17,6 +17,7 @@ public class BoardView {
         return Bview;
     }
 
+
     public void Bprinter() {
         ArrayList<BoardDto> result = Bcontroller.getInstance().Bprinter();
         System.out.println("게시물 번호\t\t게시물내용\n");

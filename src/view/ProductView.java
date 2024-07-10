@@ -217,7 +217,7 @@ public class ProductView {
     public void pPrint() {
         ArrayList<Products> result = PcController.getInstance().pPrint();
         int currentTurn = PcController.getInstance().getTurn();
-        System.out.println("제품번호\t\t제품명\t\t제품가격\t\t제품수량\t\t남은 유통기한\t\t상태");
+        System.out.println("제품번호\t\t\t제품명\t\t제품가격\t\t제품수량\t\t남은 유통기한\t\t상태");
         result.forEach(dto -> {
             int remainingTurns = dto.getExpiryTurns() - (currentTurn - dto.getGameDate());
             String status = remainingTurns <= 3 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
