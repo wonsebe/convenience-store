@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
- 
+
 // 편의점 재고 관리를 위한 Data Access Object (DAO) 클래스
 // 재고 확인, 구매, 삭제 등
 public class InventoryDao {
@@ -22,6 +22,8 @@ public class InventoryDao {
     private Connection conn;
     private PreparedStatement ps;
     private ResultSet rs;
+    private ProductDao productDao;
+
 
     // 생성자 (private으로 외부에서 인스턴스 생성 방지)
     private InventoryDao() {
@@ -40,94 +42,66 @@ public class InventoryDao {
         return iDao;
     }
 
-    // 1 - 재고 구매 메서드
     public void supplyRestock(int pId, int quantity, int turn) {
-        InventoryLog inventoryLog = null;
         try {
-            // 인벤토리 로그에 재고 입고 기록 추가 준비
-            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) VALUES (?, ?, ?, ?)";
-
-            // PreparedStatement 객체 생성
-            // RETURN_GENERATED_KEYS를 사용하여 자동 생성된 키 값을 얻을 수 있게 설정
-            ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-
-            // 쿼리 파라미터 설정
-            ps.setInt(1, turn);  // 현재 게임 턴(날짜)
-            ps.setInt(2, pId);  // 구매한 상품의 ID
-            ps.setInt(3, quantity);  // 상품 입고
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, purchase_date) VALUES (?, ?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, turn);
+            ps.setInt(2, pId);
+            ps.setInt(3, quantity);
             ps.setString(4, "재고 입고");
-
-            // 인벤토리 로그 갱신
+            ps.setInt(5, turn);  // purchase_date를 현재 턴으로 설정
             ps.executeUpdate();
-
         } catch (Exception e) {
             System.out.println("재고 구매 처리 중 오류 발생: " + e);
         }
     } // 1 - 재고 구매 메서드 end
 
+    // 유통기한이 지난 재고를 폐기하는 메서드
+    public void removeExpiredInventory(int currentTurn) {
+        try {
+            String sql = "DELETE FROM inventory_log WHERE product_id IN " +
+                    "(SELECT product_id FROM products WHERE expiry_turns + game_date <= ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, currentTurn);
+            int removedCount = ps.executeUpdate();
+            if (removedCount > 0) {
+                System.out.println(removedCount + "개의 유통기한 지난 상품이 폐기되었습니다.");
+            }
+        } catch (Exception e) {
+            System.out.println("유통기한 지난 재고 제거 중 오류 발생: " + e);
+        }
+    }
+
     // 턴넘기면 손님 방문 및 상품 구매 메서드
     public InventoryLog purchase(int productId, int quantity, int turn) {
         InventoryLog inventoryLog = null;
         try {
-            // 상품 가격을 조회하기 위한 SQL 쿼리 준비
-            String priceSql = "SELECT price FROM products WHERE product_id = ?";
-
-            // PreparedStatement 객체 생성
-            PreparedStatement pricePs = conn.prepareStatement(priceSql);
-
-            // 쿼리의 첫 번째 파라미터(?)에 productId 값을 설정
-            pricePs.setInt(1, productId);
-
-            // 쿼리 실행 및 결과 저장
-            // executeQuery()는 SELECT 문에 사용되며 ResultSet 객체를 반환.
-            ResultSet priceRs = pricePs.executeQuery();
-
-            // 가격을 저장할 변수 초기화
-            int price = 0;
-
-            // ResultSet에서 데이터 추출
-            // next() 메소드는 다음 행으로 커서를 이동시키고, 행이 존재하면 true를 반환
-            if (priceRs.next()) {
-                // "price" 컬럼의 값을 정수형으로 가져와 price 변수에 저장
-                price = priceRs.getInt("price");
+            if (productDao == null) {
+                System.out.println("productDao가 null입니다. 초기화시작");
+                productDao = ProductDao.getInstance();
             }
-
-            // 재고 로그에 손님 구매 기록 추가
-            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price) VALUES (?, ?, ?, '판매', ?)";
-
-            // PreparedStatement 객체 생성
-            // RETURN_GENERATED_KEYS를 사용하여 자동 생성된 키 값을 얻을 수 있게 설정
+            String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price, purchase_date) VALUES (?, ?, ?, '판매', ?, ?)";
             ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, turn);
+            ps.setInt(2, productId);
+            ps.setInt(3, -quantity);
+            int price = productDao.getProductPrice(productId);
+            ps.setInt(4, price * quantity);
+            ps.setInt(5, turn);
 
-            // 쿼리 파라미터 설정
-            ps.setInt(1, turn);  // 현재 게임 턴(날짜)
-            ps.setInt(2, productId);  // 구매한 상품의 ID
-            ps.setInt(3, -quantity);  // 구매 시 재고 감소 (음수 값으로 설정)
-            ps.setInt(4, price * quantity);  // 총 판매 금액 계산
-
-            // 쿼리 실행 및 영향받은 행의 수 반환
-            // executeUpdate()는 INSERT, UPDATE, DELETE 문에 사용되며 영향받은 행의 수를 반환
             int affectedRows = ps.executeUpdate();
-
-            // 쿼리 실행 결과 확인
             if (affectedRows > 0) {
-                // 자동 생성된 키(logId) 가져오기
                 rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    // 첫 번째 칼럼(자동 생성된 logId)의 값을 가져옴
                     int logId = rs.getInt(1);
-
-                    // 새로운 InventoryLog 객체 생성
-                    // 이 객체는 방금 삽입된 로그 정보를 담고 있음
-                    inventoryLog = new InventoryLog(logId, turn, productId, -quantity, "판매", price * quantity);
+                    inventoryLog = new InventoryLog(logId, turn, productId, -quantity, "판매", price * quantity, turn);
                 }
             }
         } catch (Exception e) {
-            // 예외 발생 시 에러 메시지 출력
             System.out.println("손님 구매 처리 중 오류 발생: " + e);
+            e.printStackTrace();  // 스택 트레이스 출력 추가
         }
-
-        // 생성된 inventoryLog 객체 반환 (오류 발생 시 null일 수 있음)
         return inventoryLog;
     } // 턴넘기면 손님 방문 및 상품 구매 메서드 end
 

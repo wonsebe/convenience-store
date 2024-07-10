@@ -1,7 +1,9 @@
 package model.dao;
 
+import util.DbUtil;
+
 import java.sql.*;
- 
+
 // 편의점 잔고 관리를 위한 Data Access Object (DAO) 클래스
 // 싱글톤 패턴을 사용해 구현, 데이터베이스와의 연결 및 잔고 관련 작업 담당
 public class StoreDao {
@@ -36,49 +38,47 @@ public class StoreDao {
     // 현재 편의점의 잔고를 조회하는 메서드
     public int getBalance() {
         int balance = 0;
-        if (conn == null) {
-            System.out.println("데이터베이스 연결이 설정되지 않았습니다.");
-            return balance;
-        }
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            // 가장 최근의 잔고 기록을 조회하는 SQL 쿼리
-            String sql = "SELECT balance FROM store_balance ORDER BY id DESC LIMIT 1";
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    balance = rs.getInt("balance");
-                }
+            conn = DbUtil.getConnection();
+            String sql = "SELECT balance FROM store_balance WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "admin"); // 실제로는 현재 로그인된 사용자 ID를 사용해야 함
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                balance = rs.getInt("balance");
             }
         } catch (SQLException e) {
-            System.out.println("잔고 조회 중 오류 발생: " + e);
+            System.out.println("잔고 조회 중 오류 발생: " + e.getMessage());
+        } finally {
+            DbUtil.closeResultSet(rs);
+            DbUtil.closeStatement(ps);
+            DbUtil.closeConnection(conn);
         }
         return balance;
     }
 
-    /**
-     * 편의점의 잔고를 업데이트
-     *
-     * @param amount 새로운 잔고 금액
-     * @param turn   현재 게임 턴
-     * @return
-     */
-    public boolean updateBalance(int amount, int turn) {
-        if (conn == null) {
-            System.out.println("데이터베이스 연결이 설정되지 않았습니다.");
-            return false;
-        }
+
+    // 편의점의 잔고를 업데이트
+    public boolean updateBalance(int balance, int turn) {
+        Connection conn = null;
+        PreparedStatement ps = null;
         try {
-            // 새로운 잔고 기록을 삽입하는 SQL 쿼리
-            String sql = "INSERT INTO store_balance (balance, game_turn) VALUES (?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, amount);
-                ps.setInt(2, turn);
-                int affectedRows = ps.executeUpdate();
-                return affectedRows > 0;
-            }
+            conn = DbUtil.getConnection();
+            String sql = "UPDATE store_balance SET balance = ? WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, balance);
+            ps.setString(2, "admin"); // 실제로는 현재 로그인된 사용자 ID를 사용해야 함
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
         } catch (SQLException e) {
-            System.out.println("잔고 업데이트 중 오류 발생: " + e);
+            System.out.println("잔고 업데이트 중 오류 발생: " + e.getMessage());
             return false;
+        } finally {
+            DbUtil.closeStatement(ps);
+            DbUtil.closeConnection(conn);
         }
     }
 }

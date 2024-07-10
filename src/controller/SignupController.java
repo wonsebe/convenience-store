@@ -24,6 +24,11 @@ public class SignupController {
         account.setLoginId(loginId);
         account.setLoginPwd(loginPwd);
 
-        return SignupDao.getInstance().signup(account);
+        boolean signupSuccess = SignupDao.getInstance().signup(account);
+        if (signupSuccess) {
+            // 회원가입 성공 시 초기 게임 상태 설정
+            PcController.getInstance().initializeNewGame(loginId);
+        }
+        return signupSuccess;
     }
 }

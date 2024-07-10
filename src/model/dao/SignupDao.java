@@ -28,7 +28,6 @@ public class SignupDao {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            // 데이터베이스 연결
             conn = DbUtil.getConnection();
 
             // 이미 존재하는 사용자명인지 확인
@@ -37,24 +36,22 @@ public class SignupDao {
             ps.setString(1, account.getLoginId());
             rs = ps.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
-                System.out.println("존재하는 아이디입니다.");
+                System.out.println("이미 존재하는 아이디입니다.");
                 return false;
             }
 
             // 새로운 계정 정보 삽입
-            String insertSql = "INSERT INTO store (login_id, login_pwd, current_turn) VALUES (?, ?, 1)";
+            String insertSql = "INSERT INTO store (login_id, login_pwd, current_turn, balance) VALUES (?, ?, 1, 1000000)";
             ps = conn.prepareStatement(insertSql);
             ps.setString(1, account.getLoginId());
             ps.setString(2, account.getLoginPwd());
             int affectedRows = ps.executeUpdate();
 
-            // 삽입된 행이 있으면 성공, 없으면 실패
             return affectedRows > 0;
         } catch (SQLException e) {
             System.out.println("Error during signup: " + e.getMessage());
             return false;
         } finally {
-            // 사용한 데이터베이스 자원 해제
             DbUtil.closeResultSet(rs);
             DbUtil.closeStatement(ps);
             DbUtil.closeConnection(conn);
