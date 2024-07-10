@@ -1,27 +1,25 @@
 package model.dto;
- 
+
 public class BoardDto {
     private int bmo;
     private String bcontent;
-    private int bdate;
-    private String store_id;
+    private String bdate;
+    private int store_id;
 
-
-    public BoardDto() {
-    }
-
-    public BoardDto(int bmo, String bcontent, int bdate, String store_id) {
+    public BoardDto(int bmo, String bcontent, String bdate, int store_id) {
         this.bmo = bmo;
         this.bcontent = bcontent;
         this.bdate = bdate;
         this.store_id = store_id;
-
     }
-    public BoardDto(int bmo, String bcontent, String store_id) {
-        this.bmo = bmo;
-        this.bcontent = bcontent;
-        this.store_id = store_id;
 
+    // Getter and Setter methods
+    public int getBmo() {
+        return bmo;
+    }
+
+    public void setBmo(int bmo) {
+        this.bmo = bmo;
     }
 
     public String getBcontent() {
@@ -32,36 +30,19 @@ public class BoardDto {
         this.bcontent = bcontent;
     }
 
-    public int getBdate() {
+    public String getBdate() {
         return bdate;
     }
 
-    public int setBdate(int bdate) {return bdate;  }
+    public void setBdate(String bdate) {
+        this.bdate = bdate;
+    }
 
-    public String getStore_id() {
+    public int getStore_id() {
         return store_id;
     }
 
-    public void setStore_id(String store_id) {
+    public void setStore_id(int store_id) {
         this.store_id = store_id;
     }
-
-    public int getBmo() {
-        return bmo;
-    }
-
-    public void setBmo(int bmo) {
-        this.bmo = bmo;
-    }
-
-    @Override
-    public String toString() {
-        return "BoardDto{" +
-                "bcontent='" + bcontent + '\'' +
-                ", bdate='" + bdate + '\'' +
-                ", store_id='" + store_id + '\'' +
-                ", bmo=" + bmo +
-                '}';
-    }
-
 }

@@ -5,6 +5,7 @@ public class AccountDto {
     private int id;
     private String loginId;
     private String loginPwd;
+    private int balance;
 
     // 빈 생성자
     public AccountDto() {
@@ -48,6 +49,14 @@ public class AccountDto {
 
     public void setLoginPwd(String loginPwd) {
         this.loginPwd = loginPwd;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
 

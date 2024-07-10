@@ -16,10 +16,26 @@ DROP TABLE IF EXISTS store;
 CREATE TABLE store
 (
     id           INT PRIMARY KEY AUTO_INCREMENT, -- 편의점 기본키, 편의점 구분함
-    login_id     varchar(20) NOT NULL UNIQUE,    -- 게임 회원가입시 등록했던 아이디
-    login_pwd    varchar(20) NOT NULL,           -- 등록한 로그인 비밀번호
-    current_turn INT DEFAULT 1                   -- 저장될 게임 턴수
--- 게임 회원가입시 등록했던 비밀번호
+    login_id     VARCHAR(20) NOT NULL UNIQUE,    -- 게임 회원가입시 등록했던 아이디
+    login_pwd    VARCHAR(20) NOT NULL,           -- 등록한 로그인 비밀번호
+    current_turn INT DEFAULT 1,                  -- 저장될 게임 턴수
+    balance      INT DEFAULT 1000000             -- 초기 잔고 100만원 설정
+);
+
+INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
+VALUES (1, 'admin', '1234', 1, 1000000),
+       (2, 'admin2', '1234', 1, 1000000)
+ON DUPLICATE KEY UPDATE login_id     = VALUES(login_id),
+                        login_pwd    = VALUES(login_pwd),
+                        current_turn = VALUES(current_turn),
+                        balance      = VALUES(balance);
+
+-- store_balance 테이블 생성
+CREATE TABLE store_balance
+(
+    store_id INT PRIMARY KEY,
+    balance  INT NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE
 );
 
 -- Board 테이블 생성
@@ -27,7 +43,7 @@ CREATE TABLE board
 (
     bmo      INT AUTO_INCREMENT PRIMARY KEY,
     bcontent VARCHAR(255) NOT NULL,
-    bdate    int ,
+    bdate    DATE         NOT NULL,
     store_id INT,
     FOREIGN KEY (store_id) REFERENCES store (id)
         ON DELETE CASCADE
@@ -42,23 +58,29 @@ CREATE TABLE products
     expiry_turns INT         NOT NULL,           -- 유통기한 (턴 단위), NULL 불가
     store_id     INT,
     FOREIGN KEY (store_id) REFERENCES store (id)
-        on delete cascade
+        ON DELETE CASCADE
 );
 
 -- 재고 로그 테이블 생성
 CREATE TABLE inventory_log
 (
-    log_id      INT PRIMARY KEY AUTO_INCREMENT, -- 로그 ID, 기본 키, 자동 증가
-    game_date   INT NOT NULL,                   -- 게임 내 날짜를 나타내는 정수값, NULL 불가
-    product_id  INT,                            -- 제품 ID, products 테이블의 product_id를 참조
-    quantity    INT NOT NULL,                   -- 수량, NULL 불가
-    description VARCHAR(20),                    -- 설명, NULL 가능
-    store_id    INT,
-    FOREIGN KEY (store_id) REFERENCES store (id)
-        on delete cascade,
-    FOREIGN KEY (product_id) REFERENCES products (product_id)
-        on delete cascade                       -- 외래 키, products 테이블의 product_id를 참조
+    log_id        INT PRIMARY KEY AUTO_INCREMENT,
+    game_date     INT NOT NULL,
+    product_id    INT,
+    quantity      INT NOT NULL,
+    description   VARCHAR(20),
+    store_id      INT,
+    sale_price    INT,
+    purchase_date INT,
+    FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
 );
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE inventory_log
+SET purchase_date = game_date
+WHERE purchase_date IS NULL;
+SET SQL_SAFE_UPDATES = 1;
 
 -- 매출액 테이블 생성, 게임의 각 턴별 매출 정보 저장
 CREATE TABLE sales
@@ -69,28 +91,8 @@ CREATE TABLE sales
     profit      INT NOT NULL,                   -- 해당 날짜(턴)의 순이익
     store_id    INT,
     FOREIGN KEY (store_id) REFERENCES store (id)
-        on delete cascade
+        ON DELETE CASCADE
 );
-
--- inventory_log 테이블에 sale_price 컬럼 추가
-ALTER TABLE inventory_log
-    ADD COLUMN sale_price INT;
--- 매출 계산에 활용
-
--- 편의점 상태
-CREATE TABLE store_balance
-(
-    id        INT PRIMARY KEY AUTO_INCREMENT, -- 각 잔고 기록 고유 식별자
-    balance   INT NOT NULL,                   -- 편의점의 현재 잔고
-    game_turn INT NOT NULL,                   -- 해당 잔고가 기록된 게임 내 턴 수
-    store_id  INT,
-    FOREIGN KEY (store_id) REFERENCES store (id)
-        on delete cascade
-);
-
--- 초기 잔고 설정 (예: 1,000,000원, 게임 시작 턴인 1턴에 설정)
-INSERT INTO store_balance (balance, game_turn)
-VALUES (1000000, 1);
 
 -- Products 테이블 샘플 데이터
 INSERT INTO products (product_id, name, price, expiry_turns)
@@ -159,18 +161,11 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 30, 20, '초기 입고');
 -- 포켓몬 빵
 
--- 초기 잔고 설정 (예: 1,000,000원, 게임 시작 턴인 1턴에 설정)
-INSERT INTO store_balance (balance, game_turn)
-VALUES (1000000, 1);
+-- Board 테이블 샘플 데이터
+INSERT INTO board (bmo, bcontent, bdate, store_id)
+VALUES (1, '25% 세일', '2024-07-08', 1),
+       (2, '포켓몬빵 입고', '2024-07-09', 1),
+       (3, '신메뉴 출시', '2024-07-10', 1);
 
-INSERT INTO store(id, login_id, login_pwd)
-VALUES (1, 'admin', '1234'),
-       (2, 'admin2', '1234');
-
-insert into board( bmo , bcontent   ,store_id  )
-values(1 , '25%세일'  , 1 ),
-	  (2 , '포켓몬빵 입고' , 2 ),
-      (3 , '신메뉴 출시' , 1 );
-
-
-
+SELECT *
+FROM store;
