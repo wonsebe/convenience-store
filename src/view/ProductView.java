@@ -459,7 +459,8 @@ public class ProductView {
         for (int i = 0; i < numCustomers; i++) {
             int purchaseQuantity = new Random().nextInt(5) + 1; // 1부터 5개 사이의 랜덤 구매 수량
             InventoryLog inventoryLog = PcController.getInstance().bread2(purchaseQuantity);
-            System.out.println(inventoryLog);
+            System.out.println("손님이 " + purchaseQuantity + "개의 포켓몬 빵을 구매하였습니다. 지불한 금액은 " + inventoryLog.getSalePrice() + "원 입니다.");
+
 
         }
 
