@@ -37,19 +37,19 @@ public class ProductView {
         PcController.getInstance().loadGameState();  // 게임 시작 시 상태 로드
         // 인사말 출력
         System.out.print(ColorUtil.getColor("YELLOW") + "\n          (/ΩΩ/)\n" +
-                                 "　     　 / •• /\n" +
-                                 "　　    　(＿ノ |  " + ColorUtil.getColor("GREEN") + "어서오세요 jSS\n" + ColorUtil.getColor("YELLOW") +
-                                 "　　    　　 |　|" + ColorUtil.getColor("GREEN") + "       편의점 입니다!★\n" + ColorUtil.getColor("YELLOW") +
-                                 "　　    　　 |　|\n" +
-                                 "　　    　 __|　|＿\n" +
-                                 "　    　　/ヘ　　/ )\n" +
-                                 "　　    　L ニニコ/\n" +
-                                 "　　    　|￣￣￣ |\n" +
-                                 "　　    　|　　 　|――≦彡\n" +
-                                 "　　    　|　∩　 |\n" +
-                                 "　　    　|　||　|\n" +
-                                 "　　    　|　||　|\n" +
-                                 "　　    　|二||二|\n" + ColorUtil.getColor("RESET"));
+                "　     　 / •• /\n" +
+                "　　    　(＿ノ |  " + ColorUtil.getColor("GREEN") + "어서오세요 jSS\n" + ColorUtil.getColor("YELLOW") +
+                "　　    　　 |　|" + ColorUtil.getColor("GREEN") + "       편의점 입니다!★\n" + ColorUtil.getColor("YELLOW") +
+                "　　    　　 |　|\n" +
+                "　　    　 __|　|＿\n" +
+                "　    　　/ヘ　　/ )\n" +
+                "　　    　L ニニコ/\n" +
+                "　　    　|￣￣￣ |\n" +
+                "　　    　|　　 　|――≦彡\n" +
+                "　　    　|　∩　 |\n" +
+                "　　    　|　||　|\n" +
+                "　　    　|　||　|\n" +
+                "　　    　|二||二|\n" + ColorUtil.getColor("RESET"));
 
         while (true) {
             int currentTurn = PcController.getInstance().getTurn();
@@ -223,8 +223,8 @@ public class ProductView {
             String status = remainingTurns <= 3 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
                     remainingTurns <= 5 ? ColorUtil.getColor("YELLOW") + "주의" + ColorUtil.getColor("RESET") : "정상";
             System.out.printf("%2d\t%15s\t%10s\t%10d\t%10d\t%10s\n",
-                              dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),
-                              remainingTurns > 0 ? remainingTurns : 0, status
+                    dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),
+                    remainingTurns > 0 ? remainingTurns : 0, status
             );
         });
     } // 6 - 물품 확인 메서드 end
@@ -299,8 +299,8 @@ public class ProductView {
         if (randInrush <= 30) {
             inrush();
         }
-        if (randBread <= 30) {
-            bread();
+        else if (randBread <= 30) {
+            bread1();
         }
 
         checkLoseCondition();
@@ -320,26 +320,26 @@ public class ProductView {
                 if (log.getQuantity() < InventoryDao.getInstance().checkInventory(log.getProductId())) {  // 구매 성공 시 quantity는 음수 값
                     if (currentInventory == 0) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
+                                productName, -log.getQuantity(), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
                     } else if (currentInventory <= 5) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), ColorUtil.getColor("YELLOW"), currentInventory, ColorUtil.getColor("RESET")
+                                productName, -log.getQuantity(), ColorUtil.getColor("YELLOW"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
                     } else {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
-                                          productName, -log.getQuantity(), currentInventory
+                                productName, -log.getQuantity(), currentInventory
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
                     }
                 } else {
                     System.out.printf("손님이 %s을(를) 사려고 했으나 %s재고가 부족%s하여 구매하지 못했습니다. (현재 재고: %s%d%s)%n",
-                                      productName, ColorUtil.getColor("RED"), ColorUtil.getColor("RESET"), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
+                            productName, ColorUtil.getColor("RED"), ColorUtil.getColor("RESET"), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                     );
                     // null 뜰때 확인용 콘솔
                     // System.out.println(log);
@@ -353,16 +353,16 @@ public class ProductView {
     public void inrush() {
         int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
         System.out.println("＿人人人人人人人人人＿\n" +
-                                   "＞살금살금살금살금살금＜\n" +
-                                   "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
-                                   "\n" +
-                                   "　　　　ハ_ハ\n" +
-                                   "　／＼（´◔౪◔）／＼\n" +
-                                   "((⊂  ／＼　　　／＼  つ))\n" +
-                                   "　　　　)　　ノ\n" +
-                                   "　　　　(＿⌒ヽ\n" +
-                                   "　　　　ヽ  ヘ   |\n" +
-                                   "　　　　 ノノ  Ｊ\n");
+                "＞살금살금살금살금살금＜\n" +
+                "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
+                "\n" +
+                "　　　　ハ_ハ\n" +
+                "　／＼（´◔౪◔）／＼\n" +
+                "((⊂  ／＼　　　／＼  つ))\n" +
+                "　　　　)　　ノ\n" +
+                "　　　　(＿⌒ヽ\n" +
+                "　　　　ヽ  ヘ   |\n" +
+                "　　　　 ノノ  Ｊ\n");
         System.out.println("강도가 침입했습니다!");
         //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
         ArrayList<InventoryLog> still = PcController.getInstance().purchase(currentTurn);
@@ -375,8 +375,8 @@ public class ProductView {
             //해당 상품 ID에 대한 재고 수량을 확인, 해당 상품의 재고를 currentInventory 변수에 할당
             if (stills.getQuantity() < InventoryDao.getInstance().checkInventory(stills.getProductId())) { //stills라는 변수가 참조한 수량이 0개가 아니라는 경우를 듦.
                 System.out.printf("강도가 %s을(를) %d개 훔쳐갔습니다. (남은 재고: %d) %n ",
-                                  //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
-                                  productName, -stills.getQuantity(), currentInventory
+                        //강도가 어떤 제품을 몇 개 훔쳐갔는지 안내
+                        productName, -stills.getQuantity(), currentInventory
                 ); //제품이름과 감소된 수량, 기록용 로그를 알려주기 위해 선언
             } else { //강도가 침입했어도 가져가지 못한 경우를 듦.
                 System.out.printf(
@@ -432,14 +432,14 @@ public class ProductView {
     public void gameOver(String reason) { //제품종류가 10개 이상이 0개면 게임오버를 알리는 함수
         System.out.println(ColorUtil.getColor("RED") + "게임 오버: " + reason + ColorUtil.getColor("RESET"));
         System.out.println("   ______    ______   __       __  ________         ______   __     __  ________  _______  \n" +
-                                   " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
-                                   "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
-                                   "$$ | _$$/ $$ |__$$ |$$$  \\ /$$$ |$$ |__          $$ |  $$ |$$ |   $$ |$$ |__    $$ |__$$ |\n" +
-                                   "$$ |/    |$$    $$ |$$$$  /$$$$ |$$    |         $$ |  $$ |$$  \\ /$$/ $$    |   $$    $$< \n" +
-                                   "$$ |$$$$ |$$$$$$$$ |$$ $$ $$/$$ |$$$$$/          $$ |  $$ | $$  /$$/  $$$$$/    $$$$$$$  |\n" +
-                                   "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
-                                   "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
-                                   " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
+                " /      \\  /      \\ /  \\     /  |/        |       /      \\ /  |   /  |/        |/       \\ \n" +
+                "/$$$$$$  |/$$$$$$  |$$  \\   /$$ |$$$$$$$$/       /$$$$$$  |$$ |   $$ |$$$$$$$$/ $$$$$$$  |\n" +
+                "$$ | _$$/ $$ |__$$ |$$$  \\ /$$$ |$$ |__          $$ |  $$ |$$ |   $$ |$$ |__    $$ |__$$ |\n" +
+                "$$ |/    |$$    $$ |$$$$  /$$$$ |$$    |         $$ |  $$ |$$  \\ /$$/ $$    |   $$    $$< \n" +
+                "$$ |$$$$ |$$$$$$$$ |$$ $$ $$/$$ |$$$$$/          $$ |  $$ | $$  /$$/  $$$$$/    $$$$$$$  |\n" +
+                "$$ \\__$$ |$$ |  $$ |$$ |$$$/ $$ |$$ |_____       $$ \\__$$ |  $$ $$/   $$ |_____ $$ |  $$ |\n" +
+                "$$    $$/ $$ |  $$ |$$ | $/  $$ |$$       |      $$    $$/    $$$/    $$       |$$ |  $$ |\n" +
+                " $$$$$$/  $$/   $$/ $$/      $$/ $$$$$$$$/        $$$$$$/      $/     $$$$$$$$/ $$/   $$/ ");
         MainmenuView.getInstance().start(); // 초기화면으로 돌아감
 
     }//게임오버 함수 end
@@ -447,37 +447,20 @@ public class ProductView {
 
     //굿이벤트 (포켓몬빵)
     //랜덤으로 포켓몬 빵이 들어오는 날이 오면 손님 50명이 우르르 몰려서 재고를 사는 함수
-    public void bread() {
-        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
+    public void bread1(){
         System.out.println("포켓몬 빵이 들어왔습니다!");
         //편의점 포켓몬빵 입고
-
-        // 빵 소객을 듣고 오는 손님 수를 랜덤으로 설정
-        int numCustomers = new Random().nextInt(12) + 1; // 1부터 13명 사이의 랜덤 손님 수
+        PcController.getInstance().bread1();
+        // 손님 수를 랜덤으로 설정
+        int numCustomers = new Random().nextInt(21); // 0부터 20명 사이의 랜덤 손님 수
+        numCustomers += 30; //30에서 50
 
         // 손님들이 포켓몬 빵을 최대 2개씩 구매
         for (int i = 0; i < numCustomers; i++) {
-            int purchaseQuantity = new Random().nextInt(1) + 1; // 1부터 2개 사이의 랜덤 구매 수량
-            int productId = 120; // "포켓몬 빵" 상품 ID (가정)
+            int purchaseQuantity = new Random().nextInt(5) + 1; // 1부터 5개 사이의 랜덤 구매 수량
+            InventoryLog inventoryLog = PcController.getInstance().bread2(purchaseQuantity);
+            System.out.println(inventoryLog);
 
-            // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
-            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
-
-            // 결과 출력
-            for (InventoryLog log : logs) {
-                String productName = PcController.getInstance().getProductName(log.getProductId());
-                int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
-
-                if (log.getQuantity() < 0) { // 구매 성공
-                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
-                                      productName, -log.getQuantity(), currentInventory
-                    );
-                } else { // 구매 실패 (재고 부족)
-                    System.out.printf("%s을(를) 구매할 수 있는 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
-                                      productName, currentInventory
-                    );
-                }
-            }
         }
 
 
@@ -485,5 +468,4 @@ public class ProductView {
 
 
 } // ProductView 클래스 종료
-
 

@@ -330,9 +330,13 @@ public class PcController {
 
     }
 
-    //
-    public void bread() {
+    //편의점 포켓몬빵 입고
+    public void bread1(){
+        InventoryDao.getInstance().supplyRestock(30,120,turn);
+    }
+    public InventoryLog bread2(int purchaseQuantity){
 
+        return InventoryDao.getInstance().purchase(30,purchaseQuantity,turn);
     }
 
     private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
