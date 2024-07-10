@@ -11,6 +11,12 @@ public class AccountDto {
 
     }
 
+    // 회원가입시 필요한 생성자
+    public AccountDto(String loginId, String loginPwd) {
+        this.loginId = loginId;
+        this.loginPwd = loginPwd;
+    }
+
     // 풀 생성자
 
     public AccountDto(int id, String loginId, String loginPwd) {

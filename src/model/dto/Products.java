@@ -1,5 +1,5 @@
 package model.dto;
-
+ 
 // 상품 정보를 나타내는 데이터 전송 객체(DTO) 클래스
 public class Products {
     // 멤버변수
@@ -15,7 +15,7 @@ public class Products {
 
     // productId를 제외한 필드를 초기화하는 생성자
     // 새로운 상품을 생성할 때 사용
-    public Products(String name, int price,  int stock , int expiryTurns ) {
+    public Products(String name, int price, int stock, int expiryTurns) {
         this.name = name;
         this.price = price;
         this.stock = stock;
@@ -24,7 +24,7 @@ public class Products {
 
     // 모든 필드를 초기화하는 생성자
     // 데이터베이스에서 상품 정보를 로드할 때 사용
-    public Products(int productId, String name, int price, int stock , int expiryTurns) {
+    public Products(int productId, String name, int price, int stock, int expiryTurns) {
         this.productId = productId;
         this.name = name;
         this.price = price;
@@ -50,9 +50,13 @@ public class Products {
         this.name = name;
     }
 
-    public int getStock() { return stock; }
+    public int getStock() {
+        return stock;
+    }
 
-    public void setStock(int stock) { this.stock = stock; }
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 
     public int getPrice() {
         return price;

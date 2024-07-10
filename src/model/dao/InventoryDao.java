@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
+ 
 // 편의점 재고 관리를 위한 Data Access Object (DAO) 클래스
 // 재고 확인, 구매, 삭제 등
 public class InventoryDao {

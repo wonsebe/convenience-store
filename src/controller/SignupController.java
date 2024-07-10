@@ -1,18 +1,29 @@
 package controller;
 
+import model.dao.SignupDao;
+import model.dto.AccountDto;
+import util.InputValidator;
+
 public class SignupController {
-    // 싱글턴 객체
     private static final SignupController signupCon = new SignupController();
 
-    // 생성자
     private SignupController() {
-
     }
 
-    // 싱글턴 메서드 반환
-    public SignupController getInstance() {
+    public static SignupController getInstance() {
         return signupCon;
     }
 
+    public boolean signup(String loginId, String loginPwd) {
+        if (!InputValidator.isValidInput(loginId, loginPwd)) {
+            System.out.println("Invalid username or password.");
+            return false;
+        }
 
+        AccountDto account = new AccountDto();
+        account.setLoginId(loginId);
+        account.setLoginPwd(loginPwd);
+
+        return SignupDao.getInstance().signup(account);
+    }
 }

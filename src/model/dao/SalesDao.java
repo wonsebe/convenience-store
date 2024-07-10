@@ -12,11 +12,10 @@ import java.util.ArrayList;
 // 싱글톤 패턴을 사용해 구현, 데이터베이스와의 연결 및 매출 관련 작업 담당
 public class SalesDao {
     private static final SalesDao salesDao = new SalesDao();
-    private Connection conn;
-
     private static final String DB_URL = "jdbc:mysql://localhost:3306/convenience_store";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "1234";
+    private Connection conn;
 
     // 생성자, 데이터베이스 연결 초기화
     private SalesDao() {

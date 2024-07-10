@@ -1,7 +1,7 @@
 package model.dao;
 
 import java.sql.*;
-
+ 
 // 편의점 잔고 관리를 위한 Data Access Object (DAO) 클래스
 // 싱글톤 패턴을 사용해 구현, 데이터베이스와의 연결 및 잔고 관련 작업 담당
 public class StoreDao {
