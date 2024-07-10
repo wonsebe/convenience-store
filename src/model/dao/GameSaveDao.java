@@ -71,12 +71,12 @@ public class GameSaveDao {
             conn.commit();  // 트랜잭션 커밋
             return true;
         } catch (SQLException e) {
-            System.out.println("Error saving game: " + e.getMessage());
+            System.out.println("게임저장 오류: " + e.getMessage());
             if (conn != null) {
                 try {
                     conn.rollback();  // 오류 발생 시 롤백
                 } catch (SQLException ex) {
-                    System.out.println("Error rolling back transaction: " + ex.getMessage());
+                    System.out.println("롤백 트랜잭션 오류: " + ex.getMessage());
                 }
             }
             return false;
@@ -134,7 +134,10 @@ public class GameSaveDao {
             }
 
             // 공지사항 로드
-            String loadBoardSql = "SELECT * FROM board WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            String loadBoardSql = "SELECT b.bmo, b.bcontent, b.bdate, s.id AS store_id, s.login_id " +
+                    "FROM board b " +
+                    "JOIN store s ON b.store_id = s.id " +
+                    "WHERE s.login_id = ?";
             ps = conn.prepareStatement(loadBoardSql);
             ps.setString(1, loginId);
             rs = ps.executeQuery();
@@ -144,7 +147,8 @@ public class GameSaveDao {
                         rs.getInt("bmo"),
                         rs.getString("bcontent"),
                         rs.getString("bdate"),
-                        rs.getInt("store_id")  // 수정: int 타입으로 변경
+                        rs.getInt("store_id"),
+                        rs.getString("login_id")
                 );
                 boardNotices.add(board);
             }
@@ -152,7 +156,7 @@ public class GameSaveDao {
 
             return gameState;
         } catch (SQLException e) {
-            System.out.println("Error loading game: " + e.getMessage());
+            System.out.println("게임로딩 오류: " + e.getMessage());
             return null;
         } finally {
             DbUtil.closeResultSet(rs);

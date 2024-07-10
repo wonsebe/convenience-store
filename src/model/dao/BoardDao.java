@@ -33,7 +33,7 @@ public class BoardDao {
     public ArrayList<BoardDto> Bprinter() {
         ArrayList<BoardDto> list = new ArrayList<>();
         try {
-            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.login_id " +
+            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.id AS store_id, s.login_id " +
                     "FROM board b " +
                     "JOIN store s ON b.store_id = s.id " +
                     "ORDER BY b.bmo DESC";
@@ -43,10 +43,11 @@ public class BoardDao {
                 int bmo = rs.getInt("bmo");
                 String bcontent = rs.getString("bcontent");
                 String bdate = rs.getString("bdate");
+                int store_id = rs.getInt("store_id");
                 String authorLoginId = rs.getString("login_id");
 
-
-                BoardDto boardDto = new BoardDto(bmo, bcontent, bdate, authorLoginId);
+                // 생성자 호출 수정
+                BoardDto boardDto = new BoardDto(bmo, bcontent, bdate, store_id, authorLoginId);
                 list.add(boardDto);
             }
         } catch (Exception e) {
@@ -58,7 +59,7 @@ public class BoardDao {
     // 글쓰기
     public boolean addNotice(String content, String authorLoginId) {
         try {
-            String sql = "INSERT INTO board (bcontent, bdate, store_id) VALUES (?, CURDATE(), ?)";
+            String sql = "INSERT INTO board (bcontent, bdate, store_id) VALUES (?, CURDATE(), (SELECT id FROM store WHERE login_id = ?))";
             ps = conn.prepareStatement(sql);
             ps.setString(1, content);
             ps.setString(2, authorLoginId);
@@ -73,7 +74,7 @@ public class BoardDao {
     public ArrayList<BoardDto> getAllNotices() {
         ArrayList<BoardDto> notices = new ArrayList<>();
         try {
-            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.login_id " +
+            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.id AS store_id, s.login_id " +
                     "FROM board b " +
                     "JOIN store s ON b.store_id = s.id " +
                     "ORDER BY b.bmo DESC";
@@ -84,7 +85,11 @@ public class BoardDao {
                 String bcontent = rs.getString("bcontent");
                 String bdate = rs.getString("bdate");
                 int store_id = rs.getInt("store_id");
-                notices.add(new BoardDto(bmo, bcontent, bdate, authorLoginId));
+                String authorLoginId = rs.getString("login_id");
+
+                // 생성자 호출 수정
+                BoardDto boardDto = new BoardDto(bmo, bcontent, bdate, store_id, authorLoginId);
+                notices.add(boardDto);
             }
         } catch (Exception e) {
             System.out.println("공지사항 조회 중 오류 발생: " + e);

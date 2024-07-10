@@ -225,7 +225,7 @@ public class PcController {
 
     // 8 - 글쓰기
     public boolean addNotice(String content) {
-        return Bcontroller.getInstance().addNotice(content, getCurrentStoreId());
+        return Bcontroller.getInstance().addNotice(content, getCurrentLoginId());
     }
 
     // 9 - 글보기

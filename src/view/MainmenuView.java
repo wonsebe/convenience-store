@@ -85,10 +85,13 @@ public class MainmenuView {
 
         boolean loginSuccess = LoginController.getInstance().login(id, password);
         if (loginSuccess) {
+            // 로그인 성공 시 메시지 출력하고 현재 잔고를 표시
             System.out.println(ColorUtil.getColor("GREEN") + "로그인 성공!" + ColorUtil.getColor("RESET"));
             System.out.println("현재 잔고: " + PcController.getInstance().getStoreBalance() + "원");
+            // ProductView의 index() 메서드를 호출하여 게임 메인 화면으로 이동
             ProductView.getInstance().index();
         } else {
+            // 로그인 실패 시 오류 메시지 출력 후 다시 메인 메뉴로 돌아감
             System.out.println(ColorUtil.getColor("RED") + "로그인 실패. 아이디 또는 비밀번호를 확인해주세요." + ColorUtil.getColor("RESET"));
             start();
         }
@@ -102,8 +105,10 @@ public class MainmenuView {
 
         boolean signupSuccess = SignupController.getInstance().signup(id, password);
         if (signupSuccess) {
+            // 회원가입 성공 시 메시지 출력
             System.out.println(ColorUtil.getColor("GREEN") + "회원가입 성공! 로그인해주세요." + ColorUtil.getColor("RESET"));
         } else {
+            // 회원가입 실패 시 오류 메시지 출력
             System.out.println(ColorUtil.getColor("RED") + "회원가입 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET"));
         }
         // 회원가입 후 메인 메뉴로 돌아가기

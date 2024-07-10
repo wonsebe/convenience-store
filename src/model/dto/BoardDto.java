@@ -1,20 +1,21 @@
 package model.dto;
 
 public class BoardDto {
-    private int bmo;
-    private String bcontent;
-    private String bdate;
-    private int store_id;
-    private String authorLoginId;  // store_id 대신 로그인 ID를 저장할 필드
+    private int bmo; // 게시물 번호
+    private String bcontent; // 게시물 내용
+    private String bdate; // 게시물 작성 날짜
+    private int store_id; // store의 고유 식별자 (작성자)
+    private String authorLoginId; // 작성자의 로그인 ID
 
-    public BoardDto(int bmo, String bcontent, String bdate, String authorLoginId) {
-        this.bmo = bmo;
-        this.bcontent = bcontent;
-        this.bdate = bdate;
-        this.authorLoginId = authorLoginId;
+    public BoardDto(int bmo, String bcontent, String bdate, int store_id, String authorLoginId) {
+        this.bmo = bmo; // 게시물 번호 설정
+        this.bcontent = bcontent; // 게시물 내용 설정
+        this.bdate = bdate; // 게시물 작성 날짜 설정
+        this.store_id = store_id; // store의 고유 식별자 설정
+        this.authorLoginId = authorLoginId; // 작성자의 로그인 ID 설정
     }
 
-    // Getter and Setter methods
+    // Getter와 Setter 메서드들
     public int getBmo() {
         return bmo;
     }

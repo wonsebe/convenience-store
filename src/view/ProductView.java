@@ -254,18 +254,23 @@ public class ProductView {
         if (notices.isEmpty()) {
             System.out.println(ColorUtil.getColor("YELLOW") + "등록된 공지사항이 없습니다." + ColorUtil.getColor("RESET"));
         } else {
-            System.out.println("============= 공지사항 목록 =============");
-            System.out.printf("%-5s %-15s %-20s %-10s\n", "번호", "작성일", "내용", "작성자");
+            System.out.println("================= 공지사항 목록 =================");
+            System.out.printf("%-4s %-12s %-12s\t\t %-10s\n", "번호", "작성일", "내용", "작성자");
             for (BoardDto notice : notices) {
+                // 공지사항 내용이 12자를 초과할 경우 처음 12자까지만 표시하고 "..."을 붙임
+                // 공지사항 내용이 12자 이하일 경우 그대로 표시
+                String content = notice.getBcontent().length() > 12
+                        ? notice.getBcontent().substring(0, 12) + "..."
+                        : notice.getBcontent();
                 System.out.printf(
-                        "%-5d %-15s %-30s %-10d\n",
+                        "%-4d %-12s %-14s %-10s\n",
                         notice.getBmo(),
                         notice.getBdate(),
-                        notice.getBcontent().length() > 30 ? notice.getBcontent().substring(0, 27) + "..." : notice.getBcontent(),
-                        notice.getStore_id()
+                        content,
+                        notice.getAuthorLoginId()
                 );
             }
-            System.out.println("===============================");
+            System.out.println("==============================================");
         }
     }
 

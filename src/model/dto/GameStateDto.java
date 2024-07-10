@@ -4,31 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateDto {
-    private int storeId;
-    private String loginId;  // 로그인 ID를 저장하기 위한 새 필드
-    private int balance;
-    private int currentTurn;
-    private List<InventoryLog> inventoryLogs;
-    private List<BoardDto> boardNotices;
-    private List<Products> products;
-    private int lastTurnTotalSales;
+    private int storeId; // store의 고유 식별자
+    private String loginId; // 로그인 ID를 저장
+    private int balance; // 현재 잔고
+    private int currentTurn; // 현재 턴
+    private List<InventoryLog> inventoryLogs; // 재고 로그 리스트
+    private List<BoardDto> boardNotices; // 공지사항 리스트
+    private List<Products> products; // 상품 리스트
+    private int lastTurnTotalSales; // 마지막 턴의 총 매출액
 
+    // 기본 생성자
     public GameStateDto() {
-        this.inventoryLogs = new ArrayList<>();
-        this.boardNotices = new ArrayList<>();
+        this.inventoryLogs = new ArrayList<>(); // 재고 로그 리스트 초기화
+        this.boardNotices = new ArrayList<>(); // 공지사항 리스트 초기화
     }
 
-    // 새로운 생성자 추가
+    // 모든 필드를 초기화하는 새로운 생성자
     public GameStateDto(int storeId, String loginId, int balance, int currentTurn, List<InventoryLog> inventoryLogs, List<BoardDto> boardNotices) {
-        this.storeId = storeId;
-        this.loginId = loginId;
-        this.balance = balance;
-        this.currentTurn = currentTurn;
-        this.inventoryLogs = inventoryLogs;
-        this.boardNotices = boardNotices;
+        this.storeId = storeId; // store의 고유 식별자 설정
+        this.loginId = loginId; // 로그인 ID 설정
+        this.balance = balance; // 현재 잔고 설정
+        this.currentTurn = currentTurn; // 현재 턴 설정
+        this.inventoryLogs = inventoryLogs; // 재고 로그 리스트 설정
+        this.boardNotices = boardNotices; // 공지사항 리스트 설정
     }
 
-    // Getter and Setter methods
+    // Getter와 Setter 메서드들
     public int getStoreId() {
         return storeId;
     }

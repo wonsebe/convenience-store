@@ -30,5 +30,4 @@ public class Bcontroller {
         return BoardDao.getInstance().getAllNotices();
     }
 
-
 }   // Bcontroller end
