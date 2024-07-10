@@ -146,6 +146,7 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
+  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -361,6 +362,7 @@ public class ProductView {
         System.out.println(ColorUtil.getColor("GREEN") + "편의점 현재 잔고: " + storeBalance + "원" + ColorUtil.getColor("RESET"));
         System.out.println("=========================================================");
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
+
 
 
     //패배조건 : 10개 물품의 재고가 0개되면 탈락

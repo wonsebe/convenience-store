@@ -6,20 +6,17 @@ import model.dto.BoardDto;
 import java.util.ArrayList;
 
 public class Bcontroller {
+    // 싱글톤
+    private static Bcontroller bcontrol = new Bcontroller();
+    private  Bcontroller(){}
+    public static Bcontroller getInstance(){return bcontrol;}
 
-    private static final Bcontroller bcontrol = new Bcontroller();
-
-    private Bcontroller() {
-    }
-
-    public static Bcontroller getInstance() {
-        return bcontrol;
-    }
-
-
-    public ArrayList<BoardDto> Bprinter() {
+    // 1. 전체출력
+    public ArrayList<BoardDto> Bprinter(){
         return BoardDao.getInstance().Bprinter();
     }
+
+
 
 
 }   // Bcontroller end

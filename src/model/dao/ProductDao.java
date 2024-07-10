@@ -10,9 +10,25 @@ import java.sql.*;
 public class ProductDao {
     // 싱글톤 패턴을 위한 자기 자신의 인스턴스
     private static final ProductDao pDao = new ProductDao();
+    // 데이터베이스 연결 정보
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/convenience_store";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "1234";
+    // 데이터베이스 연결을 위한 객체들
+    private Connection conn;
+    private PreparedStatement ps;
+    private ResultSet rs;
 
     // 생성자 (private으로 외부에서 인스턴스 생성 방지)
     private ProductDao() {
+        try {
+            // MySQL JDBC 드라이버 로드
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            // 등록된 멤버변수를 사용해 데이터베이스 연결
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        } catch (Exception e) {
+            System.out.println("데이터베이스 연결 중 오류 발생: " + e);
+        }
     } // 생성자 end
 
     // 싱글톤 인스턴스 반환 메서드
@@ -191,4 +207,21 @@ public class ProductDao {
             DbUtil.closeConnection(conn);
         }
     } // 물품 수정 메서드 end
+
+    // 요청한 상품의 가격을 반환하는 메서드
+    public int getProductPrice(int productId) {
+        int price = 0;
+        try {
+            String sql = "SELECT price FROM products WHERE product_id = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                price = rs.getInt("price");
+            }
+        } catch (SQLException e) {
+            System.out.println("상품 가격 조회 중 오류 발생: " + e);
+        }
+        return price;
+    }
 }
