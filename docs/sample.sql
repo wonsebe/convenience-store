@@ -1,5 +1,6 @@
 -- 편의점 시뮬레이션 데이터베이스 생성
 CREATE DATABASE IF NOT EXISTS convenience_store;
+-- drop database convenience_store;
 
 -- 데이터베이스 사용
 USE convenience_store;
@@ -22,6 +23,7 @@ CREATE TABLE store
     balance      INT DEFAULT 1000000             -- 초기 잔고 100만원 설정
 );
 
+-- 샘플 계정
 INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
 VALUES (1, 'admin', '1234', 1, 1000000),
        (2, 'admin2', '1234', 1, 1000000)
@@ -106,7 +108,7 @@ VALUES (1, '삼각김밥', 1200, 5),
        (8, '도시락', 4500, 3),
        (9, '김치찌개라면', 1300, 12),
        (10, '캔커피', 1000, 18),
-       (11, '빵', 2000, 5),
+       (11, '딸기케익', 2000, 5),
        (12, '과자', 2500, 20),
        (13, '음료수', 1500, 25),
        (14, '샌드위치', 3000, 4),

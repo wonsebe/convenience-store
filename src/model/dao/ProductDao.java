@@ -99,7 +99,7 @@ public class ProductDao {
         try {
             conn = DbUtil.getConnection();
             // SQL 쿼리 준비 (등록된 상품 종류의 총 개수 조회)
-            String sql = "SELECT COUNT(DISTINCT product_id) as count FROM products";
+            String sql = "SELECT COUNT(*) as count FROM products";
             ps = conn.prepareStatement(sql);
             // executeQuery()
             // SELECT 문과 같이 데이터를 조회하는 SQL 문에 사용합니다.

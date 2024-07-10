@@ -255,7 +255,7 @@ public class ProductView {
             System.out.println(ColorUtil.getColor("YELLOW") + "등록된 공지사항이 없습니다." + ColorUtil.getColor("RESET"));
         } else {
             System.out.println("================= 공지사항 목록 =================");
-            System.out.printf("%-4s %-12s %-12s\t\t %-10s\n", "번호", "작성일", "내용", "작성자");
+            System.out.printf("%-7s %-12s %-12s\t %-10s\n", "번호", "작성일", "내용", "작성자");
             for (BoardDto notice : notices) {
                 // 공지사항 내용이 12자를 초과할 경우 처음 12자까지만 표시하고 "..."을 붙임
                 // 공지사항 내용이 12자 이하일 경우 그대로 표시
@@ -263,7 +263,7 @@ public class ProductView {
                         ? notice.getBcontent().substring(0, 12) + "..."
                         : notice.getBcontent();
                 System.out.printf(
-                        "%-4d %-12s %-14s %-10s\n",
+                        "%-4d %-12s %-14s\t %-10s\n",
                         notice.getBmo(),
                         notice.getBdate(),
                         content,
@@ -286,7 +286,6 @@ public class ProductView {
         PcController.getInstance().processPurchaseAndSales(currentTurn);
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
         simulateCustomerVisits(logs);
-        displayTotalSalesAndBalance();
 
         // 월세 차감 처리
         boolean rentPaid = PcController.getInstance().deductRent(currentTurn);
@@ -312,6 +311,8 @@ public class ProductView {
             bread1();
         }
 
+        // 잔고 표시
+        displayTotalSalesAndBalance();
         checkLoseCondition();
 
         // 턴 증가

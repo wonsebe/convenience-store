@@ -27,25 +27,28 @@ public class GameSaveDao {
         PreparedStatement ps = null;
         try {
             conn = DbUtil.getConnection();
-            conn.setAutoCommit(false);  // 트랜잭션 시작
+            // 트랜잭션 시작
+            // 여러 SQL 명령어를 하나의 트랜잭션으로 처리하기 위해 자동 커밋을 비활성화
+            conn.setAutoCommit(false);
 
             // 게임 턴 업데이트
             String updateTurnSql = "UPDATE store SET current_turn = ? WHERE login_id = ?";
             ps = conn.prepareStatement(updateTurnSql);
-            ps.setInt(1, gameState.getCurrentTurn());
-            ps.setString(2, loginId);
+            ps.setInt(1, gameState.getCurrentTurn()); // 현재 턴 설정
+            ps.setString(2, loginId); // 로그인 ID 설정
             ps.executeUpdate();
 
             // 재고 로그 저장
             String saveInventorySql = "INSERT INTO inventory_log (game_date, product_id, quantity, description, sale_price, store_id) VALUES (?, ?, ?, ?, ?, ?)";
             ps = conn.prepareStatement(saveInventorySql);
+            // 재고 로그를 배치로 추가
             for (InventoryLog log : gameState.getInventoryLogs()) {
-                ps.setInt(1, log.getGameDate());
-                ps.setInt(2, log.getProductId());
-                ps.setInt(3, log.getQuantity());
-                ps.setString(4, log.getDescription());
-                ps.setInt(5, log.getSalePrice());
-                ps.setInt(6, log.getStoreId());
+                ps.setInt(1, log.getGameDate()); // 게임 날짜 설정
+                ps.setInt(2, log.getProductId()); // 제품 ID 설정
+                ps.setInt(3, log.getQuantity()); // 수량 설정
+                ps.setString(4, log.getDescription()); // 설명 설정
+                ps.setInt(5, log.getSalePrice()); // 판매 가격 설정
+                ps.setInt(6, log.getStoreId()); // 상점 ID 설정
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -53,17 +56,18 @@ public class GameSaveDao {
             // 편의점 잔고 업데이트
             String updateBalanceSql = "UPDATE store SET balance = ? WHERE login_id = ?";
             ps = conn.prepareStatement(updateBalanceSql);
-            ps.setInt(1, gameState.getStoreBalance());
-            ps.setString(2, loginId);
+            ps.setInt(1, gameState.getStoreBalance()); // 편의점 잔고 설정
+            ps.setString(2, loginId); // 로그인 ID 설정
             ps.executeUpdate();
 
             // 공지사항 저장
             String saveBoardSql = "INSERT INTO board (bcontent, bdate, store_id) VALUES (?, ?, (SELECT id FROM store WHERE login_id = ?))";
             ps = conn.prepareStatement(saveBoardSql);
+            // 공지사항을 배치로 추가
             for (BoardDto board : gameState.getBoardNotices()) {
-                ps.setString(1, board.getBcontent());
-                ps.setString(2, board.getBdate());
-                ps.setString(3, loginId);
+                ps.setString(1, board.getBcontent()); // 공지사항 내용 설정
+                ps.setString(2, board.getBdate()); // 공지사항 날짜 설정
+                ps.setString(3, loginId); // 로그인 ID 설정
                 ps.addBatch();
             }
             ps.executeBatch();

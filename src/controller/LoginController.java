@@ -19,6 +19,7 @@ public class LoginController {
             PcController.getInstance().setCurrentLoginId(loginId);
             PcController.getInstance().setCurrentStoreId(account.getId());
             PcController.getInstance().updateStoreBalance(account.getBalance());
+            PcController.getInstance().initializeGameAfterLogin(loginId);
             return true;
         }
         return false;

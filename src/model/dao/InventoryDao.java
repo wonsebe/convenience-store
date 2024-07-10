@@ -78,7 +78,7 @@ public class InventoryDao {
         InventoryLog inventoryLog = null;
         try {
             if (productDao == null) {
-              //  System.out.println("productDao가 null입니다. 초기화시작");
+                //  System.out.println("productDao가 null입니다. 초기화시작");
                 productDao = ProductDao.getInstance();
             }
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price, purchase_date) VALUES (?, ?, ?, '판매', ?, ?)";
@@ -191,6 +191,13 @@ public class InventoryDao {
     //강도함수
     public void inrush(int productId, int quantity) {
         try {
+            // 제품이 존재하는지 확인
+            int existingProductCount = ProductDao.getInstance().getProductTypeCount();
+            if (existingProductCount <= 0) {
+                System.out.println("해당 상품이 존재하지 않아 강도 침입 처리를 할 수 없습니다.");
+                return;
+            }
+
             // 감소할 수량을 음수로 저장 (로그 기록)
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description) " +
                     "VALUES (0, ?, ?, '강도에 의한 재고 감소')";
@@ -199,6 +206,10 @@ public class InventoryDao {
             ps.setInt(1, productId);
             ps.setInt(2, -quantity);
             ps.executeUpdate();
+
+            // 현재 재고 출력
+            int currentStock = InventoryDao.getInstance().checkInventory(productId);
+            System.out.println("강도가 " + ProductDao.getInstance().getProductName(productId) + "을(를) " + quantity + "개 훔쳐갔습니다. (남은 재고: " + currentStock + ")");
         } catch (Exception e) {
             System.out.println("강도 침입 처리 중 오류 발생: " + e);
         }
@@ -221,7 +232,6 @@ public class InventoryDao {
         }
         return 0;
     }
-
 
 
 }

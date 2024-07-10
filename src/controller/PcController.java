@@ -30,10 +30,11 @@ public class PcController {
     // 초기화 시 등록된 상품 종류의 수 조회
     private PcController() {
         // 초기화 시 등록된 상품 종류의 수 조회
-        this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
-        this.lastTurnTotalSales = 0;
-        this.turn = 1;
-        this.storeBalance = StoreDao.getInstance().getBalance();
+        // 순환참조 문제로 주석처리 함
+        // this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
+        // this.lastTurnTotalSales = 0;
+        // this.turn = 1;
+        // this.storeBalance = StoreDao.getInstance().getBalance();
     }
 
     // 싱글톤 인스턴스 반환 메서드
@@ -79,18 +80,16 @@ public class PcController {
             this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
             updateInventoryFromLogs(gameState.getInventoryLogs());
             updateBoardNotices(gameState.getBoardNotices());
-
             if (gameState.getProducts() != null) {
                 updateProducts(gameState.getProducts());
             }
-
             // 기타 필요한 게임 상태 변수들 복원
             restoreAdditionalGameStates(gameState);
 
             System.out.println("게임 상태가 성공적으로 로드되었습니다. 현재 턴: " + this.turn);
         } else {
             System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
-            initializeNewGame();
+            initializeNewGame(currentLoginId);
         }
     }
 
@@ -102,6 +101,14 @@ public class PcController {
         saveGameState();
     }
 
+    // 새로운 메서드 추가
+    public void initializeGameAfterLogin(String loginId) {
+        this.currentLoginId = loginId;
+        this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
+        initializeNewGame(loginId);
+    }
+
+    // 로그인 후 초기화 작업
     public void restoreAdditionalGameStates(GameStateDto gameState) {
         // 게임 상태 복원 로직
         // 이벤트 상태, 특별 조건 등
@@ -237,6 +244,11 @@ public class PcController {
     // 랜덤한 수의 고객이 랜덤한 상품을 랜덤 수량으로 구매하려 시도
     public ArrayList<InventoryLog> purchase(int turn) {
         ArrayList<InventoryLog> logs = new ArrayList<>();
+        if (productTypeCount <= 0) {
+            System.out.println("등록된 상품이 없습니다.");
+            return logs;
+        }
+
         // 3~12명의 랜덤한 고객 수 생성
         int customerCount = new Random().nextInt(9) + 3;
 
@@ -330,17 +342,20 @@ public class PcController {
     }
 
     public void inrush() {
+        if (productTypeCount <= 0) {
+            System.out.println("등록된 상품이 없어 강도 침입을 처리할 수 없습니다.");
+            return;
+        }
+
         Random random = new Random();
         // 랜덤하게 상품 선택
-
         int productId = random.nextInt(productTypeCount) + 1;
+
         // 랜덤하게 감소할 수량 선택
         int quantity = random.nextInt(2) + 1; //1부터 3까지 수량을 랜덤으로 가져감
 
-
         //이름과 수량을 다오로 보냄
         InventoryDao.getInstance().inrush(productId, quantity);
-
     }
 
     //편의점 포켓몬빵 입고
@@ -349,7 +364,6 @@ public class PcController {
     }
 
     public InventoryLog bread2(int purchaseQuantity) {
-
         return InventoryDao.getInstance().purchase(30, purchaseQuantity, turn);
     }
 
@@ -359,10 +373,6 @@ public class PcController {
 
     private void updateBoardNotices(List<BoardDto> boardNotices) {
         // 로드된 공지사항으로 현재 공지사항을 업데이트하는 로직
-    }
-
-    private void initializeNewGame() {
-        // 새 게임 초기화 로직
     }
 
     public void checkAndRemoveExpiredInventory() {
