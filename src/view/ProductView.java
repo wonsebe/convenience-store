@@ -167,12 +167,12 @@ public class ProductView {
                 // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
                 switch (choice) {
                     case 1 -> supplyRestock();  // 재고 구매
-                    case 2 -> displayInventory();  // 재고 확인
+                    case 2 -> BoardView.getInstance().Bwrite();  // 공지사항 작성하기
                     case 3 -> addProduct();  // 상품 추가
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush (); //강도 침입 함수
+                    case 7 -> BoardView.getInstance ().Bprinter(); // 공지사항 출력하기
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료

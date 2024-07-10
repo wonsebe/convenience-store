@@ -16,7 +16,11 @@ public class Bcontroller {
         return BoardDao.getInstance().Bprinter();
     }
 
-
+    // 2. 게시물 쓰기
+    public boolean Bwrite(String bcontent){
+        BoardDao.getInstance().Bwrite(bcontent);
+        return false;
+    }
 
 
 }   // Bcontroller end

@@ -50,6 +50,16 @@ public class BoardDao {
     }
 
 
+    // 2. 게시물 쓰기
+    public boolean Bwrite(String bcontent){
+        try {
+
+
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
 
 
 } //BoardDao end
