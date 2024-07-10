@@ -23,7 +23,7 @@ public class PcController {
     private int lastTurnTotalSales; // 마지막 턴의 총 매출액을 저장
     private int turn;
     private int storeBalance; // 편의점 현금
-    private String currentLoginId;
+    private String currentLoginId;  // 편의점 로그인 아이디
 
     // private 생성자. 외부에서 인스턴스 생성 방지
     // 초기화 시 등록된 상품 종류의 수 조회

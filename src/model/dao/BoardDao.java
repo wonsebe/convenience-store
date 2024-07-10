@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.dto.AccountDto;
 import model.dto.BoardDto;
 import util.DbUtil;
 
@@ -52,7 +53,7 @@ public class BoardDao {
 
 
     // 2. 게시물 쓰기
-    public boolean Bwrite(String bcontent){
+    public boolean Bwrite(String bcontent ){
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -60,11 +61,9 @@ public class BoardDao {
             // 데이터베이스 연결
             conn = DbUtil.getConnection();
 
-            String sql = "insert into board(bcontent  )values(?)";
+            String sql = "insert into board(bcontent )values(?)";
             ps = conn.prepareStatement(sql);
             ps.setString(1 , bcontent);
-
-
 
             int count = ps.executeUpdate();
             if (count == 1){
