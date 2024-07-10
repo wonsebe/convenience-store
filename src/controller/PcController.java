@@ -1,9 +1,8 @@
 package controller;
 
-import model.dao.InventoryDao;
-import model.dao.ProductDao;
-import model.dao.SalesDao;
-import model.dao.StoreDao;
+import model.dao.*;
+import model.dto.BoardDto;
+import model.dto.GameStateDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
@@ -47,14 +46,6 @@ public class PcController {
 
     public void setTurn(int turn) {
         this.turn = turn;
-    }
-
-    public String getCurrentLoginId() {
-        return this.currentLoginId;
-    }
-
-    public void setCurrentLoginId(String loginId) {
-        this.currentLoginId = loginId;
     }
 
     // saveGameState 메서드
@@ -340,17 +331,12 @@ public class PcController {
     }
 
     //편의점 포켓몬빵 입고
-    public void bread1(int turn){
-InventoryDao.getInstance().supplyRestock(30,120,turn);
+    public void bread1(){
+        InventoryDao.getInstance().supplyRestock(30,120,turn);
     }
-    public InventoryLog bread2(int turn,int purchaseQuantity){
+    public InventoryLog bread2(int purchaseQuantity){
 
         return InventoryDao.getInstance().purchase(30,purchaseQuantity,turn);
-    }
-
-    //
-    public void bread() {
-
     }
 
     private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
