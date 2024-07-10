@@ -2,6 +2,7 @@ package controller;
 
 import model.dao.*;
 import model.dto.BoardDto;
+import model.dto.GameStateDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
@@ -20,6 +21,7 @@ public class PcController {
     private final GameSaveDao gameSaveDao = GameSaveDao.getInstance();
     private int productTypeCount; // 등록된 상품 종류의 수를 저장
     private int lastTurnTotalSales; // 마지막 턴의 총 매출액을 저장
+    private int turn;
     private int storeBalance; // 편의점 현금
     private String currentLoginId;
 
@@ -29,6 +31,7 @@ public class PcController {
         // 초기화 시 등록된 상품 종류의 수 조회
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
         this.lastTurnTotalSales = 0;
+        this.turn = 1;
         this.storeBalance = StoreDao.getInstance().getBalance();
     }
 
@@ -37,25 +40,50 @@ public class PcController {
         return pControl;
     }
 
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public String getCurrentLoginId() {
+        return this.currentLoginId;
+    }
+
+    public void setCurrentLoginId(String loginId) {
+        this.currentLoginId = loginId;
+    }
+
+    // saveGameState 메서드
     public void saveGameState() {
-        GameState gameState = new GameState(
+        GameStateDto gameState = new GameStateDto(
                 turn,
-                new ArrayList<>(/* 현재 재고 로그 */),
+                getCurrentInventoryLogs(),
                 storeBalance,
-                new ArrayList<>(/* 현재 공지사항 */)
+                getCurrentBoardNotices(),
+                lastTurnTotalSales
         );
         gameSaveDao.saveGame(currentLoginId, gameState);
     }
 
+    // loadGameState 메서드
     public void loadGameState() {
-        GameState gameState = gameSaveDao.loadGame(currentLoginId);
+        GameStateDto gameState = gameSaveDao.loadGame(currentLoginId);
         if (gameState != null) {
             this.turn = gameState.getCurrentTurn();
             this.storeBalance = gameState.getStoreBalance();
+            this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
+            updateInventoryFromLogs(gameState.getInventoryLogs());
+            updateBoardNotices(gameState.getBoardNotices());
+            if (gameState.getProducts() != null) {
+                updateProducts(gameState.getProducts());
+            }
 
             // 재고 로그 복원
             List<InventoryLog> inventoryLogs = gameState.getInventoryLogs();
-            // 여기서 inventoryLogs를 사용하여 현재 재고 상태를 업데이트
+            // inventoryLogs를 사용하여 현재 재고 상태를 업데이트
             updateInventoryFromLogs(inventoryLogs);
 
             // 공지사항 복원
@@ -82,6 +110,22 @@ public class PcController {
             System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
             initializeNewGame();
         }
+    }
+
+    private void restoreAdditionalGameStates(GameStateDto gameState) {
+        // 게임 상태 복원 로직
+        // 이벤트 상태, 특별 조건 등
+    }
+
+    private List<Products> getCurrentProducts() {
+        // 현재 상품 목록을 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private void updateProducts(List<Products> products) {
+        // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 로직
+        // ...
     }
 
     // 1 - 재고 구매 메서드
@@ -272,6 +316,34 @@ public class PcController {
     public void bread() {
 
 
+    }
+
+    // 필요한 추가 메서드들
+    private ArrayList<InventoryLog> getCurrentInventoryLogs() {
+        // 현재 재고 로그를 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private ArrayList<BoardDto> getCurrentBoardNotices() {
+        // 현재 공지사항을 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
+        // 로드된 재고 로그로 현재 재고 상태를 업데이트하는 로직
+        // ...
+    }
+
+    private void updateBoardNotices(List<BoardDto> boardNotices) {
+        // 로드된 공지사항으로 현재 공지사항을 업데이트하는 로직
+        // ...
+    }
+
+    private void initializeNewGame() {
+        // 새 게임 초기화 로직
+        // ...
     }
 
 } // PcController 클래스 end

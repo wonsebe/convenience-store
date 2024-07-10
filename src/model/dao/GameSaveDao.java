@@ -1,7 +1,7 @@
 package model.dao;
 
 import model.dto.BoardDto;
-import model.dto.GameState;
+import model.dto.GameStateDto;
 import model.dto.InventoryLog;
 import util.DbUtil;
 
@@ -22,7 +22,7 @@ public class GameSaveDao {
         return gameSaveDao;
     }
 
-    public boolean saveGame(String loginId, GameState gameState) {
+    public boolean saveGame(String loginId, GameStateDto gameState) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -86,11 +86,11 @@ public class GameSaveDao {
         }
     }
 
-    public GameState loadGame(String loginId) {
+    public GameStateDto loadGame(String loginId) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        GameState gameState = new GameState();
+        GameStateDto gameState = new GameStateDto();
         try {
             conn = DbUtil.getConnection();
 

@@ -20,9 +20,6 @@ public class ProductView {
     // 사용자 입력을 받기 위한 Scanner 객체
     Scanner scan = new Scanner(System.in);
 
-    // 현재 게임의 턴 수를 저장하는 변수
-    int turn = 1;
-
     // private 생성자로 외부에서의 인스턴스 생성을 방지
     private ProductView() {
     }
@@ -54,6 +51,8 @@ public class ProductView {
                                  "　　    　|二||二|\n" + ColorUtil.getColor("RESET"));
 
         while (true) {
+            int currentTurn = PcController.getInstance().getTurn();
+            System.out.println("현재 턴: " + currentTurn);
             // 사용자 행동 선택 메뉴 출력 및 입력 받기
             System.out.print(ColorUtil.getColor("CYAN") + "1" + ColorUtil.getColor("RESET") + " - 재고 구매\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "2" + ColorUtil.getColor("RESET") + " - 재고 확인\t\t");
@@ -106,6 +105,7 @@ public class ProductView {
 
     // 1 - 재고 구매 메서드
     public void supplyRestock() {
+        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
         // 구매할 제품 번호를 입력한다
         System.out.println("입고할 제품 번호를 입력하세요.");
         System.out.print(">>");
@@ -124,7 +124,7 @@ public class ProductView {
         String confirm = scan.next().toLowerCase();
         if (confirm.equals("y")) {
             // 컨트롤러의 supplyRestock 메서드 호출
-            String result = PcController.getInstance().supplyRestock(pId, quantity, turn);
+            String result = PcController.getInstance().supplyRestock(pId, quantity, currentTurn);
 
             // 결과 출력
             System.out.println(result);
@@ -229,21 +229,22 @@ public class ProductView {
 
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {
-        System.out.println(turn + "번째 턴을 진행합니다.");
+        int currentTurn = PcController.getInstance().getTurn();
+        System.out.println(currentTurn + "번째 턴을 진행합니다.");
         // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
-        PcController.getInstance().processPurchaseAndSales(turn);
-        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+        PcController.getInstance().processPurchaseAndSales(currentTurn);
+        ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
         simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
         displayTotalSalesAndBalance(); // 총 매출액 출력
         // 월세 차감 처리
-        boolean rentPaid = PcController.getInstance().deductRent(turn);
+        boolean rentPaid = PcController.getInstance().deductRent(currentTurn);
         if (!rentPaid) {
             gameOver("월세를 낼 돈이 부족합니다.");
             return;
         }
 
         // 승리조건
-        if (turn >= 100) {
+        if (currentTurn >= 100) {
             System.out.println("게임 승리");
         }
 
@@ -259,10 +260,11 @@ public class ProductView {
             bread();
         }
 
-        turn++; // 턴 증가
+        currentTurn++; // 턴 증가
         checkLoseCondition();
         // 이 메서드 내에서 이미 게임 상태가 저장됨
-        PcController.getInstance().processPurchaseAndSales(turn);
+        PcController.getInstance().processPurchaseAndSales(currentTurn);
+        PcController.getInstance().setTurn(currentTurn + 1);
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
@@ -307,7 +309,7 @@ public class ProductView {
     // 99.2 - 이벤트: 강도가 들어 재고를 털어가는 설정 -재고 랜덤으로 깎임(수량이 깎이는 설정 -재고가 아예 없어지지는 않음)
     //어떤 상품을, 몇개 빼앗아 가는지 inventory log 기록 함수를 사용해서 하기
     public void inrush() {
-
+        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
         System.out.println("＿人人人人人人人人人＿\n" +
                                    "＞살금살금살금살금살금＜\n" +
                                    "￣ＹＹＹＹＹＹＹＹＹ￣\n" +
@@ -321,7 +323,7 @@ public class ProductView {
                                    "　　　　 ノノ  Ｊ\n");
         System.out.println("강도가 침입했습니다!");
         //PcController에서 turn을 매개변수로 하여 무언가를 구매하고, 그 구매에 대한 인벤토리 로그를 담은 ArrayList를 반환.
-        ArrayList<InventoryLog> still = PcController.getInstance().purchase(turn);
+        ArrayList<InventoryLog> still = PcController.getInstance().purchase(currentTurn);
 
         //still 리스트에 있는 각 인벤토리 로그를 순회하면서, 각각의 상품에 대해 이름과 재고를 확인
         for (InventoryLog stills : still) { //still 리스트에서 InventoryLog 객체를 하나씩 가져와서 stills라는 변수에 할당
@@ -404,9 +406,9 @@ public class ProductView {
     //굿이벤트 (포켓몬빵)
     //랜덤으로 포켓몬 빵이 들어오는 날이 오면 손님 50명이 우르르 몰려서 재고를 사는 함수
     public void bread() {
+        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
         System.out.println("포켓몬 빵이 들어왔습니다!");
         //편의점 포켓몬빵 입고
-
 
         // 손님 수를 랜덤으로 설정
         int numCustomers = new Random().nextInt(30) + 1; // 1부터 30명 사이의 랜덤 손님 수
@@ -417,7 +419,7 @@ public class ProductView {
             int productId = 120; // "포켓몬 빵" 상품 ID (가정)
 
             // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
-            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(turn);
+            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
 
             // 결과 출력
             for (InventoryLog log : logs) {

@@ -4,13 +4,13 @@ CREATE DATABASE IF NOT EXISTS convenience_store;
 -- 데이터베이스 사용
 USE convenience_store;
 
--- 기존 테이블 삭제
+-- 기존 테이블 삭제 (삭제 순서에 따라 오류 발생할 수 있음)
+DROP TABLE IF EXISTS board;
 DROP TABLE IF EXISTS inventory_log;
-DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS sales;
 DROP TABLE IF EXISTS store_balance;
+DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS store;
-DROP TABLE IF EXISTS board;
 
 -- 편의점 (로그인 회원(게임속 점주)마다 기본키 다름)
 CREATE TABLE store

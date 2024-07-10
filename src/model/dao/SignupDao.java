@@ -37,7 +37,7 @@ public class SignupDao {
             ps.setString(1, account.getLoginId());
             rs = ps.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
-                System.out.println("Username already exists.");
+                System.out.println("존재하는 아이디입니다.");
                 return false;
             }
 

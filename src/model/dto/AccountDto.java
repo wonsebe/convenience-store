@@ -1,5 +1,5 @@
 package model.dto;
- 
+
 public class AccountDto {
     // 멤버변수
     private int id;
@@ -9,6 +9,12 @@ public class AccountDto {
     // 빈 생성자
     public AccountDto() {
 
+    }
+
+    // 회원가입시 필요한 생성자
+    public AccountDto(String loginId, String loginPwd) {
+        this.loginId = loginId;
+        this.loginPwd = loginPwd;
     }
 
     // 풀 생성자
