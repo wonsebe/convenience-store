@@ -14,8 +14,10 @@ public class LoginController {
     }
 
     public boolean login(String loginId, String loginPwd) {
-        if (LoginDao.getInstance().login(new AccountDto(loginId, loginPwd))) {
+        AccountDto account = new AccountDto(loginId, loginPwd);
+        if (LoginDao.getInstance().login(account)) {
             PcController.getInstance().setCurrentLoginId(loginId);
+            PcController.getInstance().updateStoreBalance(account.getBalance());
             return true;
         }
         return false;

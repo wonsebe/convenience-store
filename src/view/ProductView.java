@@ -2,9 +2,7 @@ package view;
 
 import controller.PcController;
 import model.dao.InventoryDao;
-import model.dao.InventoryDao;
-import model.dao.StoreDao;
-import model.dto.Products;
+import model.dto.BoardDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
@@ -114,8 +112,10 @@ public class ProductView {
     // 게임의 메인 루프를 담당하는 메서드
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
+        // 아래는 index() 메서드 시작시 맨 처음에 있어야 함 (수정시 주의)
+        PcController.getInstance().loadGameState();  // 게임 시작 시 상태 로드
         // 인사말 출력
-        System.out.print(YELLOW + "\n          (/ΩΩ/)\n" +
+        System.out.print(ColorUtil.getColor("YELLOW") + "\n          (/ΩΩ/)\n" +
                                  "　     　 / •• /\n" +
                                  "　　    　(＿ノ |  " + ColorUtil.getColor("GREEN") + "어서오세요 jSS\n" + ColorUtil.getColor("YELLOW") +
                                  "　　    　　 |　|" + ColorUtil.getColor("GREEN") + "       편의점 입니다!★\n" + ColorUtil.getColor("YELLOW") +
@@ -128,7 +128,7 @@ public class ProductView {
                                  "　　    　|　∩　 |\n" +
                                  "　　    　|　||　|\n" +
                                  "　　    　|　||　|\n" +
-                                 "　　    　|二||二|\n" + RESET);
+                                 "　　    　|二||二|\n" + ColorUtil.getColor("RESET"));
 
         while (true) {
             int currentTurn = PcController.getInstance().getTurn();
@@ -144,10 +144,10 @@ public class ProductView {
             System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
             System.out.println();
-            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 상품 삭제\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 공지 쓰기\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 공지 보기\t\t");
+
             System.out.println();
 
             // 다음 턴 및 종료는 최하단에 표시
@@ -163,12 +163,12 @@ public class ProductView {
                 // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
                 switch (choice) {
                     case 1 -> supplyRestock();  // 재고 구매
-                    case 2 -> displayInventory();  // 재고 확인
+                    case 2 -> pPrint();         // 물품 확인
                     case 3 -> addProduct();  // 상품 추가
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
-                    case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush(); //강도 침입 함수
+                    case 6 -> writeNotice();    // 공지 쓰기
+                    case 7 -> viewNotices();    // 공지 확인
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
@@ -183,8 +183,10 @@ public class ProductView {
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
 
+
     // 1 - 재고 구매 메서드
     public void supplyRestock() {
+        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
         // 구매할 제품 번호를 입력한다
         System.out.println("입고할 제품 번호를 입력하세요.");
         System.out.print(">>");
@@ -225,7 +227,7 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
-
+  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -299,17 +301,59 @@ public class ProductView {
     // 6 - 물품 확인 메서드
     public void pPrint() {
         ArrayList<Products> result = PcController.getInstance().pPrint();
-        System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
+        int currentTurn = PcController.getInstance().getTurn();
+        System.out.println("제품번호\t\t제품명\t\t제품가격\t\t제품수량\t\t남은 유통기한\t\t상태");
         result.forEach(dto -> {
-            System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
-
+            int remainingTurns = dto.getExpiryTurns() - (currentTurn - dto.getGameDate());
+            String status = remainingTurns <= 3 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
+                    remainingTurns <= 5 ? ColorUtil.getColor("YELLOW") + "주의" + ColorUtil.getColor("RESET") : "정상";
+            System.out.printf("%2d\t%15s\t%10s\t%10d\t%10d\t%10s\n",
+                              dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),
+                              remainingTurns > 0 ? remainingTurns : 0, status
+            );
         });
 
     } // 6 - 물품 확인 메서드 end
 
+    // 8 - 글쓰기
+    private void writeNotice() {
+        System.out.println("공지 내용을 입력하세요:");
+        scan.nextLine(); // 버퍼 비우기
+        String content = scan.nextLine();
+
+        boolean result = PcController.getInstance().addNotice(content);
+        if (result) {
+            System.out.println(ColorUtil.getColor("GREEN") + "공지가 성공적으로 작성되었습니다." + ColorUtil.getColor("RESET"));
+        } else {
+            System.out.println(ColorUtil.getColor("RED") + "공지 작성에 실패했습니다." + ColorUtil.getColor("RESET"));
+        }
+    }
+
+    // 9 - 글보기
+    private void viewNotices() {
+        ArrayList<BoardDto> notices = PcController.getInstance().getAllNotices();
+        if (notices.isEmpty()) {
+            System.out.println(ColorUtil.getColor("YELLOW") + "등록된 공지사항이 없습니다." + ColorUtil.getColor("RESET"));
+        } else {
+            System.out.println("====== 공지사항 목록 ======");
+            System.out.printf("%-5s %-15s %-30s %-10s\n", "번호", "작성일", "내용", "작성자");
+            for (BoardDto notice : notices) {
+                System.out.printf(
+                        "%-5d %-15s %-30s %-10d\n",
+                        notice.getBmo(),
+                        notice.getBdate(),
+                        notice.getBcontent().length() > 30 ? notice.getBcontent().substring(0, 27) + "..." : notice.getBcontent(),
+                        notice.getStore_id()
+                );
+            }
+            System.out.println("==========================");
+        }
+    }
+
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {
-        System.out.println(turn + "번째 턴을 진행합니다.");
+        int currentTurn = PcController.getInstance().getTurn();
+        System.out.println(currentTurn + "번째 턴을 진행합니다.");
         // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
         PcController.getInstance().processPurchaseAndSales(currentTurn);
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
@@ -323,8 +367,9 @@ public class ProductView {
         }
 
         // 승리조건
-        if (turn >= 100) {
+        if (currentTurn >= 100) {
             System.out.println("게임 승리");
+            return;  // 게임 승리 시 메서드 종료
         }
 
         // 이벤트 함수( 강도 )
@@ -339,8 +384,10 @@ public class ProductView {
             bread();
         }
 
-        currentTurn++; // 턴 증가
         checkLoseCondition();
+        // 이 메서드 내에서 이미 게임 상태가 저장됨
+        PcController.getInstance().processPurchaseAndSales(currentTurn);
+        PcController.getInstance().setTurn(currentTurn + 1);
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
@@ -354,13 +401,13 @@ public class ProductView {
                 if (log.getQuantity() < InventoryDao.getInstance().checkInventory(log.getProductId())) {  // 구매 성공 시 quantity는 음수 값
                     if (currentInventory == 0) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), RED, currentInventory, RESET
+                                          productName, -log.getQuantity(), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
                     } else if (currentInventory <= 5) {
                         System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %s%d%s)%n",
-                                          productName, -log.getQuantity(), YELLOW, currentInventory, RESET
+                                          productName, -log.getQuantity(), ColorUtil.getColor("YELLOW"), currentInventory, ColorUtil.getColor("RESET")
                         );
                         // null 뜰때 확인용 콘솔
                         // System.out.println(log);
@@ -373,7 +420,7 @@ public class ProductView {
                     }
                 } else {
                     System.out.printf("손님이 %s을(를) 사려고 했으나 %s재고가 부족%s하여 구매하지 못했습니다. (현재 재고: %s%d%s)%n",
-                                      productName, RED, RESET, RED, currentInventory, RESET
+                                      productName, ColorUtil.getColor("RED"), ColorUtil.getColor("RESET"), ColorUtil.getColor("RED"), currentInventory, ColorUtil.getColor("RESET")
                     );
                     // null 뜰때 확인용 콘솔
                     // System.out.println(log);
@@ -433,8 +480,8 @@ public class ProductView {
         System.out.println("=========================================================");
         int totalSales = PcController.getInstance().getLastTurnTotalSales();
         int storeBalance = PcController.getInstance().getStoreBalance();
-        System.out.println(YELLOW + "이번 턴의 총 매출액: " + totalSales + "원" + RESET);
-        System.out.println(GREEN + "편의점 현재 잔고: " + storeBalance + "원" + RESET);
+        System.out.println(ColorUtil.getColor("YELLOW") + "이번 턴의 총 매출액: " + totalSales + "원" + ColorUtil.getColor("RESET"));
+        System.out.println(ColorUtil.getColor("GREEN") + "편의점 현재 잔고: " + storeBalance + "원" + ColorUtil.getColor("RESET"));
         System.out.println("=========================================================");
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
 
@@ -495,6 +542,7 @@ public class ProductView {
             int purchaseQuantity = new Random().nextInt(5) + 1; // 1부터 5개 사이의 랜덤 구매 수량
             InventoryLog inventoryLog = PcController.getInstance().bread2(turn,purchaseQuantity);
             System.out.println(inventoryLog);
+
             //int productId = 120; // "포켓몬 빵" 상품 ID (가정)
 
             // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴

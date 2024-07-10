@@ -37,7 +37,7 @@ public class GameSaveDao {
             ps.executeUpdate();
 
             // 재고 로그 저장
-            String saveInventorySql = "INSERT INTO inventory_log (game_date, product_id, quantity, description, sale_price) VALUES (?, ?, ?, ?, ?)";
+            String saveInventorySql = "INSERT INTO inventory_log (game_date, product_id, quantity, description, sale_price, store_id) VALUES (?, ?, ?, ?, ?, ?)";
             ps = conn.prepareStatement(saveInventorySql);
             for (InventoryLog log : gameState.getInventoryLogs()) {
                 ps.setInt(1, log.getGameDate());
@@ -45,16 +45,16 @@ public class GameSaveDao {
                 ps.setInt(3, log.getQuantity());
                 ps.setString(4, log.getDescription());
                 ps.setInt(5, log.getSalePrice());
+                ps.setInt(6, log.getStoreId());
                 ps.addBatch();
             }
             ps.executeBatch();
 
             // 편의점 잔고 업데이트
-            String updateBalanceSql = "INSERT INTO store_balance (balance, game_turn, store_id) VALUES (?, ?, (SELECT id FROM store WHERE login_id = ?))";
+            String updateBalanceSql = "UPDATE store SET balance = ? WHERE login_id = ?";
             ps = conn.prepareStatement(updateBalanceSql);
             ps.setInt(1, gameState.getStoreBalance());
-            ps.setInt(2, gameState.getCurrentTurn());
-            ps.setString(3, loginId);
+            ps.setString(2, loginId);
             ps.executeUpdate();
 
             // 공지사항 저장
@@ -104,9 +104,10 @@ public class GameSaveDao {
             }
 
             // 재고 로그 로드
-            String loadInventorySql = "SELECT * FROM inventory_log WHERE game_date = ?";
+            String loadInventorySql = "SELECT * FROM inventory_log WHERE game_date = ? AND store_id = (SELECT id FROM store WHERE login_id = ?)";
             ps = conn.prepareStatement(loadInventorySql);
             ps.setInt(1, gameState.getCurrentTurn());
+            ps.setString(2, loginId);
             rs = ps.executeQuery();
             List<InventoryLog> inventoryLogs = new ArrayList<>();
             while (rs.next()) {
@@ -116,14 +117,15 @@ public class GameSaveDao {
                         rs.getInt("product_id"),
                         rs.getInt("quantity"),
                         rs.getString("description"),
-                        rs.getInt("sale_price")
+                        rs.getInt("sale_price"),
+                        rs.getInt("store_id")
                 );
                 inventoryLogs.add(log);
             }
             gameState.setInventoryLogs(inventoryLogs);
 
             // 편의점 잔고 로드
-            String loadBalanceSql = "SELECT balance FROM store_balance WHERE store_id = (SELECT id FROM store WHERE login_id = ?) ORDER BY game_turn DESC LIMIT 1";
+            String loadBalanceSql = "SELECT balance FROM store WHERE login_id = ?";
             ps = conn.prepareStatement(loadBalanceSql);
             ps.setString(1, loginId);
             rs = ps.executeQuery();
@@ -142,7 +144,7 @@ public class GameSaveDao {
                         rs.getInt("bmo"),
                         rs.getString("bcontent"),
                         rs.getString("bdate"),
-                        rs.getString("store_id")
+                        rs.getInt("store_id")  // 수정: int 타입으로 변경
                 );
                 boardNotices.add(board);
             }
