@@ -61,13 +61,13 @@ public class ProductView {
             System.out.println();
             System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 재고 삭제\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 물품 확인\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 공지쓰기\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - 공지보기\t\t");
             System.out.println();
-            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
             System.out.println();
 
             // 다음 턴 및 종료는 최하단에 표시
@@ -146,7 +146,6 @@ public class ProductView {
         }
     } // 현재 모든 상품의 재고 상태를 출력하는 메서드 end
 
-  
 
     // 3 - 상품 추가 메서드
     // 사용자로부터 상품명, 가격, 유통기한을 입력받아 새 상품을 생성
@@ -247,6 +246,7 @@ public class ProductView {
         // 승리조건
         if (currentTurn >= 100) {
             System.out.println("게임 승리");
+            return;  // 게임 승리 시 메서드 종료
         }
 
         // 이벤트 함수( 강도 )
@@ -261,11 +261,13 @@ public class ProductView {
             bread();
         }
 
-        currentTurn++; // 턴 증가
         checkLoseCondition();
-        // 이 메서드 내에서 이미 게임 상태가 저장됨
-        PcController.getInstance().processPurchaseAndSales(currentTurn);
+
+        // 턴 증가
         PcController.getInstance().setTurn(currentTurn + 1);
+
+        // 이 메서드 내에서 이미 게임 상태가 저장됨. 주석처리 필요
+        // PcController.getInstance().saveGameState();
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드
@@ -362,7 +364,6 @@ public class ProductView {
         System.out.println(ColorUtil.getColor("GREEN") + "편의점 현재 잔고: " + storeBalance + "원" + ColorUtil.getColor("RESET"));
         System.out.println("=========================================================");
     } // 턴의 총 매출액과 잔고를 구하는 메서드 end
-
 
 
     //패배조건 : 10개 물품의 재고가 0개되면 탈락
