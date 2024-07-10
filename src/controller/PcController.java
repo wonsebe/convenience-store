@@ -1,14 +1,14 @@
 package controller;
 
-import model.dao.InventoryDao;
-import model.dao.ProductDao;
-import model.dao.SalesDao;
-import model.dao.StoreDao;
+import model.dao.*;
+import model.dto.BoardDto;
+import model.dto.GameStateDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
-import view.ProductView;
+import util.ColorUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 // 편의점 시뮬레이션 게임의 핵심 로직을 관리하는 컨트롤러 클래스
@@ -18,9 +18,12 @@ public class PcController {
     private static final PcController pControl = new PcController();
     private static final int RENT_AMOUNT = 300000; // 월세 금액
     private static final int RENT_INTERVAL = 5; // 월세 납부 주기 (턴)
+    private final GameSaveDao gameSaveDao = GameSaveDao.getInstance();
     private int productTypeCount; // 등록된 상품 종류의 수를 저장
     private int lastTurnTotalSales; // 마지막 턴의 총 매출액을 저장
+    private int turn;
     private int storeBalance; // 편의점 현금
+    private String currentLoginId;
 
     // private 생성자. 외부에서 인스턴스 생성 방지
     // 초기화 시 등록된 상품 종류의 수 조회
@@ -28,12 +31,101 @@ public class PcController {
         // 초기화 시 등록된 상품 종류의 수 조회
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
         this.lastTurnTotalSales = 0;
+        this.turn = 1;
         this.storeBalance = StoreDao.getInstance().getBalance();
     }
 
     // 싱글톤 인스턴스 반환 메서드
     public static PcController getInstance() {
         return pControl;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public String getCurrentLoginId() {
+        return this.currentLoginId;
+    }
+
+    public void setCurrentLoginId(String loginId) {
+        this.currentLoginId = loginId;
+    }
+
+    // saveGameState 메서드
+    public void saveGameState() {
+        GameStateDto gameState = new GameStateDto(
+                turn,
+                getCurrentInventoryLogs(),
+                storeBalance,
+                getCurrentBoardNotices(),
+                lastTurnTotalSales
+        );
+        gameSaveDao.saveGame(currentLoginId, gameState);
+    }
+
+    // loadGameState 메서드
+    public void loadGameState() {
+        GameStateDto gameState = gameSaveDao.loadGame(currentLoginId);
+        if (gameState != null) {
+            this.turn = gameState.getCurrentTurn();
+            this.storeBalance = gameState.getStoreBalance();
+            this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
+            updateInventoryFromLogs(gameState.getInventoryLogs());
+            updateBoardNotices(gameState.getBoardNotices());
+            if (gameState.getProducts() != null) {
+                updateProducts(gameState.getProducts());
+            }
+
+            // 재고 로그 복원
+            List<InventoryLog> inventoryLogs = gameState.getInventoryLogs();
+            // inventoryLogs를 사용하여 현재 재고 상태를 업데이트
+            updateInventoryFromLogs(inventoryLogs);
+
+            // 공지사항 복원
+            List<BoardDto> boardNotices = gameState.getBoardNotices();
+            updateBoardNotices(boardNotices);
+
+            // 상품 정보 복원 (만약 상품 정보가 GameState에 포함되어 있다면)
+            if (gameState.getProducts() != null) {
+                updateProducts(gameState.getProducts());
+            }
+
+            // 마지막 턴 매출액 복원
+            this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
+
+            // 등록된 상품 종류 수 복원
+            this.productTypeCount = gameState.getProductTypeCount();
+
+            // 기타 필요한 게임 상태 변수들 복원
+            // 예: 이벤트 상태, 특별 조건 등
+            restoreAdditionalGameStates(gameState);
+
+            System.out.println("게임 상태가 성공적으로 로드되었습니다. 현재 턴: " + this.turn);
+        } else {
+            System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
+            initializeNewGame();
+        }
+    }
+
+    private void restoreAdditionalGameStates(GameStateDto gameState) {
+        // 게임 상태 복원 로직
+        // 이벤트 상태, 특별 조건 등
+    }
+
+    private List<Products> getCurrentProducts() {
+        // 현재 상품 목록을 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private void updateProducts(List<Products> products) {
+        // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 로직
+        // ...
     }
 
     // 1 - 재고 구매 메서드
@@ -47,7 +139,7 @@ public class PcController {
 
         // 편의점 자금이 부족하면 구매 불가를 출력한다
         if (orderFunds >= this.storeBalance) {
-            return ProductView.RED + "구매할 자금이 부족합니다." + ProductView.RESET;
+            return ColorUtil.getColor("RED") + "구매할 자금이 부족합니다." + ColorUtil.getColor("RESET");
         } else {
             // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
             int newBalance = this.storeBalance - orderFunds;
@@ -57,9 +149,9 @@ public class PcController {
                 this.storeBalance = newBalance; // 잔고 변경
                 // InventoryDao 에서 상품의 수량도 변경한다
                 InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
-                return ProductView.GREEN + "구매완료!" + ProductView.RESET;
+                return ColorUtil.getColor("GREEN") + "구매완료!" + ColorUtil.getColor("RESET");
             } else {
-                return ProductView.RED + "잔고 업데이트 실패. 다시 시도해주세요." + ProductView.RESET;
+                return ColorUtil.getColor("RED") + "잔고 업데이트 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET");
             }
         }
     } // 1 - 재고 구매 메서드 end
@@ -169,6 +261,8 @@ public class PcController {
         // 잔고 업데이트
         this.storeBalance += totalSales;
         StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+        // 턴이 끝날 때마다 게임 상태 저장, 맨 마지막에 있어야 함 (메서드 수정시 주의)
+        saveGameState();
     } // 구매 처리, 총 매출 계산, 매출 저장, 잔고 저장 end
 
     // 마지막 턴 매출액 가져오기
@@ -183,11 +277,11 @@ public class PcController {
                 this.storeBalance -= RENT_AMOUNT;
                 StoreDao.getInstance().updateBalance(this.storeBalance, turn);
                 System.out.println("=========================================================");
-                System.out.println(ProductView.YELLOW + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ProductView.RESET);
+                System.out.println(ColorUtil.getColor("YELLOW") + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ColorUtil.getColor("RESET"));
                 System.out.println("=========================================================");
                 return true;
             } else {
-                System.out.println(ProductView.RED + "월세를 낼 돈이 부족합니다. 게임 오버!" + ProductView.RESET);
+                System.out.println(ColorUtil.getColor("RED") + "월세를 낼 돈이 부족합니다. 게임 오버!" + ColorUtil.getColor("RESET"));
                 return false;
             }
         }
@@ -219,8 +313,37 @@ public class PcController {
     }
 
     //
-    public void bread(){
+    public void bread() {
 
 
     }
+
+    // 필요한 추가 메서드들
+    private ArrayList<InventoryLog> getCurrentInventoryLogs() {
+        // 현재 재고 로그를 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private ArrayList<BoardDto> getCurrentBoardNotices() {
+        // 현재 공지사항을 가져오는 로직
+        // ...
+        return null;
+    }
+
+    private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
+        // 로드된 재고 로그로 현재 재고 상태를 업데이트하는 로직
+        // ...
+    }
+
+    private void updateBoardNotices(List<BoardDto> boardNotices) {
+        // 로드된 공지사항으로 현재 공지사항을 업데이트하는 로직
+        // ...
+    }
+
+    private void initializeNewGame() {
+        // 새 게임 초기화 로직
+        // ...
+    }
+
 } // PcController 클래스 end

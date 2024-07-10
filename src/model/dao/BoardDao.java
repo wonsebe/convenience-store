@@ -1,11 +1,13 @@
 package model.dao;
 
 import model.dto.BoardDto;
+import util.DbUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class BoardDao {
