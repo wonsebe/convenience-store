@@ -19,15 +19,14 @@ public class BoardView {
 
     public void Bprinter() {
         ArrayList<BoardDto> result = Bcontroller.getInstance().Bprinter();
-        System.out.println("게시물 번호\t\t게시물내용\t\t작성날짜\t\t\t작성자\n");
+        System.out.println("게시물 번호\t\t게시물내용\\t\t\t작성자\n");
         result.forEach(dto->{
-            System.out.printf("\t%2d\t%15s\t%10s\t%2s\n" , dto.getBmo(), dto.getBcontent(),dto.getBdate(),dto.getStore_id());
+            System.out.printf("\t%2d\t%15s\t%2s\n" , dto.getBmo(), dto.getBcontent(),dto.getStore_id());
         });
     }
 
     // 게시물 쓰기
     public void Bwrite(){
-        scan.nextLine();
         System.out.println("게시글 작성"); String bcontent = scan.nextLine();
 
         boolean result = Bcontroller.getInstance().Bwrite(bcontent);

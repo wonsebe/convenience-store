@@ -3,17 +3,23 @@ package model.dto;
 public class BoardDto {
     private int bmo;
     private String bcontent;
-    private String bdate;
+    private int bdate;
     private String store_id;
 
 
     public BoardDto() {
     }
 
-    public BoardDto(int bmo, String bcontent, String bdate, String store_id) {
+    public BoardDto(int bmo, String bcontent, int bdate, String store_id) {
         this.bmo = bmo;
         this.bcontent = bcontent;
         this.bdate = bdate;
+        this.store_id = store_id;
+
+    }
+    public BoardDto(int bmo, String bcontent, String store_id) {
+        this.bmo = bmo;
+        this.bcontent = bcontent;
         this.store_id = store_id;
 
     }
@@ -26,13 +32,11 @@ public class BoardDto {
         this.bcontent = bcontent;
     }
 
-    public String getBdate() {
+    public int getBdate() {
         return bdate;
     }
 
-    public void setBdate(String bdate) {
-        this.bdate = bdate;
-    }
+    public int setBdate(int bdate) {return bdate;  }
 
     public String getStore_id() {
         return store_id;

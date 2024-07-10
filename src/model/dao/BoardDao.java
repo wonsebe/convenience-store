@@ -38,10 +38,9 @@ public class BoardDao {
             while (rs.next()){
                 int bmo = rs.getInt("bmo");
                 String bcontent = rs.getString("bcontent");
-                String bdate = rs.getString("bdate");
                 String store_id = rs.getString("store_id");
 
-                BoardDto boardDto = new BoardDto(bmo,bcontent,bdate,store_id);
+                BoardDto boardDto = new BoardDto(bmo,bcontent,store_id);
                 boardDto.setStore_id(rs.getString("store_id"));
 
                 list.add(boardDto);
@@ -54,12 +53,27 @@ public class BoardDao {
 
     // 2. 게시물 쓰기
     public boolean Bwrite(String bcontent){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
+            // 데이터베이스 연결
+            conn = DbUtil.getConnection();
 
+            String sql = "insert into board(bcontent  )values(?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1 , bcontent);
+
+
+
+            int count = ps.executeUpdate();
+            if (count == 1){
+                return true;
+            }
 
         }catch (Exception e){
             System.out.println(e);
-        }
+        }return false;
     }
 
 

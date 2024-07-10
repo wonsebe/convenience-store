@@ -139,13 +139,13 @@ public class ProductView {
 
             // 사용자 행동 선택 메뉴 출력 및 입력 받기
             System.out.print(CYAN + "1" + RESET + " - 재고 구매\t\t");
-            System.out.print(CYAN + "2" + RESET + " - 재고 확인\t\t");
+            System.out.print(CYAN + "2" + RESET + " - 물품 확인\t\t");
             System.out.print(CYAN + "3" + RESET + " - 상품 추가\t\t");
             System.out.print(CYAN + "4" + RESET + " - 상품 수정\t\t");
             System.out.println();
             System.out.print(CYAN + "5" + RESET + " - 재고 삭제\t\t");
-            System.out.print(CYAN + "6" + RESET + " - 물품 확인\t\t");
-            System.out.print(CYAN + "7" + RESET + " - ㅇㅇㅇㅇ\t\t");
+            System.out.print(CYAN + "6" + RESET + " - 공지사항 작성하기\t\t");
+            System.out.print(CYAN + "7" + RESET + " - 공지사항 확인하기\t\t");
             System.out.print(CYAN + "8" + RESET + " - ㅇㅇㅇㅇ\t\t");
             System.out.println();
             System.out.print(CYAN + "9" + RESET + " - ㅇㅇㅇㅇ\t\t");
@@ -167,11 +167,11 @@ public class ProductView {
                 // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
                 switch (choice) {
                     case 1 -> supplyRestock();  // 재고 구매
-                    case 2 -> BoardView.getInstance().Bwrite();  // 공지사항 작성하기
+                    case 2 -> pPrint(); // 물품 확인
                     case 3 -> addProduct();  // 상품 추가
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
-                    case 6 -> pPrint(); // 물품 확인
+                    case 6 -> BoardView.getInstance().Bwrite();  // 공지사항 작성하기
                     case 7 -> BoardView.getInstance ().Bprinter(); // 공지사항 출력하기
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {

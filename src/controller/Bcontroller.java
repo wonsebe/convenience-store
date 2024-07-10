@@ -17,8 +17,8 @@ public class Bcontroller {
     }
 
     // 2. 게시물 쓰기
-    public boolean Bwrite(String bcontent){
-        BoardDao.getInstance().Bwrite(bcontent);
+    public boolean Bwrite(String bcontent ){
+        BoardDao.getInstance().Bwrite(bcontent );
         return false;
     }
 

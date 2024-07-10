@@ -27,7 +27,7 @@ CREATE TABLE board
 (
     bmo      INT AUTO_INCREMENT PRIMARY KEY,
     bcontent VARCHAR(255) NOT NULL,
-    bdate    DATE         NOT NULL,
+    bdate    int ,
     store_id INT,
     FOREIGN KEY (store_id) REFERENCES store (id)
         ON DELETE CASCADE
@@ -167,8 +167,10 @@ INSERT INTO store(id, login_id, login_pwd)
 VALUES (1, 'admin', '1234'),
        (2, 'admin2', '1234');
 
--- Board 테이블 샘플 데이터
-INSERT INTO board (bmo, bcontent, bdate)
-VALUES (1, '25% 세일', '2024-07-08'),
-       (2, '포켓몬빵 입고', '2024-07-09'),
-       (3, '신메뉴 출시', '2024-07-10');
+insert into board( bmo , bcontent   ,store_id  )
+values(1 , '25%세일'  , 1 ),
+	  (2 , '포켓몬빵 입고' , 2 ),
+      (3 , '신메뉴 출시' , 1 );
+
+
+

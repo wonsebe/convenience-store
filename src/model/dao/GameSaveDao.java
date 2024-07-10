@@ -62,7 +62,6 @@ public class GameSaveDao {
             ps = conn.prepareStatement(saveBoardSql);
             for (BoardDto board : gameState.getBoardNotices()) {
                 ps.setString(1, board.getBcontent());
-                ps.setString(2, board.getBdate());
                 ps.setString(3, loginId);
                 ps.addBatch();
             }
@@ -141,7 +140,6 @@ public class GameSaveDao {
                 BoardDto board = new BoardDto(
                         rs.getInt("bmo"),
                         rs.getString("bcontent"),
-                        rs.getString("bdate"),
                         rs.getString("store_id")
                 );
                 boardNotices.add(board);
