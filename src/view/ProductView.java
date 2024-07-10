@@ -2,6 +2,7 @@ package view;
 
 import controller.PcController;
 import model.dao.InventoryDao;
+import model.dto.BoardDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
@@ -61,10 +62,10 @@ public class ProductView {
             System.out.println();
             System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 재고 삭제\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 물품 확인\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 공지쓰기\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - 공지보기\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 강도 침입\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - 공지 쓰기\t\t");
             System.out.println();
-            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - 공지 보기\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
@@ -89,6 +90,8 @@ public class ProductView {
                     case 5 -> pDelete(); // 재고 삭제
                     case 6 -> pPrint(); // 물품 확인
                     case 7 -> inrush(); //강도 침입 함수
+                    case 8 -> writeNotice();
+                    case 9 -> viewNotices();
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
@@ -102,6 +105,7 @@ public class ProductView {
             } // try 끝
         } // while 끝
     } // 게임의 메인 루프를 담당하는 메서드 end
+
 
     // 1 - 재고 구매 메서드
     public void supplyRestock() {
@@ -231,6 +235,41 @@ public class ProductView {
             );
         });
     } // 6 - 물품 확인 메서드 end
+
+    // 8 - 글쓰기
+    private void writeNotice() {
+        System.out.println("공지 내용을 입력하세요:");
+        scan.nextLine(); // 버퍼 비우기
+        String content = scan.nextLine();
+
+        boolean result = PcController.getInstance().addNotice(content);
+        if (result) {
+            System.out.println(ColorUtil.getColor("GREEN") + "공지가 성공적으로 작성되었습니다." + ColorUtil.getColor("RESET"));
+        } else {
+            System.out.println(ColorUtil.getColor("RED") + "공지 작성에 실패했습니다." + ColorUtil.getColor("RESET"));
+        }
+    }
+
+    // 9 - 글보기
+    private void viewNotices() {
+        ArrayList<BoardDto> notices = PcController.getInstance().getAllNotices();
+        if (notices.isEmpty()) {
+            System.out.println(ColorUtil.getColor("YELLOW") + "등록된 공지사항이 없습니다." + ColorUtil.getColor("RESET"));
+        } else {
+            System.out.println("====== 공지사항 목록 ======");
+            System.out.printf("%-5s %-15s %-30s %-10s\n", "번호", "작성일", "내용", "작성자");
+            for (BoardDto notice : notices) {
+                System.out.printf(
+                        "%-5d %-15s %-30s %-10d\n",
+                        notice.getBmo(),
+                        notice.getBdate(),
+                        notice.getBcontent().length() > 30 ? notice.getBcontent().substring(0, 27) + "..." : notice.getBcontent(),
+                        notice.getStore_id()
+                );
+            }
+            System.out.println("==========================");
+        }
+    }
 
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {

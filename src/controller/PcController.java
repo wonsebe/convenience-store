@@ -210,6 +210,16 @@ public class PcController {
         return result;
     } // 6 - 물품 확인 메서드 end
 
+    // 8 - 글쓰기
+    public boolean addNotice(String content) {
+        return Bcontroller.getInstance().addNotice(content, getCurrentLoginId());
+    }
+
+    // 9 - 글보기
+    public ArrayList<BoardDto> getAllNotices() {
+        return Bcontroller.getInstance().getAllNotices();
+    }
+
     // 99.1 - 손님 방문 메서드
     // 랜덤한 수의 고객이 랜덤한 상품을 랜덤 수량으로 구매하려 시도
     public ArrayList<InventoryLog> purchase(int turn) {
