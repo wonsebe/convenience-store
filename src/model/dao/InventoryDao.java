@@ -77,6 +77,10 @@ public class InventoryDao {
     public InventoryLog purchase(int productId, int quantity, int turn) {
         InventoryLog inventoryLog = null;
         try {
+            if (productDao == null) {
+                System.out.println("productDao is null. Initializing...");
+                productDao = ProductDao.getInstance();
+            }
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price, purchase_date) VALUES (?, ?, ?, '판매', ?, ?)";
             ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setInt(1, turn);
@@ -84,7 +88,7 @@ public class InventoryDao {
             ps.setInt(3, -quantity);
             int price = productDao.getProductPrice(productId);
             ps.setInt(4, price * quantity);
-            ps.setInt(5, turn);  // purchase_date를 현재 턴으로 설정
+            ps.setInt(5, turn);
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -96,6 +100,7 @@ public class InventoryDao {
             }
         } catch (Exception e) {
             System.out.println("손님 구매 처리 중 오류 발생: " + e);
+            e.printStackTrace();  // 스택 트레이스 출력 추가
         }
         return inventoryLog;
     } // 턴넘기면 손님 방문 및 상품 구매 메서드 end
