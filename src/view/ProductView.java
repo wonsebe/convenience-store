@@ -475,31 +475,31 @@ public class ProductView {
 
 
 
-        // 손님 수를 랜덤으로 설정
-        int numCustomers = new Random().nextInt(30) + 1; // 1부터 30명 사이의 랜덤 손님 수
-
-        // 손님들이 포켓몬 빵을 최대 2개씩 구매
-        for (int i = 0; i < numCustomers; i++) {
-            int purchaseQuantity = new Random().nextInt(1) + 1; // 1부터 2개 사이의 랜덤 구매 수량
-            int productId = 120; // "포켓몬 빵" 상품 ID (가정)
-
-            // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
-            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
-
-            // 결과 출력
-            for (InventoryLog log : logs) {
-                String productName = PcController.getInstance().getProductName(log.getProductId());
-                int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
-
-                if (log.getQuantity() < 0) { // 구매 성공
-                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
-                            productName, -log.getQuantity(), currentInventory);
-                } else { // 구매 실패 (재고 부족)
-                    System.out.printf("%s을(를) 구매할 수 있는 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
-                            productName, currentInventory);
-                }
-            }
-        }
+//        // 손님 수를 랜덤으로 설정
+//        int numCustomers = new Random().nextInt(30) + 1; // 1부터 30명 사이의 랜덤 손님 수
+//
+//        // 손님들이 포켓몬 빵을 최대 2개씩 구매
+//        for (int i = 0; i < numCustomers; i++) {
+//            int purchaseQuantity = new Random().nextInt(1) + 1; // 1부터 2개 사이의 랜덤 구매 수량
+//            int productId = 120; // "포켓몬 빵" 상품 ID (가정)
+//
+//            // PcController에서 purchase 함수 호출하여 손님이 구매한 결과를 가져옴
+//            ArrayList<InventoryLog> logs = PcController.getInstance().purchase(productId, purchaseQuantity, turn);
+//
+//            // 결과 출력
+//            for (InventoryLog log : logs) {
+//                String productName = PcController.getInstance().getProductName(log.getProductId());
+//                int currentInventory = PcController.getInstance().checkInventory(log.getProductId());
+//
+//                if (log.getQuantity() < 0) { // 구매 성공
+//                    System.out.printf("손님이 %s을(를) %d개 구매했습니다. (현재 재고: %d)%n",
+//                            productName, -log.getQuantity(), currentInventory);
+//                } else { // 구매 실패 (재고 부족)
+//                    System.out.printf("%s을(를) 구매할 수 있는 재고가 부족하여 구매하지 못했습니다. (현재 재고: %d)%n",
+//                            productName, currentInventory);
+//                }
+//            }
+//        }
 
 
     }

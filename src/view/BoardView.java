@@ -18,9 +18,9 @@ public class BoardView {
 
     public void Bprinter(){
         ArrayList<BoardDto> result = Bcontroller.getInstance().Bprinter();
-        System.out.println("게시물 번호\t게시물내용\t작성날짜\t작성자");
+        System.out.println("게시물 번호\t\t게시물내용\t\t작성날짜\t\t\t작성자\n");
         result.forEach(dto->{
-            System.out.printf("%2s\t%20d\t%10s\t%2s" , dto.getBmo(), dto.getBcontent(),dto.getBdate(),dto.getStore_id());
+            System.out.printf("\t%2d\t%15s\t%10s\t%2s\n" , dto.getBmo(), dto.getBcontent(),dto.getBdate(),dto.getStore_id());
         });
 
     }
