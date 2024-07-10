@@ -78,7 +78,7 @@ public class InventoryDao {
         InventoryLog inventoryLog = null;
         try {
             if (productDao == null) {
-                System.out.println("productDao가 null입니다. 초기화시작");
+              //  System.out.println("productDao가 null입니다. 초기화시작");
                 productDao = ProductDao.getInstance();
             }
             String sql = "INSERT INTO inventory_log(game_date, product_id, quantity, description, sale_price, purchase_date) VALUES (?, ?, ?, '판매', ?, ?)";
