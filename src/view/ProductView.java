@@ -220,8 +220,8 @@ public class ProductView {
         System.out.println("제품번호\t\t제품명\t\t제품가격\t\t제품수량\t\t남은 유통기한\t\t상태");
         result.forEach(dto -> {
             int remainingTurns = dto.getExpiryTurns() - (currentTurn - dto.getGameDate());
-            String status = remainingTurns <= 3 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
-                    remainingTurns <= 5 ? ColorUtil.getColor("YELLOW") + "주의" + ColorUtil.getColor("RESET") : "정상";
+            String status = remainingTurns <= 5 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
+                    remainingTurns <= 10 ? ColorUtil.getColor("YELLOW") + "주의" + ColorUtil.getColor("RESET") : "정상";
             System.out.printf("%2d\t%15s\t%10s\t%10d\t%10d\t%10s\n",
                               dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),
                               remainingTurns > 0 ? remainingTurns : 0, status
