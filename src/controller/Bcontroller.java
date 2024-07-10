@@ -7,19 +7,27 @@ import java.util.ArrayList;
 
 public class Bcontroller {
     // 싱글톤
-    private static Bcontroller bcontrol = new Bcontroller();
-    private  Bcontroller(){}
-    public static Bcontroller getInstance(){return bcontrol;}
+    private static final Bcontroller bcontrol = new Bcontroller();
+
+    private Bcontroller() {
+    }
+
+    public static Bcontroller getInstance() {
+        return bcontrol;
+    }
 
     // 1. 전체출력
-    public ArrayList<BoardDto> Bprinter(){
+    public ArrayList<BoardDto> Bprinter() {
         return BoardDao.getInstance().Bprinter();
     }
 
-    // 2. 게시물 쓰기
-    public boolean Bwrite(String bcontent ){
-        BoardDao.getInstance().Bwrite(bcontent );
-        return true;
+    // 2. 글쓰기
+    public boolean addNotice(String content, int storeId) {
+        return BoardDao.getInstance().addNotice(content, storeId);
+    }
+
+    public ArrayList<BoardDto> getAllNotices() {
+        return BoardDao.getInstance().getAllNotices();
     }
 
 

@@ -51,4 +51,38 @@ public class BoardDao {
         return list;
     }
 
+    // 글쓰기
+    public boolean addNotice(String content, int storeId) {
+        try {
+            String sql = "INSERT INTO board (bcontent, bdate, store_id) VALUES (?, CURDATE(), ?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, content);
+            ps.setInt(2, storeId);
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (Exception e) {
+            System.out.println("게시물 작성 중 오류 발생: " + e);
+            return false;
+        }
+    }
+
+    public ArrayList<BoardDto> getAllNotices() {
+        ArrayList<BoardDto> notices = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM board ORDER BY bmo DESC";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int bmo = rs.getInt("bmo");
+                String bcontent = rs.getString("bcontent");
+                String bdate = rs.getString("bdate");
+                int store_id = rs.getInt("store_id");
+                notices.add(new BoardDto(bmo, bcontent, bdate, store_id));
+            }
+        } catch (Exception e) {
+            System.out.println("공지사항 조회 중 오류 발생: " + e);
+        }
+        return notices;
+    }
+
 } // BoardDao end
