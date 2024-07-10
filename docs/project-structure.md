@@ -4,6 +4,7 @@ convenience-store
 ├── docs
 │ ├── convenience-store.ico
 │ ├── er-diagram.md
+│ ├── project-proposal.md
 │ ├── tasks.md
 │ ├── sample.sql
 │ └── project-structure.md
@@ -27,10 +28,11 @@ convenience-store
 │ │ │ └── StoreDao.java
 │ │ │
 │ │ └── dto
-│ │ ├── AccountDto.java
-│ │ ├── BoardDto.java
-│ │ ├── InventoryLog.java
-│ │ └── Products.java
+│ │ · ├── AccountDto.java
+│ │ · ├── BoardDto.java
+│ │ · ├── GameStateDto.java
+│ │ · ├── InventoryLog.java
+│ │ · └── Products.java
 │ │
 │ ├── view
 │ │ ├── BoardView.java
