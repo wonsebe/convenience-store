@@ -323,22 +323,23 @@ public class PcController {
     //
     public void bread() {
 
-
     }
 
     private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
         // 로드된 재고 로그로 현재 재고 상태를 업데이트하는 로직
-        // ...
     }
 
     private void updateBoardNotices(List<BoardDto> boardNotices) {
         // 로드된 공지사항으로 현재 공지사항을 업데이트하는 로직
-        // ...
     }
 
     private void initializeNewGame() {
         // 새 게임 초기화 로직
-        // ...
+    }
+
+    public void checkAndRemoveExpiredInventory() {
+        int currentTurn = this.getTurn();
+        InventoryDao.getInstance().removeExpiredInventory(currentTurn);
     }
 
 } // PcController 클래스 end

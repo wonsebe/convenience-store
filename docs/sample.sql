@@ -152,6 +152,11 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 30, 20, '초기 입고');
 -- 포켓몬 빵
 
+
+-- 유통기한 폐기 처리를 위한 입고날짜
+ALTER TABLE inventory_log
+    MODIFY COLUMN purchase_date INT NOT NULL DEFAULT 0;
+
 -- 초기 테스트 계정 추가
 INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
 VALUES (1, 'admin', '1234', 1, 1000000),

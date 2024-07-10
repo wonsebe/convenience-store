@@ -219,23 +219,33 @@ public class ProductView {
     // 6 - 물품 확인 메서드
     public void pPrint() {
         ArrayList<Products> result = PcController.getInstance().pPrint();
-        System.out.println("제품번호\t\t\t제품명\t\t\t 제품가격\t\t제품수량\t\t유통기한");
+        int currentTurn = PcController.getInstance().getTurn();
+        System.out.println("제품번호\t\t제품명\t\t제품가격\t\t제품수량\t\t남은 유통기한\t\t상태");
         result.forEach(dto -> {
-            System.out.printf("%2d\t%15s\t\t%10s\t\t%10d\t%10d\n", dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(), dto.getExpiryTurns());
-
+            int remainingTurns = dto.getExpiryTurns() - (currentTurn - dto.getGameDate());
+            String status = remainingTurns <= 3 ? ColorUtil.getColor("RED") + "임박" + ColorUtil.getColor("RESET") :
+                    remainingTurns <= 5 ? ColorUtil.getColor("YELLOW") + "주의" + ColorUtil.getColor("RESET") : "정상";
+            System.out.printf("%2d\t%15s\t%10s\t%10d\t%10d\t%10s\n",
+                              dto.getProductId(), dto.getName(), dto.getPrice(), dto.getStock(),
+                              remainingTurns > 0 ? remainingTurns : 0, status
+            );
         });
-
     } // 6 - 물품 확인 메서드 end
 
     // 99 - 다음 턴 진행 메서드
     public void processTurn() {
         int currentTurn = PcController.getInstance().getTurn();
         System.out.println(currentTurn + "번째 턴을 진행합니다.");
-        // 턴을 넘기면 진행되는 여러 사건들을 메서드로 만들고 99.X 번호로 구분
+
+        // 유통기한 체크 및 폐기 처리
+        PcController.getInstance().checkAndRemoveExpiredInventory();
+
+        // 기존 턴 처리 로직
         PcController.getInstance().processPurchaseAndSales(currentTurn);
         ArrayList<InventoryLog> logs = PcController.getInstance().purchase(currentTurn);
-        simulateCustomerVisits(logs); // 99.1 - 손님 방문 메서드
-        displayTotalSalesAndBalance(); // 총 매출액 출력
+        simulateCustomerVisits(logs);
+        displayTotalSalesAndBalance();
+
         // 월세 차감 처리
         boolean rentPaid = PcController.getInstance().deductRent(currentTurn);
         if (!rentPaid) {
@@ -265,9 +275,6 @@ public class ProductView {
 
         // 턴 증가
         PcController.getInstance().setTurn(currentTurn + 1);
-
-        // 이 메서드 내에서 이미 게임 상태가 저장됨. 주석처리 필요
-        // PcController.getInstance().saveGameState();
     } // 99 - 다음 턴 진행 메서드 end
 
     // 99.1 - 손님 방문 메서드

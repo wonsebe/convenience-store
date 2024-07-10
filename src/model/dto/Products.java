@@ -1,5 +1,5 @@
 package model.dto;
- 
+
 // 상품 정보를 나타내는 데이터 전송 객체(DTO) 클래스
 public class Products {
     // 멤버변수
@@ -8,6 +8,7 @@ public class Products {
     private int price;          // 상품의 가격
     private int expiryTurns;    // 상품의 유통기한 (턴 단위)
     private int stock;
+    private int gameDate;  // 제품 구매 날짜(턴)
 
     // 기본 생성자, 모든 필드를 기본값으로 초기화
     public Products() {
@@ -72,6 +73,14 @@ public class Products {
 
     public void setExpiryTurns(int expiryTurns) {
         this.expiryTurns = expiryTurns;
+    }
+
+    public int getGameDate() {
+        return gameDate;
+    }
+
+    public void setGameDate(int gameDate) {
+        this.gameDate = gameDate;
     }
 
     @Override
