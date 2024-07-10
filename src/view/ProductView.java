@@ -143,7 +143,7 @@ public class ProductView {
             System.out.print(CYAN + "3" + RESET + " - 상품 추가\t\t");
             System.out.print(CYAN + "4" + RESET + " - 상품 수정\t\t");
             System.out.println();
-            System.out.print(CYAN + "5" + RESET + " - 재고 삭제\t\t");
+            System.out.print(CYAN + "5" + RESET + " - 물품 삭제\t\t");
             System.out.print(CYAN + "6" + RESET + " - 공지사항 작성하기\t\t");
             System.out.print(CYAN + "7" + RESET + " - 공지사항 확인하기\t\t");
             System.out.print(CYAN + "8" + RESET + " - ㅇㅇㅇㅇ\t\t");
