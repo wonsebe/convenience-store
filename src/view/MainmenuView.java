@@ -90,6 +90,7 @@ public class MainmenuView {
             ProductView.getInstance().index();
         } else {
             System.out.println(ColorUtil.getColor("RED") + "로그인 실패. 아이디 또는 비밀번호를 확인해주세요." + ColorUtil.getColor("RESET"));
+            start();
         }
     }
 

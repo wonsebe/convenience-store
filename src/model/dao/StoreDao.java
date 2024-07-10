@@ -1,5 +1,6 @@
 package model.dao;
 
+import controller.PcController;
 import util.DbUtil;
 
 import java.sql.*;
@@ -67,10 +68,10 @@ public class StoreDao {
         PreparedStatement ps = null;
         try {
             conn = DbUtil.getConnection();
-            String sql = "UPDATE store_balance SET balance = ? WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            String sql = "UPDATE store SET balance = ? WHERE login_id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, balance);
-            ps.setString(2, "admin"); // 실제로는 현재 로그인된 사용자 ID를 사용해야 함
+            ps.setString(2, PcController.getInstance().getCurrentLoginId());
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {

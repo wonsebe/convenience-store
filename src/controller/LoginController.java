@@ -17,6 +17,7 @@ public class LoginController {
         AccountDto account = new AccountDto(loginId, loginPwd);
         if (LoginDao.getInstance().login(account)) {
             PcController.getInstance().setCurrentLoginId(loginId);
+            PcController.getInstance().setCurrentStoreId(account.getId());
             PcController.getInstance().updateStoreBalance(account.getBalance());
             return true;
         }

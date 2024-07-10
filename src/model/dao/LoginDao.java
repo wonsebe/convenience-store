@@ -30,14 +30,13 @@ public class LoginDao {
             ps.setString(2, account.getLoginPwd());
             rs = ps.executeQuery();
             if (rs.next()) {
-                int userId = rs.getInt("id");
+                int storeId = rs.getInt("id");
                 int balance = rs.getInt("balance");
-                account.setId(userId);
+                account.setId(storeId);
                 account.setBalance(balance);
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } catch (SQLException e) {
             System.out.println("로그인 중 오류 발생: " + e.getMessage());
             return false;

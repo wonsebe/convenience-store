@@ -22,8 +22,8 @@ public class Bcontroller {
     }
 
     // 2. 글쓰기
-    public boolean addNotice(String content, int storeId) {
-        return BoardDao.getInstance().addNotice(content, storeId);
+    public boolean addNotice(String content, String authorLoginId) {
+        return BoardDao.getInstance().addNotice(content, authorLoginId);
     }
 
     public ArrayList<BoardDto> getAllNotices() {

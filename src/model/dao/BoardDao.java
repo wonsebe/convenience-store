@@ -33,16 +33,20 @@ public class BoardDao {
     public ArrayList<BoardDto> Bprinter() {
         ArrayList<BoardDto> list = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM board order by bmo desc";
+            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.login_id " +
+                    "FROM board b " +
+                    "JOIN store s ON b.store_id = s.id " +
+                    "ORDER BY b.bmo DESC";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
                 int bmo = rs.getInt("bmo");
                 String bcontent = rs.getString("bcontent");
                 String bdate = rs.getString("bdate");
-                int store_id = rs.getInt("store_id");
+                String authorLoginId = rs.getString("login_id");
 
-                BoardDto boardDto = new BoardDto(bmo, bcontent, bdate, store_id);
+
+                BoardDto boardDto = new BoardDto(bmo, bcontent, bdate, authorLoginId);
                 list.add(boardDto);
             }
         } catch (Exception e) {
@@ -52,12 +56,12 @@ public class BoardDao {
     }
 
     // 글쓰기
-    public boolean addNotice(String content, int storeId) {
+    public boolean addNotice(String content, String authorLoginId) {
         try {
             String sql = "INSERT INTO board (bcontent, bdate, store_id) VALUES (?, CURDATE(), ?)";
             ps = conn.prepareStatement(sql);
             ps.setString(1, content);
-            ps.setInt(2, storeId);
+            ps.setString(2, authorLoginId);
             int result = ps.executeUpdate();
             return result > 0;
         } catch (Exception e) {
@@ -69,7 +73,10 @@ public class BoardDao {
     public ArrayList<BoardDto> getAllNotices() {
         ArrayList<BoardDto> notices = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM board ORDER BY bmo DESC";
+            String sql = "SELECT b.bmo, b.bcontent, b.bdate, s.login_id " +
+                    "FROM board b " +
+                    "JOIN store s ON b.store_id = s.id " +
+                    "ORDER BY b.bmo DESC";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -77,7 +84,7 @@ public class BoardDao {
                 String bcontent = rs.getString("bcontent");
                 String bdate = rs.getString("bdate");
                 int store_id = rs.getInt("store_id");
-                notices.add(new BoardDto(bmo, bcontent, bdate, store_id));
+                notices.add(new BoardDto(bmo, bcontent, bdate, authorLoginId));
             }
         } catch (Exception e) {
             System.out.println("공지사항 조회 중 오류 발생: " + e);

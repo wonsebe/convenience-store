@@ -5,6 +5,7 @@ import java.util.List;
 
 public class GameStateDto {
     private int storeId;
+    private String loginId;  // 로그인 ID를 저장하기 위한 새 필드
     private int balance;
     private int currentTurn;
     private List<InventoryLog> inventoryLogs;
@@ -18,8 +19,9 @@ public class GameStateDto {
     }
 
     // 새로운 생성자 추가
-    public GameStateDto(int storeId, int balance, int currentTurn, List<InventoryLog> inventoryLogs, List<BoardDto> boardNotices) {
+    public GameStateDto(int storeId, String loginId, int balance, int currentTurn, List<InventoryLog> inventoryLogs, List<BoardDto> boardNotices) {
         this.storeId = storeId;
+        this.loginId = loginId;
         this.balance = balance;
         this.currentTurn = currentTurn;
         this.inventoryLogs = inventoryLogs;
@@ -33,6 +35,14 @@ public class GameStateDto {
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
     }
 
     public int getBalance() {

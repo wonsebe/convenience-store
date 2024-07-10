@@ -24,6 +24,7 @@ public class PcController {
     private int turn;
     private int storeBalance; // 편의점 현금
     private String currentLoginId;  // 편의점 로그인 아이디
+    private int currentStoreId;  // 현재 store의 id를 저장할 필드
 
     // private 생성자. 외부에서 인스턴스 생성 방지
     // 초기화 시 등록된 상품 종류의 수 조회
@@ -51,13 +52,22 @@ public class PcController {
     // saveGameState 메서드
     public void saveGameState() {
         GameStateDto gameState = new GameStateDto(
+                getCurrentStoreId(),
                 getCurrentLoginId(),
                 getStoreBalance(),
                 getCurrentTurn(),
                 getCurrentInventoryLogs(),
                 getCurrentBoardNotices()
         );
-        gameSaveDao.saveGame(currentLoginId, gameState);
+        gameSaveDao.saveGame(getCurrentLoginId(), gameState);
+    }
+
+    public int getCurrentStoreId() {
+        return this.currentStoreId;
+    }
+
+    public void setCurrentStoreId(int storeId) {
+        this.currentStoreId = storeId;
     }
 
     // loadGameState 메서드
@@ -98,9 +108,8 @@ public class PcController {
     }
 
     // 현재 로그인된 사용자 ID 반환 메서드
-    public int getCurrentLoginId() {
-        // 현재 로그인된 사용자 ID 반환 로직 구현
-        return 1; // 예제 값, 실제로는 로그인된 사용자 ID를 반환해야 함
+    public String getCurrentLoginId() {
+        return this.currentLoginId;
     }
 
     public void setCurrentLoginId(String loginId) {
@@ -114,31 +123,37 @@ public class PcController {
 
     // 현재 턴 반환 메서드
     public int getCurrentTurn() {
-        // 현재 턴 반환 로직 구현
+        // 현재 턴 반환 로직
         return this.turn;
     }
 
     // 현재 재고 로그 반환 메서드
     public List<InventoryLog> getCurrentInventoryLogs() {
-        // 현재 재고 로그 반환 로직 구현
-        return new ArrayList<>(); // 예제 값, 실제로는 현재 재고 로그를 반환해야 함
+        // 현재 재고 로그 반환 로직
+        return new ArrayList<>();
     }
 
     // 현재 공지사항 반환 메서드
     public List<BoardDto> getCurrentBoardNotices() {
-        // 현재 공지사항 반환 로직 구현
-        return new ArrayList<>(); // 예제 값, 실제로는 현재 공지사항을 반환해야 함
+        // 현재 공지사항 반환 로직
+        return new ArrayList<>();
     }
 
     // 현재 상품 목록을 가져오는 메서드
     public List<Products> getCurrentProducts() {
-        // 현재 상품 목록을 가져오는 로직 구현
-        return new ArrayList<>(); // 예제 값, 실제로는 현재 상품 목록을 반환해야 함
+        // 현재 상품 목록을 가져오는 로직
+        return new ArrayList<>();
     }
 
     // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 메서드
     public void updateProducts(List<Products> products) {
         // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 로직 구현
+    }
+
+    public int calculateEstimatedCost(int pId, int quantity) {
+        int retailPrice = ProductDao.getInstance().getProductPrice(pId);
+        int wholeSalePrice = (int) (retailPrice * 0.6);
+        return wholeSalePrice * quantity;
     }
 
     // 1 - 재고 구매 메서드
@@ -156,15 +171,13 @@ public class PcController {
         } else {
             // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
             int newBalance = this.storeBalance - orderFunds;
-            this.storeBalance -= orderFunds;
             boolean updateSuccess = StoreDao.getInstance().updateBalance(newBalance, turn);
             if (updateSuccess) {
-                this.storeBalance = newBalance; // 잔고 변경
-                // InventoryDao 에서 상품의 수량도 변경한다
+                this.storeBalance = newBalance;
                 InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
                 return ColorUtil.getColor("GREEN") + "구매완료!" + ColorUtil.getColor("RESET");
             } else {
-                return ColorUtil.getColor("RED") + "잔고 업데이트 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET");
+                return ColorUtil.getColor("RED") + "잔고 업데이트 실패. 구매가 취소되었습니다." + ColorUtil.getColor("RESET");
             }
         }
     } // 1 - 재고 구매 메서드 end
@@ -212,7 +225,7 @@ public class PcController {
 
     // 8 - 글쓰기
     public boolean addNotice(String content) {
-        return Bcontroller.getInstance().addNotice(content, getCurrentLoginId());
+        return Bcontroller.getInstance().addNotice(content, getCurrentStoreId());
     }
 
     // 9 - 글보기
@@ -331,12 +344,13 @@ public class PcController {
     }
 
     //편의점 포켓몬빵 입고
-    public void bread1(){
-        InventoryDao.getInstance().supplyRestock(30,120,turn);
+    public void bread1() {
+        InventoryDao.getInstance().supplyRestock(30, 120, turn);
     }
-    public InventoryLog bread2(int purchaseQuantity){
 
-        return InventoryDao.getInstance().purchase(30,purchaseQuantity,turn);
+    public InventoryLog bread2(int purchaseQuantity) {
+
+        return InventoryDao.getInstance().purchase(30, purchaseQuantity, turn);
     }
 
     private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
