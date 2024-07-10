@@ -22,6 +22,14 @@ CREATE TABLE store
     balance      INT DEFAULT 1000000             -- 초기 잔고 100만원 설정
 );
 
+INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
+VALUES (1, 'admin', '1234', 1, 1000000),
+       (2, 'admin2', '1234', 1, 1000000)
+ON DUPLICATE KEY UPDATE login_id     = VALUES(login_id),
+                        login_pwd    = VALUES(login_pwd),
+                        current_turn = VALUES(current_turn),
+                        balance      = VALUES(balance);
+
 -- store_balance 테이블 생성
 CREATE TABLE store_balance
 (
@@ -56,17 +64,23 @@ CREATE TABLE products
 -- 재고 로그 테이블 생성
 CREATE TABLE inventory_log
 (
-    log_id      INT PRIMARY KEY AUTO_INCREMENT, -- 로그 ID, 기본 키, 자동 증가
-    game_date   INT NOT NULL,                   -- 게임 내 날짜를 나타내는 정수값, NULL 불가
-    product_id  INT,                            -- 제품 ID, products 테이블의 product_id를 참조
-    quantity    INT NOT NULL,                   -- 수량, NULL 불가
-    description VARCHAR(20),                    -- 설명, NULL 가능
-    store_id    INT,
-    FOREIGN KEY (store_id) REFERENCES store (id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products (product_id)
-        ON DELETE CASCADE                       -- 외래 키, products 테이블의 product_id를 참조
+    log_id        INT PRIMARY KEY AUTO_INCREMENT,
+    game_date     INT NOT NULL,
+    product_id    INT,
+    quantity      INT NOT NULL,
+    description   VARCHAR(20),
+    store_id      INT,
+    sale_price    INT,
+    purchase_date INT,
+    FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
 );
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE inventory_log
+SET purchase_date = game_date
+WHERE purchase_date IS NULL;
+SET SQL_SAFE_UPDATES = 1;
 
 -- 매출액 테이블 생성, 게임의 각 턴별 매출 정보 저장
 CREATE TABLE sales
@@ -79,11 +93,6 @@ CREATE TABLE sales
     FOREIGN KEY (store_id) REFERENCES store (id)
         ON DELETE CASCADE
 );
-
--- inventory_log 테이블에 sale_price 컬럼 추가
-ALTER TABLE inventory_log
-    ADD COLUMN sale_price INT;
--- 매출 계산에 활용
 
 -- Products 테이블 샘플 데이터
 INSERT INTO products (product_id, name, price, expiry_turns)
@@ -152,18 +161,11 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 30, 20, '초기 입고');
 -- 포켓몬 빵
 
-
--- 유통기한 폐기 처리를 위한 입고날짜
-ALTER TABLE inventory_log
-    MODIFY COLUMN purchase_date INT NOT NULL DEFAULT 0;
-
--- 초기 테스트 계정 추가
-INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
-VALUES (1, 'admin', '1234', 1, 1000000),
-       (2, 'admin2', '1234', 1, 1000000);
-
 -- Board 테이블 샘플 데이터
 INSERT INTO board (bmo, bcontent, bdate, store_id)
 VALUES (1, '25% 세일', '2024-07-08', 1),
        (2, '포켓몬빵 입고', '2024-07-09', 1),
        (3, '신메뉴 출시', '2024-07-10', 1);
+
+SELECT *
+FROM store;

@@ -420,8 +420,8 @@ public class ProductView {
         System.out.println("포켓몬 빵이 들어왔습니다!");
         //편의점 포켓몬빵 입고
 
-        // 손님 수를 랜덤으로 설정
-        int numCustomers = new Random().nextInt(30) + 1; // 1부터 30명 사이의 랜덤 손님 수
+        // 빵 소객을 듣고 오는 손님 수를 랜덤으로 설정
+        int numCustomers = new Random().nextInt(12) + 1; // 1부터 13명 사이의 랜덤 손님 수
 
         // 손님들이 포켓몬 빵을 최대 2개씩 구매
         for (int i = 0; i < numCustomers; i++) {

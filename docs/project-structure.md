@@ -4,6 +4,7 @@ convenience-store
 ├── docs
 │ ├── convenience-store.ico
 │ ├── er-diagram.md
+│ ├── flowchart.md
 │ ├── project-proposal.md
 │ ├── tasks.md
 │ ├── sample.sql

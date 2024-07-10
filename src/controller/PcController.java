@@ -214,8 +214,8 @@ public class PcController {
     // 랜덤한 수의 고객이 랜덤한 상품을 랜덤 수량으로 구매하려 시도
     public ArrayList<InventoryLog> purchase(int turn) {
         ArrayList<InventoryLog> logs = new ArrayList<>();
-        // 3~15명의 랜덤한 고객 수 생성
-        int customerCount = new Random().nextInt(13) + 3;
+        // 3~12명의 랜덤한 고객 수 생성
+        int customerCount = new Random().nextInt(9) + 3;
 
         for (int i = 0; i < customerCount; i++) {
             // 랜덤한 상품 ID 선택
