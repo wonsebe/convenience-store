@@ -24,20 +24,20 @@ public class BoardView {
             System.out.printf("\t%2d\t%15s\n" , dto.getBmo(), dto.getBcontent());
         });
     }
-
-    // 게시물 쓰기
-    public void Bwrite(){
-        System.out.println("게시글 작성"); String bcontent = scan.nextLine();
-
-        boolean result = Bcontroller.getInstance().Bwrite(bcontent);
-        if (result){
-            System.out.println("게시물 등록 성공");
-        }else {
-            System.out.println("게시물 등록 실패");
-        }
-    }
-
-
+//
+//    // 게시물 쓰기
+//    public void Bwrite(){
+//        System.out.println("게시글 작성"); String bcontent = scan.nextLine();
+//
+//        boolean result = Bcontroller.getInstance().Bwrite(bcontent);
+//        if (result){
+//            System.out.println("게시물 등록 성공");
+//        }else {
+//            System.out.println("게시물 등록 실패");
+//        }
+//    }
+//
+//
 
 
 

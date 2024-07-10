@@ -58,17 +58,12 @@ public class ProductView {
             System.out.print(ColorUtil.getColor("CYAN") + "1" + ColorUtil.getColor("RESET") + " - 재고 구매\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "2" + ColorUtil.getColor("RESET") + " - 재고 확인\t\t");
             System.out.print(ColorUtil.getColor("CYAN") + "3" + ColorUtil.getColor("RESET") + " - 상품 추가\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "4" + ColorUtil.getColor("RESET") + " - 상품 수정\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "4" + ColorUtil.getColor("RESET") + " - 상품 가격 수정\t\t");
             System.out.println();
-            System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 재고 삭제\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 물품 확인\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 강도 침입\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "8" + ColorUtil.getColor("RESET") + " - 공지 쓰기\t\t");
-            System.out.println();
-            System.out.print(ColorUtil.getColor("CYAN") + "9" + ColorUtil.getColor("RESET") + " - 공지 보기\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "10" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "11" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
-            System.out.print(ColorUtil.getColor("CYAN") + "12" + ColorUtil.getColor("RESET") + " - 미구현\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "5" + ColorUtil.getColor("RESET") + " - 상품 삭제\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "6" + ColorUtil.getColor("RESET") + " - 공지 쓰기\t\t");
+            System.out.print(ColorUtil.getColor("CYAN") + "7" + ColorUtil.getColor("RESET") + " - 공지 보기\t\t");
+
             System.out.println();
 
             // 다음 턴 및 종료는 최하단에 표시
@@ -84,14 +79,12 @@ public class ProductView {
                 // 향상된 switch 문을 사용해 사용자 선택에 따른 동작 수행
                 switch (choice) {
                     case 1 -> supplyRestock();  // 재고 구매
-                    case 2 -> displayInventory();  // 재고 확인
+                    case 2 -> pPrint();         // 물품 확인
                     case 3 -> addProduct();  // 상품 추가
                     case 4 -> updateProduct();  // 상품 수정
                     case 5 -> pDelete(); // 재고 삭제
-                    case 6 -> pPrint(); // 물품 확인
-                    case 7 -> inrush(); //강도 침입 함수
-                    case 8 -> writeNotice();
-                    case 9 -> viewNotices();
+                    case 6 -> writeNotice();    // 공지 쓰기
+                    case 7 -> viewNotices();    // 공지 확인
                     case 99 -> processTurn();  // 다음 턴 진행
                     case 100 -> {
                         System.out.println("게임을 종료합니다.");  // 게임 종료
