@@ -232,6 +232,7 @@ public class InventoryDao {
                     "FROM products p " +
                     "LEFT JOIN inventory_log il ON p.product_id = il.product_id AND il.store_id = ? " +
                     "GROUP BY p.product_id, p.name, p.price, p.expiry_turns";
+
             ps = conn.prepareStatement(sql);
             ps.setInt(1, PcController.getInstance().getCurrentStoreId());
             rs = ps.executeQuery();
