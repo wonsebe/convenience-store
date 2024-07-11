@@ -86,7 +86,7 @@ public class PcController {
             // 기타 필요한 게임 상태 변수들 복원
             restoreAdditionalGameStates(gameState);
 
-            System.out.println("게임 상태가 성공적으로 로드되었습니다. 현재 턴: " + this.turn);
+            System.out.println("저장된 게임을 불러왔습니다. 현재 턴: " + this.turn);
         } else {
             System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
             initializeNewGame(currentLoginId);
@@ -101,17 +101,37 @@ public class PcController {
         saveGameState();
     }
 
-    // 새로운 메서드 추가
+    //
     public void initializeGameAfterLogin(String loginId) {
         this.currentLoginId = loginId;
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
-        initializeNewGame(loginId);
+        // initializeNewGame(loginId);
+        loadGameState();  // 저장된 게임 상태를 로드
     }
 
     // 로그인 후 초기화 작업
     public void restoreAdditionalGameStates(GameStateDto gameState) {
-        // 게임 상태 복원 로직
-        // 이벤트 상태, 특별 조건 등
+        // 턴 복원
+        this.turn = gameState.getCurrentTurn();
+
+        // 잔고 복원
+        this.storeBalance = gameState.getStoreBalance();
+
+        // 마지막 턴 총 매출액 복원
+        this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
+
+        // 상품 정보 복원
+        if (gameState.getProducts() != null) {
+            updateProducts(gameState.getProducts());
+        }
+
+        // 재고 로그 복원
+        updateInventoryFromLogs(gameState.getInventoryLogs());
+
+        // 공지사항 복원
+        updateBoardNotices(gameState.getBoardNotices());
+
+        
     }
 
     // 현재 로그인된 사용자 ID 반환 메서드
