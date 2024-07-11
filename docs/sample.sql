@@ -1,5 +1,6 @@
 -- 편의점 시뮬레이션 데이터베이스 생성
 CREATE DATABASE IF NOT EXISTS convenience_store;
+-- drop database convenience_store;
 
 -- 데이터베이스 사용
 USE convenience_store;
@@ -22,6 +23,7 @@ CREATE TABLE store
     balance      INT DEFAULT 1000000             -- 초기 잔고 100만원 설정
 );
 
+-- 샘플 계정
 INSERT INTO store (id, login_id, login_pwd, current_turn, balance)
 VALUES (1, 'admin', '1234', 1, 1000000),
        (2, 'admin2', '1234', 1, 1000000)
@@ -60,6 +62,11 @@ CREATE TABLE products
     FOREIGN KEY (store_id) REFERENCES store (id)
         ON DELETE CASCADE
 );
+
+ALTER TABLE products
+    DROP FOREIGN KEY products_ibfk_1;
+ALTER TABLE products
+    DROP COLUMN store_id;
 
 -- 재고 로그 테이블 생성
 CREATE TABLE inventory_log
@@ -106,7 +113,7 @@ VALUES (1, '삼각김밥', 1200, 5),
        (8, '도시락', 4500, 3),
        (9, '김치찌개라면', 1300, 12),
        (10, '캔커피', 1000, 18),
-       (11, '빵', 2000, 5),
+       (11, '딸기케익', 2000, 5),
        (12, '과자', 2500, 20),
        (13, '음료수', 1500, 25),
        (14, '샌드위치', 3000, 4),
@@ -139,7 +146,7 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 8, 15, '초기 입고'),  -- 도시락
        (1, 9, 20, '초기 입고'),  -- 김치찌개라면
        (1, 10, 20, '초기 입고'), -- 캔커피
-       (1, 11, 20, '초기 입고'), -- 빵
+       (1, 11, 20, '초기 입고'), -- 딸기케익
        (1, 12, 30, '초기 입고'), -- 과자
        (1, 13, 20, '초기 입고'), -- 음료수
        (1, 14, 25, '초기 입고'), -- 샌드위치

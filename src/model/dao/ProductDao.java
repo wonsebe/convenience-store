@@ -38,7 +38,7 @@ public class ProductDao {
 
     // 요청한 상품의 가격을 반환하는 메서드
     public int getProductPrice(int productId) {
-        int price = 0;
+        int price = -1;  // 기본값을 -1로 설정
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -98,12 +98,9 @@ public class ProductDao {
         ResultSet rs = null;
         try {
             conn = DbUtil.getConnection();
-            // SQL 쿼리 준비 (등록된 상품 종류의 총 개수 조회)
-            String sql = "SELECT COUNT(DISTINCT product_id) as count FROM products";
+            // SQL 쿼리 수정: 모든 상품의 수를 조회
+            String sql = "SELECT COUNT(*) as count FROM products";
             ps = conn.prepareStatement(sql);
-            // executeQuery()
-            // SELECT 문과 같이 데이터를 조회하는 SQL 문에 사용합니다.
-            // 결과를 ResultSet 객체로 반환
             rs = ps.executeQuery();
             if (rs.next()) {
                 count = rs.getInt("count");
