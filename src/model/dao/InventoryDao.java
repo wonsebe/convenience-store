@@ -200,26 +200,30 @@ public class InventoryDao {
 
     // 재고 삭제 메서드
     public boolean pdelete(int productId) {
+        Connection conn = null;
+        PreparedStatement ps = null;
         try {
+            conn = DbUtil.getConnection();
             // products 테이블에서 해당 product_id를 가진 상품을 삭제하는 SQL 쿼리 준비
-            String sql = "DELETE FROM products WHERE product_id = ? AND store_id = ?";
+            String sql = "DELETE FROM products WHERE product_id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, productId);
-            ps.setInt(2, PcController.getInstance().getCurrentStoreId());
             int count = ps.executeUpdate();
 
             if (count == 1) {
                 // 상품이 성공적으로 삭제되었다면 관련된 재고 로그도 삭제
-                sql = "DELETE FROM inventory_log WHERE product_id = ? AND store_id = ?";
+                sql = "DELETE FROM inventory_log WHERE product_id = ?";
                 ps = conn.prepareStatement(sql);
                 ps.setInt(1, productId);
-                ps.setInt(2, PcController.getInstance().getCurrentStoreId());
                 ps.executeUpdate();
 
                 return true;
             }
         } catch (Exception e) {
             System.out.println("재고 삭제 중 오류 발생: " + e);
+        } finally {
+            DbUtil.closeStatement(ps);
+            DbUtil.closeConnection(conn);
         }
         return false;
     } // 재고 삭제 메서드 end
