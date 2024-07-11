@@ -69,29 +69,48 @@ public class StoreDao {
         return balance; // 조회한 잔고 반환
     }
 
+    // 로그인 ID를 이용, store ID를 조회하는 메서드
+    public int getStoreIdByLoginId(String loginId) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtil.getConnection();
+            String sql = "SELECT id FROM store WHERE login_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, loginId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Store ID 조회 중 오류 발생: " + e.getMessage());
+        } finally {
+            DbUtil.closeResultSet(rs);
+            DbUtil.closeStatement(ps);
+            DbUtil.closeConnection(conn);
+        }
+        return 0;
+    }
 
     // 편의점의 잔고를 업데이트
-    public boolean updateBalance(int balance, int turn) {
+    public boolean updateBalance(int balance, int turn, int storeId) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DbUtil.getConnection();
-            // SQL 쿼리 준비, store 테이블에서 현재 로그인된 사용자의 잔고를 업데이트
-            String sql = "UPDATE store SET balance = ? WHERE login_id = ?";
+            // SQL 쿼리 수정: store_id를 사용하여 특정 편의점의 잔고를 업데이트
+            String sql = "UPDATE store SET balance = ?, current_turn = ? WHERE id = ?";
             ps = conn.prepareStatement(sql);
-            // balance 값을 SQL 쿼리의 첫 번째 매개변수에 설정
             ps.setInt(1, balance);
-            // 현재 로그인된 사용자 ID를 SQL 쿼리의 두 번째 매개변수에 설정
-            ps.setString(2, PcController.getInstance().getCurrentLoginId());
-            // 쿼리를 실행하고 영향받은 행의 수를 반환
+            ps.setInt(2, turn);
+            ps.setInt(3, storeId);
             int rowsUpdated = ps.executeUpdate();
-            // 업데이트된 행의 수가 0보다 크면 true 반환
             return rowsUpdated > 0;
         } catch (SQLException e) {
             System.out.println("잔고 업데이트 중 오류 발생: " + e.getMessage());
             return false;
         } finally {
-            // 리소스 해제 (PreparedStatement, Connection 객체)
             DbUtil.closeStatement(ps);
             DbUtil.closeConnection(conn);
         }

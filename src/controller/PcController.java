@@ -7,6 +7,7 @@ import model.dto.InventoryLog;
 import model.dto.Products;
 import util.ColorUtil;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,33 +65,53 @@ public class PcController {
     }
 
     public int getCurrentStoreId() {
+        if (this.currentStoreId == 0) {
+            System.out.println("현재 store id가 저장되어 있지 않음");
+            if (this.currentLoginId != null && !this.currentLoginId.isEmpty()) {
+                this.currentStoreId = StoreDao.getInstance().getStoreIdByLoginId(this.currentLoginId);
+                if (this.currentStoreId != 0) {
+                    System.out.println("Store ID를 성공적으로 조회했습니다: " + this.currentStoreId);
+                } else {
+                    System.out.println("Store ID 조회에 실패했습니다.");
+                }
+            } else {
+                System.out.println("현재 로그인된 사용자 정보가 없습니다.");
+            }
+        }
         return this.currentStoreId;
     }
 
     public void setCurrentStoreId(int storeId) {
         this.currentStoreId = storeId;
+        // System.out.println("StoreID: " + storeId); // 디버깅용 출력
     }
 
     // loadGameState 메서드
-    public void loadGameState() {
+    private boolean loadGameState() {
         GameStateDto gameState = gameSaveDao.loadGame(currentLoginId);
         if (gameState != null) {
+            if (gameState.getStoreId() != 0) {
+                this.currentStoreId = gameState.getStoreId();
+            } else {
+                // 확인용
+                // System.out.println("경고: 로드된 게임 상태의 storeId가 0입니다. 현재 storeId를 유지합니다.");
+            }
             this.turn = gameState.getCurrentTurn();
             this.storeBalance = gameState.getStoreBalance();
             this.lastTurnTotalSales = gameState.getLastTurnTotalSales();
             updateInventoryFromLogs(gameState.getInventoryLogs());
             updateBoardNotices(gameState.getBoardNotices());
+
             if (gameState.getProducts() != null) {
                 updateProducts(gameState.getProducts());
             }
-            // 기타 필요한 게임 상태 변수들 복원
-            restoreAdditionalGameStates(gameState);
 
-            System.out.println("저장된 게임을 불러왔습니다. 현재 턴: " + this.turn);
-        } else {
-            System.out.println("저장된 게임 상태가 없거나 로드에 실패했습니다. 새 게임을 시작합니다.");
-            initializeNewGame(currentLoginId);
+            restoreAdditionalGameStates(gameState);
+            // 확인용
+            // System.out.println("게임 상태가 성공적으로 로드되었습니다. 현재 턴: " + this.turn + ", StoreID: " + this.currentStoreId);
+            return true;
         }
+        return false;
     }
 
     public void initializeNewGame(String loginId) {
@@ -101,12 +122,36 @@ public class PcController {
         saveGameState();
     }
 
-    //
     public void initializeGameAfterLogin(String loginId) {
         this.currentLoginId = loginId;
+        this.currentStoreId = StoreDao.getInstance().getStoreIdByLoginId(loginId);
+        if (this.currentStoreId == 0) {
+            System.out.println("오류: 유효하지 않은 로그인 ID입니다.");
+            return;
+        }
+        // System.out.println("현재 StoreID: " + this.currentStoreId);
+
+        // 게임 상태 로드 또는 새 게임 시작
+        if (!loadGameState()) {
+            initializeNewGame(loginId);
+        }
+
         this.productTypeCount = ProductDao.getInstance().getProductTypeCount();
-        // initializeNewGame(loginId);
-        loadGameState();  // 저장된 게임 상태를 로드
+
+        if (this.productTypeCount == 0) {
+            //System.out.println("경고: 등록된 상품이 없습니다. 데이터베이스를 확인해주세요.");
+        } else {
+            //System.out.println("등록된 상품 수: " + this.productTypeCount);
+
+            if (!InventoryDao.getInstance().hasInitialInventory(this.currentStoreId)) {
+                //System.out.println("초기 재고를 설정합니다.");
+                InventoryDao.getInstance().initializeInventory(this.currentStoreId);
+            } else {
+                //System.out.println("이미 초기 재고가 설정되어 있습니다.");
+            }
+            // 확인용
+            //System.out.println("현재 스토어의 재고 상태가 준비되었습니다.");
+        }
     }
 
     // 로그인 후 초기화 작업
@@ -130,8 +175,6 @@ public class PcController {
 
         // 공지사항 복원
         updateBoardNotices(gameState.getBoardNotices());
-
-        
     }
 
     // 현재 로그인된 사용자 ID 반환 메서드
@@ -174,7 +217,27 @@ public class PcController {
 
     // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 메서드
     public void updateProducts(List<Products> products) {
-        // 로드된 상품 정보로 현재 상품 상태를 업데이트하는 로직 구현
+        if (products == null || products.isEmpty()) {
+            System.out.println("업데이트할 상품 정보가 없습니다.");
+            return;
+        }
+
+        for (Products product : products) {
+            try {
+                // 데이터베이스에 상품 정보 업데이트
+                boolean updated = ProductDao.getInstance().pUpdate(product);
+                if (updated) {
+                    // 확인용
+                    // System.out.println("상품 ID " + product.getProductId() + " 정보가 업데이트되었습니다.");
+                } else {
+                    System.out.println("상품 ID " + product.getProductId() + " 정보 업데이트에 실패했습니다.");
+                }
+            } catch (Exception e) {
+                System.out.println("상품 정보 업데이트 중 오류 발생: " + e.getMessage());
+            }
+        }
+        // 상품 종류 수 갱신
+        updateProductTypeCount();
     }
 
     public int calculateEstimatedCost(int pId, int quantity) {
@@ -185,27 +248,32 @@ public class PcController {
 
     // 1 - 재고 구매 메서드
     public String supplyRestock(int pId, int quantity, int turn) {
-        // 구매할 제품의 소매가를 가져온다
+        int currentStoreId = this.getCurrentStoreId();
+        if (currentStoreId == 0) {
+            return ColorUtil.getColor("RED") + "오류: 현재 store ID가 설정되지 않았습니다." + ColorUtil.getColor("RESET");
+        }
+
         int retailPrice = ProductDao.getInstance().getProductPrice(pId);
-        // 도매가를 계산한다. (소매가의 60%)
         int wholeSalePrice = (int) (retailPrice * 0.6);
-        // 총 구매가격을 계산한다
         int orderFunds = wholeSalePrice * quantity;
 
-        // 편의점 자금이 부족하면 구매 불가를 출력한다
-        if (orderFunds >= this.storeBalance) {
+        if (orderFunds > this.storeBalance) {
             return ColorUtil.getColor("RED") + "구매할 자금이 부족합니다." + ColorUtil.getColor("RESET");
-        } else {
-            // 자금이 충분하면 StoreDao에 전달해 편의점 자금 상태를 변경한다
+        }
+
+        try {
             int newBalance = this.storeBalance - orderFunds;
-            boolean updateSuccess = StoreDao.getInstance().updateBalance(newBalance, turn);
+            boolean updateSuccess = StoreDao.getInstance().updateBalance(newBalance, turn, currentStoreId);
             if (updateSuccess) {
+                InventoryDao.getInstance().supplyRestock(pId, quantity, turn, currentStoreId);
                 this.storeBalance = newBalance;
-                InventoryDao.getInstance().supplyRestock(pId, quantity, turn);
                 return ColorUtil.getColor("GREEN") + "구매완료!" + ColorUtil.getColor("RESET");
             } else {
                 return ColorUtil.getColor("RED") + "잔고 업데이트 실패. 구매가 취소되었습니다." + ColorUtil.getColor("RESET");
             }
+        } catch (SQLException e) {
+            System.out.println("재고 구매 중 오류 발생: " + e.getMessage());
+            return ColorUtil.getColor("RED") + "재고 구매 실패. 다시 시도해주세요." + ColorUtil.getColor("RESET");
         }
     } // 1 - 재고 구매 메서드 end
 
@@ -265,7 +333,7 @@ public class PcController {
     public ArrayList<InventoryLog> purchase(int turn) {
         ArrayList<InventoryLog> logs = new ArrayList<>();
         if (productTypeCount <= 0) {
-            System.out.println("등록된 상품이 없습니다.");
+            System.out.println("등록된 상품이 없습니다. 게임을 진행할 수 없습니다.");
             return logs;
         }
 
@@ -278,18 +346,22 @@ public class PcController {
             // 1~5개의 랜덤한 구매 수량 생성
             int buyCount = new Random().nextInt(5) + 1;
 
-            int purchaseQuantity = new Random().nextInt(2) + 1; // 1부터 2개 사이의 랜덤 구매 수량
-
             int productCount = InventoryDao.getInstance().checkInventory(productId);
-            // 확인용 콘솔
-            // System.out.println("상품 ID " + productId + " 구매 시도: 요청 수량 " + buyCount + ", 현재 재고 " + productCount); // 디버깅을 위한 출력
 
             if (productCount >= buyCount) {
-                InventoryLog log = InventoryDao.getInstance().purchase(productId, buyCount, turn);
-                if (log != null) {
-                    logs.add(log);
-                    // 확인용 콘솔
-                    // System.out.println("구매 성공: 상품 ID " + productId + ", 수량 " + buyCount); // 디버깅을 위한 출력
+                try {
+                    InventoryLog log = InventoryDao.getInstance().purchase(productId, buyCount, turn, this.currentStoreId);
+                    if (log != null) {
+                        logs.add(log);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("구매 처리 중 오류 발생: " + e.getMessage());
+                    // 오류 발생 시 더미 로그 생성
+                    InventoryLog errorLog = new InventoryLog();
+                    errorLog.setProductId(productId);
+                    errorLog.setQuantity(0);
+                    errorLog.setDescription("구매 처리 중 오류 발생");
+                    logs.add(errorLog);
                 }
             } else {
                 InventoryLog log = new InventoryLog();
@@ -297,8 +369,6 @@ public class PcController {
                 log.setQuantity(0);
                 log.setDescription("재고 부족으로 구매 실패");
                 logs.add(log);
-                // 확인용 콘솔
-                // System.out.println("구매 실패: 상품 ID " + productId + ", 요청 수량 " + buyCount + ", 현재 재고 " + productCount); // 디버깅을 위한 출력
             }
         }
         return logs;
@@ -328,7 +398,7 @@ public class PcController {
 
         // 잔고 업데이트
         this.storeBalance += totalSales;
-        StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+        StoreDao.getInstance().updateBalance(this.storeBalance, turn, this.currentStoreId);
         // 턴이 끝날 때마다 게임 상태 저장, 맨 마지막에 있어야 함 (메서드 수정시 주의)
         saveGameState();
     } // 구매 처리, 총 매출 계산, 매출 저장, 잔고 저장 end
@@ -343,7 +413,7 @@ public class PcController {
         if (turn % RENT_INTERVAL == 0) {
             if (this.storeBalance >= RENT_AMOUNT) {
                 this.storeBalance -= RENT_AMOUNT;
-                StoreDao.getInstance().updateBalance(this.storeBalance, turn);
+                StoreDao.getInstance().updateBalance(this.storeBalance, turn, this.currentStoreId);
                 System.out.println("=========================================================");
                 System.out.println(ColorUtil.getColor("YELLOW") + "월세 " + RENT_AMOUNT + "원이 차감되었습니다." + ColorUtil.getColor("RESET"));
                 System.out.println("=========================================================");
@@ -380,19 +450,72 @@ public class PcController {
 
     //편의점 포켓몬빵 입고
     public void bread1() {
-        InventoryDao.getInstance().supplyRestock(30, 120, turn);
+        try {
+            int currentStoreId = this.getCurrentStoreId();
+            if (currentStoreId == 0) {
+                System.out.println("오류: 현재 store ID가 설정되지 않았습니다.");
+                return;
+            }
+            InventoryDao.getInstance().supplyRestock(30, 120, turn, currentStoreId);
+            System.out.println("포켓몬 빵 120개가 입고되었습니다.");
+        } catch (Exception e) {
+            System.out.println("포켓몬 빵 입고 중 오류 발생: " + e.getMessage());
+        }
     }
 
     public InventoryLog bread2(int purchaseQuantity) {
-        return InventoryDao.getInstance().purchase(30, purchaseQuantity, turn);
+        try {
+            int currentStoreId = this.getCurrentStoreId();
+            if (currentStoreId == 0) {
+                System.out.println("오류: 현재 store ID가 설정되지 않았습니다.");
+                return null;
+            }
+            return InventoryDao.getInstance().purchase(30, purchaseQuantity, turn, currentStoreId);
+        } catch (Exception e) {
+            System.out.println("포켓몬 빵 구매 처리 중 오류 발생: " + e.getMessage());
+            return null;
+        }
     }
 
-    private void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
-        // 로드된 재고 로그로 현재 재고 상태를 업데이트하는 로직
+    public void updateInventoryFromLogs(List<InventoryLog> inventoryLogs) {
+        if (inventoryLogs == null || inventoryLogs.isEmpty()) {
+            // 확인용 콘솔
+            // System.out.println("업데이트할 재고 로그가 없습니다.");
+            return;
+        }
+
+        for (InventoryLog log : inventoryLogs) {
+            try {
+                // 재고 로그를 기반으로 재고 상태 업데이트
+                InventoryDao.getInstance().supplyRestock(log.getProductId(), log.getQuantity(), log.getGameDate(), this.currentStoreId);
+                // 확인용 콘솔
+                // System.out.println("상품 ID " + log.getProductId() + "의 재고가 " + log.getQuantity() + "만큼 업데이트되었습니다.");
+            } catch (SQLException e) {
+                System.out.println("재고 업데이트 중 오류 발생: " + e.getMessage());
+            }
+        }
     }
 
-    private void updateBoardNotices(List<BoardDto> boardNotices) {
-        // 로드된 공지사항으로 현재 공지사항을 업데이트하는 로직
+    public void updateBoardNotices(List<BoardDto> boardNotices) {
+        if (boardNotices == null || boardNotices.isEmpty()) {
+            System.out.println("업데이트할 공지사항이 없습니다.");
+            return;
+        }
+
+        for (BoardDto notice : boardNotices) {
+            try {
+                // 공지사항 업데이트 또는 추가
+                boolean added = Bcontroller.getInstance().addNotice(notice.getBcontent(), notice.getAuthorLoginId());
+                if (added) {
+                    // 확인용 콘솔
+                    // System.out.println("공지사항 ID " + notice.getBmo() + "가 업데이트되었습니다.");
+                } else {
+                    System.out.println("공지사항 ID " + notice.getBmo() + " 업데이트에 실패했습니다.");
+                }
+            } catch (Exception e) {
+                System.out.println("공지사항 업데이트 중 오류 발생: " + e.getMessage());
+            }
+        }
     }
 
     public void checkAndRemoveExpiredInventory() {

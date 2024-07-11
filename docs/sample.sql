@@ -63,6 +63,11 @@ CREATE TABLE products
         ON DELETE CASCADE
 );
 
+ALTER TABLE products
+    DROP FOREIGN KEY products_ibfk_1;
+ALTER TABLE products
+    DROP COLUMN store_id;
+
 -- 재고 로그 테이블 생성
 CREATE TABLE inventory_log
 (
@@ -141,7 +146,7 @@ VALUES (1, 1, 20, '초기 입고'),  -- 삼각김밥
        (1, 8, 15, '초기 입고'),  -- 도시락
        (1, 9, 20, '초기 입고'),  -- 김치찌개라면
        (1, 10, 20, '초기 입고'), -- 캔커피
-       (1, 11, 20, '초기 입고'), -- 빵
+       (1, 11, 20, '초기 입고'), -- 딸기케익
        (1, 12, 30, '초기 입고'), -- 과자
        (1, 13, 20, '초기 입고'), -- 음료수
        (1, 14, 25, '초기 입고'), -- 샌드위치

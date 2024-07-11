@@ -34,7 +34,7 @@ public class ProductView {
     // 사용자 입력을 받아 해당하는 동작을 수행
     public void index() {
         // 아래는 index() 메서드 시작시 맨 처음에 있어야 함 (수정시 주의)
-        PcController.getInstance().loadGameState();  // 게임 시작 시 상태 로드
+        //        PcController.getInstance().loadGameState();  // 게임 시작 시 상태 로드
         // 인사말 출력
         System.out.print(ColorUtil.getColor("YELLOW") + "\n          (/ΩΩ/)\n" +
                                  "　     　 / •• /\n" +
@@ -469,14 +469,13 @@ public class ProductView {
         for (int i = 0; i < numCustomers; i++) {
             int purchaseQuantity = new Random().nextInt(5) + 1; // 1부터 5개 사이의 랜덤 구매 수량
             InventoryLog inventoryLog = PcController.getInstance().bread2(purchaseQuantity);
-            System.out.println("손님이 " + purchaseQuantity + "개의 포켓몬 빵을 구매하였습니다. 지불한 금액은 " + inventoryLog.getSalePrice() + "원 입니다.");
-
-
+            if (inventoryLog != null) {
+                System.out.println("손님이 " + purchaseQuantity + "개의 포켓몬 빵을 구매하였습니다. 지불한 금액은 " + inventoryLog.getSalePrice() + "원 입니다.");
+            } else {
+                System.out.println("포켓몬 빵 구매 처리 중 오류가 발생했습니다.");
+            }
         }
-
-
     }
-
 
 } // ProductView 클래스 종료
 
