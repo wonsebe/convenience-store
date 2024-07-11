@@ -36,11 +36,8 @@ public class SalesDao {
         return salesDao;
     }
 
-    /**
-     * 제공된 재고 로그 목록을 기반으로 총 매출액을 계산합니다.
-     *
-     * @param logs 재고 로그 목록
-     */
+
+    // 재고 로그 목록을 기반으로 총 매출액을 계산
     public int calculateTotalSales(ArrayList<InventoryLog> logs) {
         // 총 매출액을 저장할 변수를 0으로 초기화
         int totalSales = 0;
@@ -54,12 +51,7 @@ public class SalesDao {
         return totalSales;
     }
 
-    /**
-     * 특정 턴의 매출 정보를 데이터베이스에 저장합니다.
-     *
-     * @param turn       현재 게임 턴
-     * @param totalSales 해당 턴의 총 매출액
-     */
+    // 특정 턴의 매출 정보를 데이터베이스에 저장.
     public void saveSales(int turn, int totalSales) {
         if (conn == null) {
             System.out.println("데이터베이스 연결이 설정되지 않았습니다.");
@@ -68,10 +60,15 @@ public class SalesDao {
         try {
             // 매출 정보를 삽입하는 SQL 쿼리
             String sql = "INSERT INTO sales(game_date, total_sales, profit) VALUES(?, ?, ?)";
+            // PreparedStatement 객체 생성
             PreparedStatement ps = conn.prepareStatement(sql);
+            // 첫 번째 매개변수로 현재 턴 수를 설정
             ps.setInt(1, turn);
+            // 두 번째 매개변수로 총 매출액을 설정
             ps.setInt(2, totalSales);
-            ps.setInt(3, totalSales); // 간단히 하기 위해 profit을 total_sales와 같게 설정
+            // 세 번째 매개변수로 이익을 설정, 간단히 하기 위해 총 매출액과 같게 설정
+            ps.setInt(3, totalSales);
+            // SQL 쿼리를 실행, 매출 정보를 데이터베이스에 삽입
             ps.executeUpdate();
         } catch (Exception e) {
             System.out.println("매출 저장 중 오류 발생: " + e);

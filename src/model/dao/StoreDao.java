@@ -1,5 +1,6 @@
 package model.dao;
 
+import controller.PcController;
 import util.DbUtil;
 
 import java.sql.*;
@@ -42,35 +43,68 @@ public class StoreDao {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            // 데이터베이스 연결 생성
             conn = DbUtil.getConnection();
-            String sql = "SELECT balance FROM store_balance WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            // SQL 쿼리 준비, store_balance 테이블에서 현재 로그인된 사용자의 잔고를 조회
+            String sql = "SELECT balance FROM store WHERE login_id = ?";
+            // SQL 쿼리를 실행하기 위해 PreparedStatement 객체를 생성
             ps = conn.prepareStatement(sql);
-            ps.setString(1, "admin"); // 실제로는 현재 로그인된 사용자 ID를 사용해야 함
+            // 현재 로그인된 사용자 ID를 SQL 쿼리의 첫 번째 매개변수에 설정
+            ps.setString(1, PcController.getInstance().getCurrentLoginId());
+            // 쿼리를 실행하고 결과를 ResultSet 객체로 반환
             rs = ps.executeQuery();
+            // ResultSet 객체에서 다음 행(row)을 가져옴. 첫 번째 행이 존재하면 true를 반환
             if (rs.next()) {
+                // balance 열의 값을 가져와서 balance 변수에 저장
                 balance = rs.getInt("balance");
             }
         } catch (SQLException e) {
             System.out.println("잔고 조회 중 오류 발생: " + e.getMessage());
         } finally {
+            // 리소스 해제 (ResultSet, PreparedStatement, Connection 객체)
             DbUtil.closeResultSet(rs);
             DbUtil.closeStatement(ps);
             DbUtil.closeConnection(conn);
         }
-        return balance;
+        return balance; // 조회한 잔고 반환
     }
 
+    // 로그인 ID를 이용, store ID를 조회하는 메서드
+    public int getStoreIdByLoginId(String loginId) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = DbUtil.getConnection();
+            String sql = "SELECT id FROM store WHERE login_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, loginId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.out.println("Store ID 조회 중 오류 발생: " + e.getMessage());
+        } finally {
+            DbUtil.closeResultSet(rs);
+            DbUtil.closeStatement(ps);
+            DbUtil.closeConnection(conn);
+        }
+        return 0;
+    }
 
     // 편의점의 잔고를 업데이트
-    public boolean updateBalance(int balance, int turn) {
+    public boolean updateBalance(int balance, int turn, int storeId) {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = DbUtil.getConnection();
-            String sql = "UPDATE store_balance SET balance = ? WHERE store_id = (SELECT id FROM store WHERE login_id = ?)";
+            // SQL 쿼리 수정: store_id를 사용하여 특정 편의점의 잔고를 업데이트
+            String sql = "UPDATE store SET balance = ?, current_turn = ? WHERE id = ?";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, balance);
-            ps.setString(2, "admin"); // 실제로는 현재 로그인된 사용자 ID를 사용해야 함
+            ps.setInt(2, turn);
+            ps.setInt(3, storeId);
             int rowsUpdated = ps.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
