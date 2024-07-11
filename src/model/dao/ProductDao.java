@@ -38,7 +38,7 @@ public class ProductDao {
 
     // 요청한 상품의 가격을 반환하는 메서드
     public int getProductPrice(int productId) {
-        int price = 0;
+        int price = -1;  // 기본값을 -1로 설정
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;

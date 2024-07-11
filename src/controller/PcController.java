@@ -254,6 +254,10 @@ public class PcController {
         }
 
         int retailPrice = ProductDao.getInstance().getProductPrice(pId);
+        if (retailPrice == -1) {
+            return ColorUtil.getColor("RED") + "오류: 존재하지 않는 상품 번호입니다." + ColorUtil.getColor("RESET");
+        }
+
         int wholeSalePrice = (int) (retailPrice * 0.6);
         int orderFunds = wholeSalePrice * quantity;
 

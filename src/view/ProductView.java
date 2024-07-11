@@ -2,6 +2,7 @@ package view;
 
 import controller.PcController;
 import model.dao.InventoryDao;
+import model.dao.ProductDao;
 import model.dto.BoardDto;
 import model.dto.InventoryLog;
 import model.dto.Products;
@@ -104,19 +105,22 @@ public class ProductView {
 
     // 1 - 재고 구매 메서드
     public void supplyRestock() {
-        int currentTurn = PcController.getInstance().getTurn(); // 현재 턴 정보 가져오기
-        // 구매할 제품 번호를 입력한다
+        int currentTurn = PcController.getInstance().getTurn();
         System.out.println("입고할 제품 번호를 입력하세요.");
         System.out.print(">>");
         int pId = scan.nextInt();
-        // 구매할 제품의 수량을 입력한다
+
+        // 상품 존재 여부 확인
+        if (ProductDao.getInstance().getProductPrice(pId) == -1) {
+            System.out.println(ColorUtil.getColor("RED") + "오류: 존재하지 않는 상품 번호입니다." + ColorUtil.getColor("RESET"));
+            return;
+        }
+
         System.out.println("입고할 수량을 입력하세요.");
         System.out.print(">>");
         int quantity = scan.nextInt();
 
-        // 현재 잔고 확인
         int currentBalance = PcController.getInstance().getStoreBalance();
-        // 구매 예상 금액 계산
         int estimatedCost = PcController.getInstance().calculateEstimatedCost(pId, quantity);
 
         System.out.println("현재 잔고: " + currentBalance + "원");
@@ -125,13 +129,8 @@ public class ProductView {
 
         String confirm = scan.next().toLowerCase();
         if (confirm.equals("y")) {
-            // 컨트롤러의 supplyRestock 메서드 호출
             String result = PcController.getInstance().supplyRestock(pId, quantity, currentTurn);
-
-            // 결과 출력
             System.out.println(result);
-
-            // 구매 후 실제 잔고 출력
             int newBalance = PcController.getInstance().getStoreBalance();
             System.out.println("구매 후 실제 잔고: " + newBalance + "원");
         } else {
